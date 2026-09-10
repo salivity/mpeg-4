@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How MPEG-4 Sync Layer DTS Coordinates Buffer Flushes - mpeg-4</title>
+    <meta name="description" content="The Decoding Time Stamp (DTS) in the MPEG-4 Sync Layer (SL) serves as a critical synchronization mechanism that dictates precisely when an Access Unit (AU) must be removed from the decoding buffer and handed over to the decoder. In streaming and playback">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/how-mpeg-4-sync-layer-dts-coordinates-buffer-flushes">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How MPEG-4 Sync Layer DTS Coordinates Buffer Flushes - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/how-mpeg-4-sync-layer-dts-coordinates-buffer-flushes" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The Decoding Time Stamp (DTS) in the MPEG-4 Sync Layer (SL) serves as a critical synchronization mechanism that dictates precisely when an Access Unit (AU) must be removed from the decoding buffer and handed over to the decoder. In streaming and playback" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="how-mpeg-4-sync-layer-dts-coordinates-buffer-flushes">How MPEG-4
+Sync Layer DTS Coordinates Buffer Flushes</h1>
+<p>The Decoding Time Stamp (DTS) in the MPEG-4 Sync Layer (SL) serves as
+a critical synchronization mechanism that dictates precisely when an
+Access Unit (AU) must be removed from the decoding buffer and handed
+over to the decoder. In streaming and playback pipelines, the
+coordination between the DTS, system clocks, and buffer management
+ensures deterministic pipeline buffer flushes during normal playback,
+stream discontinuities, and random access events. This article explains
+how the Sync Layer uses DTS to govern buffer management and synchronize
+pipeline clearing operations.</p>
+<h3 id="the-sync-layer-timing-framework">The Sync Layer Timing
+Framework</h3>
+<p>The MPEG-4 Systems specification (ISO/IEC 14496-1) defines the Sync
+Layer to adapt elementary streams into time-stamped packet sequences.
+Within this layer, each Access Unit is packetized into one or more SL
+packets that carry timing metadata, primarily the Decoding Time Stamp
+(DTS), the Composition Time Stamp (CTS), and Object Clock Reference
+(OCR) values.</p>
+<p>The MPEG-4 decoding architecture relies on a generalized conceptual
+buffer model consisting of:</p>
+<ul>
+<li><strong>The Channel Buffer / Delivery Layer:</strong> Receives
+incoming data from the transport mechanism.</li>
+<li><strong>The Decoding Buffer (DB):</strong> Stores SL packets and
+reassembles them into complete Access Units awaiting decoding.</li>
+<li><strong>The Composition Buffer (CB):</strong> Retains decoded frames
+until their presentation time (CTS).</li>
+</ul>
+<p>The DTS explicitly defines the instantaneous time instant relative to
+the active OCR at which the entirety of an AU must be extracted from the
+Decoding Buffer and passed to the elementary stream decoder.</p>
+<h3
+id="dts-driven-buffer-extraction-and-normal-pipeline-draining">DTS-Driven
+Buffer Extraction and Normal Pipeline Draining</h3>
+<p>Under steady-state conditions, the Decoding Buffer operates according
+to the DTS schedule. The decoding pipeline coordinates buffer emptying
+via the following process:</p>
+<ol type="1">
+<li><strong>Reassembly:</strong> Incoming SL packets populate the
+Decoding Buffer until a complete AU is formed.</li>
+<li><strong>Clock Comparison:</strong> The Sync Layer continuously
+compares the local Elementary Stream time derived from the OCR to the
+DTS of the head-of-line AU in the Decoding Buffer.</li>
+<li><strong>Instantaneous Evacuation:</strong> When the OCR reaches the
+value specified by the DTS, the Sync Layer instantaneously pulls that AU
+out of the Decoding Buffer.</li>
+</ol>
+<p>This strict schedule prevents both buffer overflow (data arriving
+faster than extraction) and underflow (extraction triggered before data
+is fully assembled).</p>
+<h3 id="coordinating-buffer-flushes-during-discontinuities">Coordinating
+Buffer Flushes During Discontinuities</h3>
+<p>A buffer flush is required when the continuous temporal flow is
+interrupted—such as during seeking, track switching, stream splicing, or
+error recovery following packet loss. In these scenarios, the Sync Layer
+coordinates the flush using the DTS in conjunction with specific SL
+packet header flags:</p>
+<h4 id="1-discontinuity-detection-and-timeline-resets">1. Discontinuity
+Detection and Timeline Resets</h4>
+<p>When a stream discontinuity occurs, the Sync Layer receives a new
+reference time base (a new OCR value) and an AU marked with
+discontinuity indicators or a <code>randomAccessPointFlag</code>. The
+incoming AU carries a DTS that is not contiguous with the previous
+timeline.</p>
+<h4 id="2-stale-au-invalidation">2. Stale AU Invalidation</h4>
+<p>Upon identifying a timeline shift, the Sync Layer uses the new DTS
+boundary to coordinate the flush of stale data:</p>
+<ul>
+<li>Any un-decoded AUs remaining in the Decoding Buffer whose DTS
+belongs to the previous reference timeline are invalidated.</li>
+<li>The pipeline parser clears the pre-decoder queue up to the boundary
+of the AU carrying the new, valid DTS.</li>
+<li>The Sync Layer drops partially reassembled AUs in the buffer to
+avoid passing corrupt or temporally misplaced payloads to the media
+decoder.</li>
+</ul>
+<h4 id="3-post-flush-decoder-alignment">3. Post-Flush Decoder
+Alignment</h4>
+<p>Once the Decoding Buffer is cleared, the Sync Layer halts extraction
+until the newly received data fills the buffer sufficiently to meet the
+initial buffering delay. When the local clock matches the new DTS of the
+first incoming Random Access Point AU, the Sync Layer triggers decoder
+processing, effectively restarting the pipeline without visual or
+acoustic artifacts.</p>
+<p>Through this mechanism, the DTS acts as both the schedule for
+standard buffer consumption and the temporal demarcation line used to
+clear, re-align, and restart the decoding pipeline during state
+transitions.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

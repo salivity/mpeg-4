@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>In-Loop Deblocking Filters in MPEG-4 Part 10 - mpeg-4</title>
+    <meta name="description" content="The in-loop deblocking filter in MPEG-4 Part 10 (also known as H.264/AVC) is an adaptive video processing tool designed to eliminate visible grid-like artifacts that occur along block boundaries during compression. By operating inside the prediction loop">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/in-loop-deblocking-filters-in-mpeg-4-part-10">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="In-Loop Deblocking Filters in MPEG-4 Part 10 - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/in-loop-deblocking-filters-in-mpeg-4-part-10" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The in-loop deblocking filter in MPEG-4 Part 10 (also known as H.264/AVC) is an adaptive video processing tool designed to eliminate visible grid-like artifacts that occur along block boundaries during compression. By operating inside the prediction loop" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="in-loop-deblocking-filters-in-mpeg-4-part-10">In-Loop Deblocking
+Filters in MPEG-4 Part 10</h1>
+<p>The in-loop deblocking filter in MPEG-4 Part 10 (also known as
+H.264/AVC) is an adaptive video processing tool designed to eliminate
+visible grid-like artifacts that occur along block boundaries during
+compression. By operating inside the prediction loop, this filter
+processes decoded macroblocks before they are used as reference frames
+for future temporal predictions. This article explains how the in-loop
+deblocking filter operates, why its placement within the decoding loop
+is critical, and the specific advantages it provides for video
+compression and perceived visual quality.</p>
+<h3 id="the-origin-of-blocking-artifacts">The Origin of Blocking
+Artifacts</h3>
+<p>MPEG-4 Part 10 uses block-based transforms—primarily <span
+class="math inline">\(4\times4\)</span> and <span
+class="math inline">\(8\times8\)</span> integer transforms—along with
+motion compensation and quantization to compress video data. While
+quantization reduces file size by discarding high-frequency information,
+it also creates slight discontinuities at the edges between adjacent
+blocks. At lower bitrates, these discontinuities manifest as noticeable
+square patterns across the image, known as blocking artifacts.</p>
+<h3 id="why-in-loop-placement-matters">Why "In-Loop" Placement
+Matters</h3>
+<p>Traditional codecs (such as MPEG-2) often relied on out-of-loop
+post-processing filters to smooth out blockiness for the viewer.
+However, these post-filters do not affect the internal reference frames
+stored in the encoder or decoder memory.</p>
+<p>In MPEG-4 Part 10, the filter is placed "in-loop." This means the
+filtering occurs directly inside the encoding and decoding pipeline:</p>
+<ol type="1">
+<li>The frame is decoded and reconstructed from the bitstream.</li>
+<li>The deblocking filter smooths the block edges.</li>
+<li>The newly filtered frame is displayed to the user <em>and</em>
+stored in the decoded picture buffer (DPB) as a reference frame for
+subsequent motion-compensated prediction.</li>
+</ol>
+<p>Because the encoder and decoder both use the exact same filtered
+frame for future predictions, visual errors do not accumulate or
+propagate throughout the video sequence.</p>
+<h3 id="adaptive-filtering-mechanism">Adaptive Filtering Mechanism</h3>
+<p>The deblocking filter is fully adaptive to prevent the loss of
+genuine image detail (such as natural object boundaries and fine
+textures). It evaluates edges using several parameters:</p>
+<ul>
+<li><strong>Boundary Strength (Bs):</strong> A value assigned from 0 (no
+filtering) to 4 (strongest filtering) based on whether the adjacent
+blocks are intra-coded or inter-coded, contain non-zero transform
+coefficients, or use different motion vectors.</li>
+<li><strong>Quantization Parameter (QP):</strong> Higher quantization
+allows stronger filtering, as coarse quantization generates worse
+artifacts. Lower quantization limits filtering to preserve fine
+detail.</li>
+<li><strong>Sample Differences (Thresholds <span
+class="math inline">\(\alpha\)</span> and <span
+class="math inline">\(\beta\)</span>):</strong> The filter measures the
+gradient of pixel values across each edge. If the difference across a
+boundary exceeds specific thresholds, the algorithm assumes the edge is
+a real visual feature rather than a compression artifact, turning off or
+reducing the filter.</li>
+</ul>
+<h3 id="key-benefits">Key Benefits</h3>
+<ul>
+<li><strong>Enhanced Visual Quality:</strong> Artifacts along block
+boundaries are substantially softened, resulting in smoother gradients
+and more natural images.</li>
+<li><strong>Bitrate Reduction:</strong> Because reference frames are
+cleaner and contain fewer artificial sharp edges, motion vectors and
+residual error signals require fewer bits to encode, yielding bit
+savings of roughly 5% to 10% for the same visual quality.</li>
+<li><strong>Standardized Output:</strong> Since the filter algorithm is
+normative in the MPEG-4 Part 10 standard, every compliant decoder
+produces the exact same output pixel values, ensuring consistent
+playback across all platforms.</li>
+</ul></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Understanding the MP4 Meta Box for Non-Timed Assets - mpeg-4</title>
+    <meta name="description" content="The Meta box (meta) in the ISO Base Media File Format (ISOBMFF) and MPEG-4 specifications serves as a standardized container for storing and managing non-timed metadata and static assets. Unlike continuous audio or video streams that rely on time-synchro">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/understanding-the-mp4-meta-box-for-non-timed-assets">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Understanding the MP4 Meta Box for Non-Timed Assets - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/understanding-the-mp4-meta-box-for-non-timed-assets" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The Meta box (meta) in the ISO Base Media File Format (ISOBMFF) and MPEG-4 specifications serves as a standardized container for storing and managing non-timed metadata and static assets. Unlike continuous audio or video streams that rely on time-synchro" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1
+id="understanding-the-mp4-meta-box-for-non-timed-assets">Understanding
+the MP4 Meta Box for Non-Timed Assets</h1>
+<p>The Meta box (<code>meta</code>) in the ISO Base Media File Format
+(ISOBMFF) and MPEG-4 specifications serves as a standardized container
+for storing and managing non-timed metadata and static assets. Unlike
+continuous audio or video streams that rely on time-synchronized track
+hierarchies, the <code>meta</code> box provides a self-contained
+namespace and file-indexing mechanism. This article breaks down the
+structural design of the <code>meta</code> box, its essential child
+boxes, and how it maps raw data payloads to functional items such as
+cover art, XML schemas, and static images.</p>
+<h3 id="structural-placement-in-the-file-hierarchy">Structural Placement
+in the File Hierarchy</h3>
+<p>The <code>meta</code> box is defined as a <code>FullBox</code>
+(containing a version and flag field) and can reside at multiple levels
+within an MP4 file:</p>
+<ul>
+<li><strong>File Level (Root):</strong> Stored directly under the file
+root alongside <code>ftyp</code>, <code>moov</code>, and
+<code>mdat</code>. At this level, it describes global metadata or turns
+the file into a pure item repository (as seen in HEIF and AVIF image
+formats).</li>
+<li><strong>Movie Level (<code>moov</code>):</strong> Nested inside the
+<code>moov</code> container to provide metadata and assets that apply to
+the entire media presentation.</li>
+<li><strong>Track Level (<code>trak</code>):</strong> Nested inside a
+specific <code>trak</code> box to associate static assets or specialized
+metadata with that particular media stream.</li>
+</ul>
+<h3 id="key-sub-boxes-and-their-functions">Key Sub-Boxes and Their
+Functions</h3>
+<p>The <code>meta</code> box achieves its functionality through a set of
+specialized sub-boxes that declare, describe, and locate non-timed
+items.</p>
+<h4 id="1-handler-reference-box-hdlr">1. Handler Reference Box
+(<code>hdlr</code>)</h4>
+<p>Every <code>meta</code> box must contain a <code>hdlr</code> box as
+its first child. The <code>hdlr</code> specifies the structure and
+format of the metadata contained within the <code>meta</code> box by
+declaring a four-character handler type (e.g., <code>pict</code> for
+image collections, <code>idir</code> for item directories, or custom
+vendor codes).</p>
+<h4 id="2-item-information-box-iinf">2. Item Information Box
+(<code>iinf</code>)</h4>
+<p>The <code>iinf</code> box acts as a registry for all non-timed
+assets. It contains one or more Item Info Entry (<code>infe</code>)
+boxes. Each entry assigns a unique numerical <code>item_ID</code>,
+specifies an <code>item_type</code> (or MIME type), provides an optional
+symbolic item name, and sets protection or encryption flags.</p>
+<h4 id="3-item-location-box-iloc">3. Item Location Box
+(<code>iloc</code>)</h4>
+<p>The <code>iloc</code> box maps each <code>item_ID</code> to its
+physical bytes within the file. It allows items to be stored in various
+locations without duplicating data:</p>
+<ul>
+<li>Inside the standard Media Data Box (<code>mdat</code>).</li>
+<li>Inside an Item Data Box (<code>idat</code>) contained directly
+within the <code>meta</code> box.</li>
+<li>Directly within the <code>iloc</code> box itself (for very small
+payloads using construction methods).</li>
+<li>Referenced from external resources.</li>
+</ul>
+<p>The <code>iloc</code> entry provides base offsets, extent offsets,
+and byte lengths, enabling parsers to extract assets via direct
+byte-range requests.</p>
+<h4 id="4-item-reference-box-iref">4. Item Reference Box
+(<code>iref</code>)</h4>
+<p>The <code>iref</code> box defines typed relationships between
+different items. For example, it can link a thumbnail item to a primary
+full-resolution image using a <code>thmb</code> reference type, or
+attach auxiliary metadata (like depth maps or alpha channels) to a base
+asset.</p>
+<h4 id="5-item-primary-item-box-pitm">5. Item Primary Item Box
+(<code>pitm</code>)</h4>
+<p>When a <code>meta</code> box contains multiple items, the optional
+<code>pitm</code> box designates a single <code>item_ID</code> as the
+primary asset (such as the main image in a multi-image sequence).</p>
+<h3 id="decoupling-non-timed-assets-from-timed-media">Decoupling
+Non-Timed Assets from Timed Media</h3>
+<p>In traditional MP4 playback, media engines read the <code>moov</code>
+tree to establish timelines, sample tables (<code>stbl</code>), and
+decoding timestamps. Non-timed assets—such as album artwork, 3D models,
+PDF attachments, or EXIF data—do not fit this temporal model.</p>
+<p>The <code>meta</code> architecture decouples asset retrieval from the
+media clock. Parsers can discover, inspect, and retrieve static files on
+demand simply by reading the <code>iinf</code> and <code>iloc</code>
+tables, without instantiating media decoders or calculating track
+synchronization.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Probability Estimation in MPEG-4 CABAC - mpeg-4</title>
+    <meta name="description" content="This article explains how dynamic probability estimation operates within Context-Adaptive Binary Arithmetic Coding (CABAC) in MPEG-4 (H.264/AVC). It covers the process of context modeling, the 64-state transition mechanism, and the exact step-by-step upd">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/dynamic-probability-estimation-in-mpeg-4-cabac">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Dynamic Probability Estimation in MPEG-4 CABAC - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/dynamic-probability-estimation-in-mpeg-4-cabac" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explains how dynamic probability estimation operates within Context-Adaptive Binary Arithmetic Coding (CABAC) in MPEG-4 (H.264/AVC). It covers the process of context modeling, the 64-state transition mechanism, and the exact step-by-step upd" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="dynamic-probability-estimation-in-mpeg-4-cabac">Dynamic
+Probability Estimation in MPEG-4 CABAC</h1>
+<p>This article explains how dynamic probability estimation operates
+within Context-Adaptive Binary Arithmetic Coding (CABAC) in MPEG-4
+(H.264/AVC). It covers the process of context modeling, the 64-state
+transition mechanism, and the exact step-by-step updates that occur when
+processing syntax elements during video encoding and decoding.</p>
+<h3 id="context-modeling-and-state-representation">Context Modeling and
+State Representation</h3>
+<p>In CABAC, non-binary syntax elements are first converted into binary
+strings (bins) through a process called binarization. Each bin is
+assigned a specific context model depending on local spatial statistics,
+such as values of neighboring macroblocks or prior syntax elements.</p>
+<p>A context model contains two core variables:</p>
+<ol type="1">
+<li><strong>Most Probable Symbol (MPS):</strong> The binary value (0 or
+1) statistically expected to occur most frequently.</li>
+<li><strong>Probability State Index (<span
+class="math inline">\(\sigma\)</span>):</strong> A 6-bit integer ranging
+from 0 to 63 that represents the probability of the Least Probable
+Symbol (<span class="math inline">\(p_{\text{LPS}}\)</span>).</li>
+</ol>
+<p>The probability of the LPS for state index <span
+class="math inline">\(\sigma\)</span> is defined mathematically as:
+<span class="math display">\[p_{\text{LPS}}(\sigma) = \alpha \cdot
+p_{\text{LPS}}(\sigma - 1)\]</span> where <span
+class="math inline">\(\alpha \approx 0.95\)</span>, with <span
+class="math inline">\(p_{\text{LPS}}(0) \approx 0.5\)</span>.</p>
+<h3 id="dynamic-update-mechanism">Dynamic Update Mechanism</h3>
+<p>Every time a bin is encoded or decoded using regular coding mode, the
+context model associated with that bin dynamically updates its state.
+The update does not require floating-point arithmetic; instead, it uses
+a pre-calculated Finite State Machine (FSM) implemented via two lookup
+tables: <code>transIdxMPS</code> and <code>transIdxLPS</code>.</p>
+<h4 id="1-processing-a-most-probable-symbol-mps">1. Processing a Most
+Probable Symbol (MPS)</h4>
+<p>When the processed bin matches the current MPS:</p>
+<ul>
+<li>The probability state transitions to a higher index using the
+<code>transIdxMPS</code> table: <span
+class="math display">\[\sigma_{\text{new}} =
+\text{transIdxMPS}[\sigma]\]</span></li>
+<li>This transition decreases the value of <span
+class="math inline">\(p_{\text{LPS}}\)</span>, reinforcing the model's
+confidence in the MPS.</li>
+<li>If the state is already at the maximum index (63), it remains at
+63.</li>
+</ul>
+<h4 id="2-processing-a-least-probable-symbol-lps">2. Processing a Least
+Probable Symbol (LPS)</h4>
+<p>When the processed bin is the LPS (the less likely symbol):</p>
+<ul>
+<li>The probability state transitions to a lower index using the
+<code>transIdxLPS</code> table: <span
+class="math display">\[\sigma_{\text{new}} =
+\text{transIdxLPS}[\sigma]\]</span></li>
+<li>This transition increases the estimated probability of the LPS.</li>
+<li><strong>Symbol Inversion:</strong> If an LPS occurs when the current
+state index is <span class="math inline">\(\sigma = 0\)</span> (where
+both symbols have equal probability <span class="math inline">\(p
+\approx 0.5\)</span>), the identity of the MPS is inverted: <span
+class="math display">\[\text{MPS}_{\text{new}} = 1 - \text{MPS}\]</span>
+The state index remains at 0 for the newly assigned MPS.</li>
+</ul>
+<h3 id="adaptation-rate-and-performance">Adaptation Rate and
+Performance</h3>
+<p>The dynamic probability update acts as an exponential smoothing
+filter. Because the transition parameter <span
+class="math inline">\(\alpha \approx 0.95\)</span>, recent symbol
+occurrences have a stronger influence on the probability estimation than
+older ones. This allows the CABAC engine to quickly adapt to
+non-stationary video statistics—such as sudden motion, scene changes, or
+texture variations—while maintaining low computational complexity
+through simple table lookups and bitwise operations.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

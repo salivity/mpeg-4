@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How MPEG-4 Audio BIFS Positions 3D Sound - mpeg-4</title>
+    <meta name="description" content="The MPEG-4 Binary Format for Scenes (BIFS) engine positions synthetic sound sources within a 3D visual scene by integrating audio nodes directly into its hierarchical scene graph. By mapping spatial coordinates, directivity vectors, distance attenuation,">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/how-mpeg-4-audio-bifs-positions-3d-sound">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How MPEG-4 Audio BIFS Positions 3D Sound - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/how-mpeg-4-audio-bifs-positions-3d-sound" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The MPEG-4 Binary Format for Scenes (BIFS) engine positions synthetic sound sources within a 3D visual scene by integrating audio nodes directly into its hierarchical scene graph. By mapping spatial coordinates, directivity vectors, distance attenuation," />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="how-mpeg-4-audio-bifs-positions-3d-sound">How MPEG-4 Audio BIFS
+Positions 3D Sound</h1>
+<p>The MPEG-4 Binary Format for Scenes (BIFS) engine positions synthetic
+sound sources within a 3D visual scene by integrating audio nodes
+directly into its hierarchical scene graph. By mapping spatial
+coordinates, directivity vectors, distance attenuation, and
+environmental acoustics to visual geometry, the BIFS engine ensures that
+synthetic sounds accurately track visual objects relative to the user's
+virtual listening point.</p>
+<h3 id="the-scene-graph-architecture">The Scene Graph Architecture</h3>
+<p>MPEG-4 BIFS represents 2D and 3D scenes as a tree structure of nodes.
+Visual elements (such as geometric meshes, lights, and materials) and
+audio elements share this common hierarchy. Positioning synthetic sound
+relies on three primary node categories:</p>
+<ul>
+<li><strong>AudioSource Nodes:</strong> Generate the raw audio signals,
+which can be synthesized via Structured Audio (SAOL/SASL), MIDI, or
+decoded audio streams.</li>
+<li><strong>Sound Nodes (<code>Sound</code> /
+<code>Sound3D</code>):</strong> Act as the spatial emitter,
+encapsulating the audio source within the 3D space.</li>
+<li><strong>Transform Nodes:</strong> Define the translation (x, y, z
+coordinates), rotation, and scale of any child nodes attached to them,
+including visual objects and audio nodes.</li>
+</ul>
+<p>By placing an audio node under the same <code>Transform</code> parent
+as a 3D visual object, any movement, rotation, or animation applied to
+the visual mesh automatically updates the spatial position of the
+synthetic sound source.</p>
+<h3 id="coordinate-transformation-and-listener-tracking">Coordinate
+Transformation and Listener Tracking</h3>
+<p>The BIFS engine calculates the final spatialization parameters
+relative to the user's viewpoint in the scene:</p>
+<ol type="1">
+<li><strong>Global World Coordinates:</strong> The engine computes the
+absolute position of the sound source by traversing up the scene graph
+and compounding all local transformations.</li>
+<li><strong>The <code>ListeningPoint</code> Node:</strong> Represents
+the virtual ears of the observer, typically linked directly to the
+active camera (<code>Viewpoint</code> node).</li>
+<li><strong>Relative Vector Calculation:</strong> The engine calculates
+the distance and azimuth/elevation angles between the source position
+and the <code>ListeningPoint</code>.</li>
+</ol>
+<h3 id="directivity-and-radiation-patterns">Directivity and Radiation
+Patterns</h3>
+<p>Sound emitters in MPEG-4 BIFS are not limited to omnidirectional
+point sources. The engine models directional radiation through
+customizable parameters:</p>
+<ul>
+<li><strong>Direction Vector:</strong> Defines the forward-facing axis
+of the sound emitter.</li>
+<li><strong>Radiation Cones:</strong> Configured using inner and outer
+angle thresholds. Within the inner cone, sound is emitted at full gain.
+Between the inner and outer cones, sound attenuates linearly. Outside
+the outer cone, sound drops to a user-defined minimum gain level.</li>
+</ul>
+<h3 id="distance-attenuation-and-doppler-effects">Distance Attenuation
+and Doppler Effects</h3>
+<p>As the distance between the synthetic sound source and the listener
+increases, the BIFS engine applies physical propagation models:</p>
+<ul>
+<li><strong>Geometric Attenuation:</strong> Sound intensity decreases
+based on distance metrics configured by minimum and maximum operational
+ranges.</li>
+<li><strong>Doppler Shift:</strong> If either the sound source or the
+listener is moving rapidly through the scene via animated transforms,
+the engine dynamically modulates the pitch of the synthesized sound
+based on relative velocity.</li>
+</ul>
+<h3 id="environmental-acoustics-and-spatial-rendering">Environmental
+Acoustics and Spatial Rendering</h3>
+<p>Advanced Audio BIFS incorporates physical and perceptual room
+acoustics to match the visual environment:</p>
+<ul>
+<li><strong>Occlusion and Obstruction:</strong> When visual geometry
+intersects the direct path between the sound source and the listener,
+the engine filters high frequencies and attenuates the direct sound
+path.</li>
+<li><strong>Perceptual Acoustic Modeling:</strong> Parameters such as
+reverberation time, late reverberation gain, and early reflections are
+configured globally or per-zone to reflect the acoustic properties of
+enclosing visual structures.</li>
+<li><strong>Binaural and Multi-Channel Output:</strong> The calculated
+spatial parameters are fed into a rendering pipeline (such as
+Head-Related Transfer Functions for headphones or panning algorithms for
+multi-channel speakers) to produce the final immersive output.</li>
+</ul></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

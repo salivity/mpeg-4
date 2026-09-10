@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPEG-4 sgpd Box: Sample Group Description Explained - mpeg-4</title>
+    <meta name="description" content="The Sample Group Description Box (sgpd) is a fundamental structural element within the ISO Base Media File Format (ISOBMFF) and MPEG-4 Part 12 specifications designed to manage complex sample metadata. This article explains the purpose of the sgpd box, h">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/mpeg-4-sgpd-box-sample-group-description-explained">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MPEG-4 sgpd Box: Sample Group Description Explained - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/mpeg-4-sgpd-box-sample-group-description-explained" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The Sample Group Description Box (sgpd) is a fundamental structural element within the ISO Base Media File Format (ISOBMFF) and MPEG-4 Part 12 specifications designed to manage complex sample metadata. This article explains the purpose of the sgpd box, h" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="mpeg-4-sgpd-box-sample-group-description-explained">MPEG-4 sgpd
+Box: Sample Group Description Explained</h1>
+<p>The Sample Group Description Box (<code>sgpd</code>) is a fundamental
+structural element within the ISO Base Media File Format (ISOBMFF) and
+MPEG-4 Part 12 specifications designed to manage complex sample
+metadata. This article explains the purpose of the <code>sgpd</code>
+box, how it collaborates with the Sample-to-Group Box
+(<code>sbgp</code>) to establish advanced sample groupings, and why it
+is essential for modern multimedia features like random access, layered
+coding, and dynamic streaming.</p>
+<h3 id="the-role-of-the-sgpd-box-in-mpeg-4">The Role of the
+<code>sgpd</code> Box in MPEG-4</h3>
+<p>In standard MP4 file structures, basic metadata like sample timing,
+size, and chunk offsets are stored in dedicated table boxes (such as
+<code>stts</code>, <code>stsz</code>, and <code>stco</code>). However,
+advanced streaming and modern video codecs require associating
+arbitrary, non-sequential metadata with specific subsets of samples.</p>
+<p>The <code>sgpd</code> (Sample Group Description) box addresses this
+need by functioning as an indexed dictionary of sample group
+characteristics. Instead of duplicating metadata across every single
+video or audio sample, the <code>sgpd</code> box defines an array of
+description entries once. Each entry contains specific parameters that
+describe a particular behavior, coding characteristic, or playback
+condition.</p>
+<h3 id="how-sgpd-interacts-with-sbgp">How <code>sgpd</code> Interacts
+with <code>sbgp</code></h3>
+<p>Advanced sample grouping in MPEG-4 relies on a two-box
+architecture:</p>
+<ol type="1">
+<li><strong>Sample-to-Group Box (<code>sbgp</code>):</strong> Maps
+individual samples or ranges of consecutive samples to a specific
+1-based index pointing into a description table.</li>
+<li><strong>Sample Group Description Box (<code>sgpd</code>):</strong>
+Stores the actual definition entries corresponding to those
+indices.</li>
+</ol>
+<p>Both boxes share a matching <code>grouping_type</code>—a
+four-character code (FourCC) that defines the semantic type of the
+group. A single track can contain multiple pairs of <code>sbgp</code>
+and <code>sgpd</code> boxes, allowing the same sample to participate in
+multiple, independent grouping classifications simultaneously (for
+example, one grouping for random access and another for temporal
+scalability).</p>
+<h3 id="internal-structure-of-the-sgpd-box">Internal Structure of the
+<code>sgpd</code> Box</h3>
+<p>The <code>sgpd</code> box includes several key fields defined in the
+ISOBMFF specification:</p>
+<ul>
+<li><strong><code>grouping_type</code>:</strong> A 32-bit FourCC
+identifier (e.g., <code>roll</code>, <code>prol</code>,
+<code>seig</code>, <code>tele</code>) specifying the structure and
+syntax of the entry payloads.</li>
+<li><strong><code>version</code>:</strong> Dictates whether the box uses
+legacy fixed-size descriptions (version 0) or variable-length entries
+with default size optimization (version 1 or higher).</li>
+<li><strong><code>default_length</code>:</strong> Specifies the byte
+size of each entry when all entries share the same length, reducing file
+overhead.</li>
+<li><strong><code>entry_count</code>:</strong> Indicates the total
+number of distinct sample group descriptions contained in the
+table.</li>
+<li><strong>Payload Table:</strong> A sequential list of description
+structures matching the defined <code>grouping_type</code>.</li>
+</ul>
+<h3 id="common-use-cases-for-sgpd">Common Use Cases for
+<code>sgpd</code></h3>
+<p>The modular nature of the <code>sgpd</code> box enables a wide range
+of advanced media workflows:</p>
+<h4 id="1-gradual-decoder-refresh-and-roll-recovery-roll-prol">1.
+Gradual Decoder Refresh and Roll Recovery (<code>roll</code>,
+<code>prol</code>)</h4>
+<p>In modern video compression (such as H.264/AVC or H.265/HEVC), an
+intra-coded frame may not always be an Instantaneous Decoder Refresh
+(IDR) frame. Using the <code>roll</code> group type, the
+<code>sgpd</code> box specifies the exact number of samples a decoder
+must process before the visual output is fully refreshed. This enables
+clean seeking in open Group of Pictures (GOP) configurations without
+requiring frequent, bandwidth-heavy IDR frames.</p>
+<h4 id="2-common-encryption-seig">2. Common Encryption
+(<code>seig</code>)</h4>
+<p>In encrypted streams (CENC), the <code>sgpd</code> box can carry
+<code>CencSampleEncryptionInformationVideoGroupEntry</code> or audio
+equivalents. This provides sample-specific cryptographic parameters,
+such as initialization vector (IV) sizes, key identifiers (KIDs), and
+pattern-based protection parameters.</p>
+<h4 id="3-temporal-scalability-tscl">3. Temporal Scalability
+(<code>tscl</code>)</h4>
+<p>For layered codecs, the <code>sgpd</code> box defines hierarchical
+dependencies, frame rates, and temporal layer IDs. Decoders and
+streaming engines inspect this box to discard higher temporal layers
+smoothly during network congestion without breaking decoding
+dependencies.</p>
+<h3 id="key-benefits-of-sgpd-in-modern-streaming">Key Benefits of
+<code>sgpd</code> in Modern Streaming</h3>
+<ul>
+<li><strong>Storage Efficiency:</strong> Metadata is declared once per
+group rather than repeated for hundreds or thousands of individual
+frames.</li>
+<li><strong>Extensibility:</strong> New standards and proprietary
+workflows can introduce custom grouping types by defining new FourCC
+codes without breaking backward compatibility for standard
+decoders.</li>
+<li><strong>Optimized Manifest Parsing:</strong> In adaptive streaming
+formats like DASH and HLS (specifically using CMAF), fragment-level
+<code>sgpd</code> boxes enable fast client-side heuristics for switching
+bitrates and locating precise random access points.</li>
+</ul></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

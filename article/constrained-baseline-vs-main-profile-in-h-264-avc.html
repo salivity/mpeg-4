@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Constrained Baseline vs Main Profile in H.264 AVC - mpeg-4</title>
+    <meta name="description" content="This article compares the Constrained Baseline Profile (CBP) and the Main Profile in the MPEG-4 AVC (H.264) video compression standard. It highlights their key technical differences, including supported features like B-slices, entropy coding methods, and">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/constrained-baseline-vs-main-profile-in-h-264-avc">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Constrained Baseline vs Main Profile in H.264 AVC - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/constrained-baseline-vs-main-profile-in-h-264-avc" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article compares the Constrained Baseline Profile (CBP) and the Main Profile in the MPEG-4 AVC (H.264) video compression standard. It highlights their key technical differences, including supported features like B-slices, entropy coding methods, and" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="constrained-baseline-vs-main-profile-in-h264-avc">Constrained
+Baseline vs Main Profile in H.264 AVC</h1>
+<p>This article compares the Constrained Baseline Profile (CBP) and the
+Main Profile in the MPEG-4 AVC (H.264) video compression standard. It
+highlights their key technical differences, including supported features
+like B-slices, entropy coding methods, and interlaced video support,
+helping you understand how these profiles impact compression efficiency
+and decoding complexity.</p>
+<h2 id="understanding-h264-profiles">Understanding H.264 Profiles</h2>
+<p>In the H.264/MPEG-4 AVC standard, a "profile" defines a specific
+subset of coding tools and algorithms that a decoder must support. By
+targeting different profiles, developers can optimize video playback for
+specific hardware capabilities, ranging from low-power mobile devices to
+high-performance broadcast equipment.</p>
+<hr />
+<h2 id="what-is-constrained-baseline-profile-cbp">What is Constrained
+Baseline Profile (CBP)?</h2>
+<p>The Constrained Baseline Profile (CBP) is designed primarily for
+low-cost, low-latency applications with limited processing power. It is
+widely used in real-time communications, such as video conferencing, IP
+cameras, and older mobile playback devices.</p>
+<p>CBP is a subset of the original Baseline Profile. It deliberately
+excludes certain complex features to ensure that decoding requires
+minimal computational resources and memory.</p>
+<hr />
+<h2 id="what-is-main-profile-mp">What is Main Profile (MP)?</h2>
+<p>The Main Profile (MP) was designed for standard-definition digital TV
+broadcasts and mainstream internet streaming. It offers a much higher
+compression efficiency than the Constrained Baseline Profile, meaning it
+can deliver higher visual quality at lower bitrates. However, this
+efficiency comes at the cost of increased computational complexity
+during both encoding and decoding.</p>
+<hr />
+<h2 id="key-technical-differences">Key Technical Differences</h2>
+<p>The primary differences between the Constrained Baseline Profile and
+the Main Profile lie in the specific coding tools they support.</p>
+<h3 id="1-b-slices-bi-predictive-pictures">1. B-Slices (Bi-predictive
+Pictures)</h3>
+<ul>
+<li><strong>Constrained Baseline Profile:</strong> Does not support
+B-slices. It only uses I-slices (intra-coded) and P-slices (predictive).
+Because P-slices only reference past frames, CBP has lower latency and
+lower memory requirements.</li>
+<li><strong>Main Profile:</strong> Fully supports B-slices. B-slices can
+reference both past and future frames, which dramatically improves
+compression efficiency and image quality at lower bitrates. However,
+referencing future frames introduces decoding delay (latency).</li>
+</ul>
+<h3 id="2-entropy-coding">2. Entropy Coding</h3>
+<ul>
+<li><strong>Constrained Baseline Profile:</strong> Only supports
+<strong>CAVLC</strong> (Context-Adaptive Variable-Length Coding). CAVLC
+is computationally lightweight, making it ideal for low-power
+hardware.</li>
+<li><strong>Main Profile:</strong> Supports both CAVLC and
+<strong>CABAC</strong> (Context-Adaptive Binary Arithmetic Coding).
+CABAC is highly efficient, typically reducing the file size by 10% to
+15% compared to CAVLC at the same visual quality. However, CABAC
+requires significantly more processing power to decode.</li>
+</ul>
+<h3 id="3-interlaced-video-support">3. Interlaced Video Support</h3>
+<ul>
+<li><strong>Constrained Baseline Profile:</strong> Only supports
+progressive scan video. It cannot natively encode interlaced video
+formats.</li>
+<li><strong>Main Profile:</strong> Supports interlaced video coding
+using tools like MBAFF (Macroblock-Adaptive Frame-Field coding). This
+makes the Main Profile compatible with traditional television broadcast
+standards.</li>
+</ul>
+<hr />
+<h2 id="comparison-summary">Comparison Summary</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Feature</th>
+<th style="text-align: left;">Constrained Baseline Profile (CBP)</th>
+<th style="text-align: left;">Main Profile (MP)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Primary Use Case</strong></td>
+<td style="text-align: left;">Video conferencing, mobile streaming,
+low-latency IP cameras</td>
+<td style="text-align: left;">Web streaming, standard-definition TV
+broadcast</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>B-Slices</strong></td>
+<td style="text-align: left;">No</td>
+<td style="text-align: left;">Yes</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Entropy Coding</strong></td>
+<td style="text-align: left;">CAVLC</td>
+<td style="text-align: left;">CABAC and CAVLC</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Interlaced Video</strong></td>
+<td style="text-align: left;">No (Progressive only)</td>
+<td style="text-align: left;">Yes (MBAFF)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Decoding Complexity</strong></td>
+<td style="text-align: left;">Low</td>
+<td style="text-align: left;">Moderate</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Compression
+Efficiency</strong></td>
+<td style="text-align: left;">Moderate</td>
+<td style="text-align: left;">High</td>
+</tr>
+</tbody>
+</table>
+<p>By choosing between these two profiles, developers balance the need
+for high-quality compression (Main Profile) against the need for low
+latency and universal compatibility with older or lower-powered hardware
+(Constrained Baseline Profile).</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPEG-4 Systems Ad Splicing Mechanism Explained - mpeg-4</title>
+    <meta name="description" content="The MPEG-4 Systems layer (ISO/IEC 14496-1) enables the splicing of remote dynamic advertisements into live streams through its object-based architecture, specifically utilizing Object Descriptor (OD) streams and Binary Format for Scenes (BIFS) commands.">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/mpeg-4-systems-ad-splicing-mechanism-explained">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MPEG-4 Systems Ad Splicing Mechanism Explained - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/mpeg-4-systems-ad-splicing-mechanism-explained" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The MPEG-4 Systems layer (ISO/IEC 14496-1) enables the splicing of remote dynamic advertisements into live streams through its object-based architecture, specifically utilizing Object Descriptor (OD) streams and Binary Format for Scenes (BIFS) commands." />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="mpeg-4-systems-ad-splicing-mechanism-explained">MPEG-4 Systems
+Ad Splicing Mechanism Explained</h1>
+<p>The MPEG-4 Systems layer (ISO/IEC 14496-1) enables the splicing of
+remote dynamic advertisements into live streams through its object-based
+architecture, specifically utilizing Object Descriptor (OD) streams and
+Binary Format for Scenes (BIFS) commands. By separating scene
+composition, object descriptions, and elementary media streams, the
+architecture allows a player to seamlessly swap primary content with
+remote dynamic ad content on the fly without disrupting the continuous
+session.</p>
+<h3
+id="object-based-architecture-and-separation-of-concerns">Object-Based
+Architecture and Separation of Concerns</h3>
+<p>Unlike traditional monolithic transport layers, MPEG-4 Systems treats
+audio, video, and interactive elements as discrete media objects. These
+objects are managed through three primary mechanisms:</p>
+<ul>
+<li><strong>Elementary Streams (ES):</strong> The raw encoded media data
+(video, audio, metadata).</li>
+<li><strong>Object Descriptors (OD):</strong> Metadata structures that
+associate elementary streams with unique identifiers and define their
+location, decoder configurations, and synchronization parameters.</li>
+<li><strong>Scene Description (BIFS):</strong> A temporal and spatial
+graph structure (based on VRML) that dictates how and when media objects
+are rendered on the screen.</li>
+</ul>
+<h3 id="dynamic-modification-via-bifs-and-od-updates">Dynamic
+Modification via BIFS and OD Updates</h3>
+<p>Remote dynamic ad splicing relies on real-time stream modification
+commands delivered within the live stream multiplex:</p>
+<ol type="1">
+<li><strong>OD Stream Commands (<code>OD_Update</code>):</strong> When
+an ad insertion opportunity arrives, the server issues an
+<code>OD_Update</code> command. This updates the
+<code>ES_Descriptor</code> (Elementary Stream Descriptor) assigned to a
+given media object. The descriptor points the player's decoder to the
+URL or transport address of a remote ad asset, prompting the client to
+initialize a secondary connection to retrieve the ad stream.</li>
+<li><strong>BIFS Commands and <code>Inline</code> Nodes:</strong> BIFS
+provides commands like <code>ReplaceNode</code>,
+<code>InsertNode</code>, and <code>DeleteNode</code> to alter the live
+scene graph in real-time. By utilizing the <code>Inline</code> node, the
+scene description can dynamically fetch an external sub-scene containing
+the ad video, audio, and companion interactive metadata directly from a
+remote ad server.</li>
+</ol>
+<h3 id="synchronization-layer-sl-coordination">Synchronization Layer
+(SL) Coordination</h3>
+<p>Seamless splicing requires strict timing coordination to prevent
+buffer underflows or visible artifacts during transitions:</p>
+<ul>
+<li><strong>Sync Layer (SL) Packetization:</strong> Both the main live
+stream and the spliced ad streams are encapsulated into SL packets
+carrying Composition Time Stamps (CTS) and Decoding Time Stamps
+(DTS).</li>
+<li><strong>Timeline Alignment:</strong> The MPEG-4 Systems multiplexer
+aligns the presentation timestamps of the incoming remote ad stream with
+the splicing point of the primary stream. The player switches the active
+rendering pipeline based on these timestamps, ensuring continuous
+playback before restoring the original live stream's Object Descriptors
+once the ad completes.</li>
+</ul></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

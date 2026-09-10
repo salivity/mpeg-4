@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MP4 Track Selection Box: Audio Language Selection - mpeg-4</title>
+    <meta name="description" content="The Track Selection box (tsel) in the MPEG-4 (ISO Base Media File Format) framework provides media players with structured metadata to automatically identify, group, and select alternative media tracks based on user preferences. By establishing relations">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/mp4-track-selection-box-audio-language-selection">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MP4 Track Selection Box: Audio Language Selection - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/mp4-track-selection-box-audio-language-selection" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The Track Selection box (tsel) in the MPEG-4 (ISO Base Media File Format) framework provides media players with structured metadata to automatically identify, group, and select alternative media tracks based on user preferences. By establishing relations" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="mp4-track-selection-box-audio-language-selection">MP4 Track
+Selection Box: Audio Language Selection</h1>
+<p>The Track Selection box (<code>tsel</code>) in the MPEG-4 (ISO Base
+Media File Format) framework provides media players with structured
+metadata to automatically identify, group, and select alternative media
+tracks based on user preferences. By establishing relationships among
+parallel audio streams—such as different spoken languages, commentary,
+and accessibility tracks—the <code>tsel</code> box allows media engines
+to seamlessly evaluate and activate the most appropriate audio track
+without manual user intervention.</p>
+<h3 id="location-and-structure-in-mpeg-4">Location and Structure in
+MPEG-4</h3>
+<p>The <code>tsel</code> box is an optional box contained within the
+User Data box (<code>udta</code>) of an individual track
+(<code>trak</code>). Defined in ISO/IEC 14496-12, its internal structure
+primarily consists of:</p>
+<ul>
+<li><strong><code>switch_group</code>:</strong> An integer that links
+mutually exclusive tracks. All tracks sharing the same non-zero
+<code>switch_group</code> value represent alternatives to one another
+(e.g., English, French, and Spanish dubs of the same feature).</li>
+<li><strong><code>attributes</code>:</strong> A list of four-character
+codes (4CCs) describing specific qualities or purposes of the track,
+such as descriptive audio (<code>desc</code>), auxiliary commentary, or
+subtitles.</li>
+</ul>
+<h3 id="grouping-mutually-exclusive-audio-tracks">Grouping Mutually
+Exclusive Audio Tracks</h3>
+<p>In multi-language MPEG-4 files, multiple audio tracks exist
+concurrently in the container. Without clear grouping, a player might
+attempt to decode multiple audio streams simultaneously or fail to
+understand which tracks serve the same role.</p>
+<p>The <code>switch_group</code> parameter within the <code>tsel</code>
+box solves this by signaling to the player that only one track from a
+designated group should be decoded and rendered at any given time. When
+switching audio tracks, the player replaces the active track with
+another track sharing the same <code>switch_group</code> ID.</p>
+<h3 id="language-identification-and-preference-matching">Language
+Identification and Preference Matching</h3>
+<p>When a media player initializes an MP4 file, it performs track
+selection by matching the user's preferred language settings against the
+available tracks:</p>
+<ol type="1">
+<li><strong>Header Evaluation:</strong> The player inspects the Media
+Header box (<code>mdhd</code>) to read the ISO 639-2/T language code
+assigned to each track.</li>
+<li><strong>Track Relationship Analysis:</strong> The player references
+the <code>tsel</code> box to identify which audio tracks belong to the
+primary audio switch group.</li>
+<li><strong>Filtering by Attributes:</strong> If the user has enabled
+accessibility options, the player checks the attributes list within
+<code>tsel</code> for specific identifiers (such as audio description
+tracks for visually impaired audiences).</li>
+<li><strong>Automated Selection:</strong> The player selects the single
+track within the <code>switch_group</code> that best matches both the
+target language code and the requested track attributes.</li>
+</ol>
+<h3 id="seamless-track-switching-and-fallback-behavior">Seamless Track
+Switching and Fallback Behavior</h3>
+<p>The <code>tsel</code> box facilitates runtime track switching without
+disrupting video playback. Because alternative tracks in the same
+<code>switch_group</code> are typically synchronized to the same
+timeline, the player can smoothly switch audio decoders. Furthermore, if
+a user's primary preferred language is unavailable, the player relies on
+the <code>switch_group</code> hierarchy to fall back to a designated
+default track or original language track within the same group.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

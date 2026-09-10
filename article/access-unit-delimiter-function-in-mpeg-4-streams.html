@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Access Unit Delimiter Function in MPEG-4 Streams - mpeg-4</title>
+    <meta name="description" content="The Access Unit Delimiter (AUD) is a specific Network Abstraction Layer (NAL) unit in MPEG-4 Part 10 (H.264/AVC) streams that marks the boundary between individual access units (coded pictures). This article explains the technical function of the AUD in">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/access-unit-delimiter-function-in-mpeg-4-streams">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Access Unit Delimiter Function in MPEG-4 Streams - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/access-unit-delimiter-function-in-mpeg-4-streams" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The Access Unit Delimiter (AUD) is a specific Network Abstraction Layer (NAL) unit in MPEG-4 Part 10 (H.264/AVC) streams that marks the boundary between individual access units (coded pictures). This article explains the technical function of the AUD in" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="access-unit-delimiter-function-in-mpeg-4-streams">Access Unit
+Delimiter Function in MPEG-4 Streams</h1>
+<p>The Access Unit Delimiter (AUD) is a specific Network Abstraction
+Layer (NAL) unit in MPEG-4 Part 10 (H.264/AVC) streams that marks the
+boundary between individual access units (coded pictures). This article
+explains the technical function of the AUD in stream parsing, detailing
+how it simplifies frame detection, signals frame types for trick play
+and seeking, aids in error recovery, and reduces computational overhead
+for decoders and streaming parsers.</p>
+<h3 id="what-is-an-access-unit-delimiter">What Is an Access Unit
+Delimiter?</h3>
+<p>In MPEG-4 AVC/H.264 video streams, video data is organized into
+Network Abstraction Layer (NAL) units. An <strong>Access Unit
+(AU)</strong> represents all the data required to decode a single
+primary coded picture (a frame or field), which may consist of multiple
+slice NAL units along with associated metadata such as Parameter Sets
+(SPS, PPS) and Supplemental Enhancement Information (SEI).</p>
+<p>The Access Unit Delimiter is designated as NAL unit type 9
+(<code>nal_unit_type = 9</code>). When present, it must be the very
+first NAL unit of an access unit.</p>
+<h3 id="key-functions-of-aud-in-stream-parsing">Key Functions of AUD in
+Stream Parsing</h3>
+<h4 id="1-frame-boundary-detection">1. Frame Boundary Detection</h4>
+<p>Without an AUD, a parser must inspect the internal syntax of
+individual slice headers (such as checking if
+<code>first_mb_in_slice == 0</code> or observing changes in frame
+numbers and picture parameter IDs) to determine when the slices
+belonging to the previous picture have ended and a new picture has
+begun.</p>
+<p>When an AUD is present, the parser simply detects the NAL unit type
+9. This immediately signals the start of a new access unit without
+requiring full parsing of subsequent slice headers, significantly
+speeding up demuxing and decoding workflows.</p>
+<h4 id="2-signaled-picture-types-primary_pic_type">2. Signaled Picture
+Types (<code>primary_pic_type</code>)</h4>
+<p>The AUD payload contains a concise syntax element called
+<code>primary_pic_type</code>. This field indicates the types of slices
+contained within the access unit:</p>
+<ul>
+<li><strong>I-slices only:</strong> Used for keyframes (IDR or non-IDR
+I-frames).</li>
+<li><strong>P and I slices:</strong> Forward-predicted frames.</li>
+<li><strong>B, P, and I slices:</strong> Bi-directionally predicted
+frames.</li>
+</ul>
+<p>By reading only this byte, media parsers can filter frames without
+reading or decoding the video payload. This is essential for:</p>
+<ul>
+<li><strong>Trick-play modes:</strong> Implementing fast-forward or
+rewind by filtering and decoding only I-frames.</li>
+<li><strong>Thumbnail generation:</strong> Quickly finding random-access
+keyframes.</li>
+<li><strong>Adaptive streaming:</strong> Assisting packagers in
+identifying segment and GOP boundaries.</li>
+</ul>
+<h4 id="3-stream-splicing-and-packetization">3. Stream Splicing and
+Packetization</h4>
+<p>In streaming protocols (such as RTP) and container formats (such as
+MPEG-TS or MP4), parsers must package discrete frames into individual
+packets or sample entries. The AUD provides an unambiguous separator
+that simplifies packaging:</p>
+<ul>
+<li>In <strong>MPEG-TS</strong>, AUDs often align with the start of a
+PES (Packetized Elementary Stream) packet, simplifying demuxing.</li>
+<li>In <strong>Byte Stream Formats</strong> (Annex B), where start codes
+(<code>0x000001</code> or <code>0x00000001</code>) separate NAL units,
+the AUD ensures unambiguous frame separation even across fragmented
+transmissions.</li>
+</ul>
+<h4 id="4-error-recovery-and-resynchronization">4. Error Recovery and
+Resynchronization</h4>
+<p>If data corruption or packet loss occurs in transit, a parser can
+lose track of where a frame begins and ends. Scanning for an AUD allows
+the parser to discard malformed data and safely resume parsing at the
+start of the next complete access unit.</p>
+<h3 id="summary">Summary</h3>
+<p>While the Access Unit Delimiter is optional in the MPEG-4 AVC
+specification, its inclusion reduces CPU overhead during stream parsing,
+standardizes picture boundary detection, enables fast picture-type
+inspection, and enhances stream robustness across transport
+networks.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

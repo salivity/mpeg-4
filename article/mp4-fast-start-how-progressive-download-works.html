@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MP4 Fast Start: How Progressive Download Works - mpeg-4</title>
+    <meta name="description" content="MP4 Fast Start enables immediate media playback during a download by restructuring the internal container hierarchy of an MPEG-4 file. By default, video encoders place the metadata required for decoding at the end of the file, forcing users to wait for a">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/mp4-fast-start-how-progressive-download-works">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MP4 Fast Start: How Progressive Download Works - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/mp4-fast-start-how-progressive-download-works" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="MP4 Fast Start enables immediate media playback during a download by restructuring the internal container hierarchy of an MPEG-4 file. By default, video encoders place the metadata required for decoding at the end of the file, forcing users to wait for a" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="mp4-fast-start-how-progressive-download-works">MP4 Fast Start:
+How Progressive Download Works</h1>
+<p>MP4 Fast Start enables immediate media playback during a download by
+restructuring the internal container hierarchy of an MPEG-4 file. By
+default, video encoders place the metadata required for decoding at the
+end of the file, forcing users to wait for a complete download before
+playback can begin. Applying the Fast Start modification moves this
+critical metadata to the beginning of the file and recalculates all
+internal byte offsets, allowing media players to immediately parse,
+decode, and render video frames as data arrives over HTTP progressive
+download.</p>
+<h3 id="the-mp4-box-architecture">The MP4 Box Architecture</h3>
+<p>The MPEG-4 (ISO Base Media File Format) structure is organized into
+hierarchical data blocks called "atoms" or "boxes." Three primary boxes
+dictate file playback:</p>
+<ul>
+<li><strong><code>ftyp</code> (File Type Box):</strong> Identifies the
+file specifications, compatibility, and container brand.</li>
+<li><strong><code>mdat</code> (Media Data Box):</strong> Contains the
+raw, interleaved audio and video payloads (the actual encoded frames).
+This is typically the largest component of the file.</li>
+<li><strong><code>moov</code> (Movie Box):</strong> Contains all
+structural metadata, including codec details, resolution, duration,
+track definitions, and indexing tables that map specific timestamps to
+exact byte locations within the <code>mdat</code> box.</li>
+</ul>
+<h3 id="the-default-sequential-encoding-problem">The Default Sequential
+Encoding Problem</h3>
+<p>During standard recording or encoding, a software encoder processes
+video frames sequentially and writes them immediately to the
+<code>mdat</code> box. Because the final sizes, durations, and byte
+offsets of all frames are not known until encoding completes, the
+encoder builds and appends the <code>moov</code> box at the very end of
+the file.</p>
+<p>When a standard web browser or media player requests this file via
+standard HTTP progressive download, it reads the data sequentially from
+byte zero. Without the <code>moov</code> box, the player cannot
+determine frame rates, codec profiles, or where individual video packets
+begin. Consequently, playback cannot start until the entire file
+finishes downloading and the trailing <code>moov</code> box is read.</p>
+<h3 id="the-fast-start-structural-modifications">The Fast Start
+Structural Modifications</h3>
+<p>To enable Fast Start (also referred to as "web-optimized" encoding),
+two critical modifications are made to the binary structure:</p>
+<ol type="1">
+<li><strong>Relocating the <code>moov</code> Box:</strong> The
+<code>moov</code> atom is physically shifted from the end of the file to
+the front, positioning it immediately after the <code>ftyp</code> box
+and directly before the <code>mdat</code> box.</li>
+<li><strong>Patching Chunk Offsets (<code>stco</code> /
+<code>co64</code>):</strong> Inside the <code>moov</code> box, sample
+table atoms (<code>stbl</code>) contain either a 32-bit
+<code>stco</code> (Sample Table Chunk Offset) atom or a 64-bit
+<code>co64</code> atom. These tables store absolute byte positions
+pointing to each media chunk inside the <code>mdat</code> box. Moving
+the <code>moov</code> box to the front shifts the starting byte address
+of the <code>mdat</code> payload forward by the exact size of the
+<code>moov</code> box. Therefore, the Fast Start process recalculates
+and overwrites every offset in the <code>stco</code> or
+<code>co64</code> tables to match the new byte locations.</li>
+</ol>
+<h3 id="how-fast-start-enables-immediate-playback">How Fast Start
+Enables Immediate Playback</h3>
+<p>With the <code>moov</code> box located at the start of the byte
+stream, the media player downloads the essential playback index in the
+first few kilobytes of the transfer. The player instantly reads the
+codec parameters, initializes hardware decoders, references the updated
+chunk offset tables, and begins playing the video frames as they stream
+into the <code>mdat</code> payload without needing to download the rest
+of the file.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

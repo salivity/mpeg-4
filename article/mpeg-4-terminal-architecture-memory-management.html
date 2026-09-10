@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPEG-4 Terminal Architecture Memory Management - mpeg-4</title>
+    <meta name="description" content="The MPEG-4 terminal architecture manages memory exchange between decoders and display compositors through a standardized buffering model centered on Composition Buffers (CB). By decoupling the decoding pipeline from the rendering pipeline, the architectu">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/mpeg-4-terminal-architecture-memory-management">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MPEG-4 Terminal Architecture Memory Management - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/mpeg-4-terminal-architecture-memory-management" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The MPEG-4 terminal architecture manages memory exchange between decoders and display compositors through a standardized buffering model centered on Composition Buffers (CB). By decoupling the decoding pipeline from the rendering pipeline, the architectu" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="mpeg-4-terminal-architecture-memory-management">MPEG-4 Terminal
+Architecture Memory Management</h1>
+<p>The MPEG-4 terminal architecture manages memory exchange between
+decoders and display compositors through a standardized buffering model
+centered on Composition Buffers (CB). By decoupling the decoding
+pipeline from the rendering pipeline, the architecture allows elementary
+stream decoders to output raw media frames into synchronized memory
+structures, where the compositor can access and render them onto the
+display surface according to precise presentation timestamps.</p>
+<h3 id="the-standardized-buffering-pipeline">The Standardized Buffering
+Pipeline</h3>
+<p>The ISO/IEC 14496-1 (MPEG-4 Systems) specification defines the
+terminal architecture using a structured buffering pipeline designed to
+handle diverse multimedia objects simultaneously:</p>
+<ol type="1">
+<li><strong>Delivery Layer and Demultiplexing:</strong> Multiplexed
+streams enter the terminal and are split into Elementary Streams
+(ES).</li>
+<li><strong>Decoding Buffers (DB):</strong> Incoming access units
+(compressed packets) are held in elementary stream-specific Decoding
+Buffers before being processed by the respective media codecs.</li>
+<li><strong>Decoders:</strong> Codecs retrieve compressed data from the
+DB at specific Decoding Time Stamps (DTS) and decode them into raw
+media.</li>
+<li><strong>Composition Buffers (CB):</strong> The raw, uncompressed
+media units—referred to as Composition Units (CUs)—are written directly
+into the Composition Buffer assigned to that stream.</li>
+<li><strong>Compositor:</strong> The scene compositor reads the CUs from
+the Composition Buffers at designated Composition Time Stamps (CTS) and
+blends them into the final visual scene graph (BIFS).</li>
+</ol>
+<h3 id="memory-exchange-mechanism-between-codecs-and-compositors">Memory
+Exchange Mechanism Between Codecs and Compositors</h3>
+<p>The memory transfer between codecs and the display compositor relies
+on a producer-consumer relationship governed by the Composition
+Buffer:</p>
+<ul>
+<li><strong>Decoupled Execution Rates:</strong> Video codecs typically
+decode at variable intervals depending on frame complexity, while
+compositors render at fixed display refresh rates (e.g., 60 Hz). The
+Composition Buffer acts as an elastic memory pool that absorbs jitter
+and frame-rate differences.</li>
+<li><strong>Timestamp-Driven Access:</strong> Each decoded frame in the
+Composition Buffer is tagged with a Composition Time Stamp (CTS). The
+compositor queries the buffer, retrieves the exact frame valid for the
+current system time, and maps it to the target visual node within the 2D
+or 3D scene.</li>
+<li><strong>Buffer Management and Release:</strong> Once the compositor
+finishes rendering a frame, or when a newer frame's timestamp
+invalidates an older frame, the associated memory segment in the CB is
+released or flagged for reuse by the codec.</li>
+</ul>
+<h3 id="practical-implementation-and-zero-copy-optimizations">Practical
+Implementation and Zero-Copy Optimizations</h3>
+<p>While the MPEG-4 standard conceptualizes these buffers logically,
+real-world terminal implementations optimize the memory exchange between
+codecs and display hardware to minimize CPU and bus overhead:</p>
+<ul>
+<li><strong>Shared Memory Pools:</strong> Implementations often allocate
+a unified pool of physical memory shared between the video decoder
+(hardware or software) and the graphics rendering subsystem.</li>
+<li><strong>Direct Surface and Texture Binding:</strong> Decoders write
+raw YUV or RGB pixel data directly into GPU-accessible framebuffers or
+texture surfaces. The compositor treats the decoded frame’s memory
+address as a dynamic texture, applying geometric transformations,
+scaling, and blending without performing redundant memory copies
+(zero-copy architecture).</li>
+<li><strong>Circular Buffer Structures:</strong> Composition Buffers are
+frequently implemented as ring buffers with fixed slot counts, using
+mutexes or lock-free synchronization primitives to signal buffer
+readiness between the decoder thread and the compositor thread.</li>
+</ul></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

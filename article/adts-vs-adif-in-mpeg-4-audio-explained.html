@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ADTS vs ADIF in MPEG-4 Audio Explained - mpeg-4</title>
+    <meta name="description" content="This article explores the functional differences between Audio Data Transport Stream (ADTS) and Audio Data Interchange Format (ADIF), the two primary transport formats used for Advanced Audio Coding (AAC) in MPEG-4. While both formats package raw AAC aud">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/adts-vs-adif-in-mpeg-4-audio-explained">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="ADTS vs ADIF in MPEG-4 Audio Explained - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/adts-vs-adif-in-mpeg-4-audio-explained" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explores the functional differences between Audio Data Transport Stream (ADTS) and Audio Data Interchange Format (ADIF), the two primary transport formats used for Advanced Audio Coding (AAC) in MPEG-4. While both formats package raw AAC aud" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="adts-vs-adif-in-mpeg-4-audio-explained">ADTS vs ADIF in MPEG-4
+Audio Explained</h1>
+<p>This article explores the functional differences between Audio Data
+Transport Stream (ADTS) and Audio Data Interchange Format (ADIF), the
+two primary transport formats used for Advanced Audio Coding (AAC) in
+MPEG-4. While both formats package raw AAC audio payloads, they serve
+fundamentally different purposes: ADIF is designed for stored local
+files with a single header at the start, whereas ADTS is built for
+streaming with synchronization headers repeated before every frame.</p>
+<h2 id="understanding-adif-audio-data-interchange-format">Understanding
+ADIF (Audio Data Interchange Format)</h2>
+<p>ADIF is a format specifically designed for static audio files stored
+on local disks or fixed media. In an ADIF-encoded stream, there is only
+one header located at the very beginning of the entire audio file.</p>
+<p>This single header contains all the configuration and metadata
+required by the decoder, such as sampling frequency, channel
+configuration, and profile information. Once the decoder reads this
+initial header, it processes the remainder of the file as a continuous
+stream of raw audio frames without any additional structural
+metadata.</p>
+<h3 id="advantages-and-limitations-of-adif">Advantages and Limitations
+of ADIF</h3>
+<ul>
+<li><strong>Low Overhead:</strong> Because metadata is only written
+once, ADIF minimizes file size and maximizes bandwidth efficiency for
+the audio payload.</li>
+<li><strong>No Mid-Stream Entry:</strong> Decoders must access the start
+of the file to obtain the configuration header. If playback starts in
+the middle, or if the beginning of the file is corrupted, the stream
+cannot be decoded.</li>
+<li><strong>Not Suitable for Streaming:</strong> ADIF is unusable for
+live broadcasting or network streaming where packets may be lost or
+users may tune in at arbitrary times.</li>
+</ul>
+<h2 id="understanding-adts-audio-data-transport-stream">Understanding
+ADTS (Audio Data Transport Stream)</h2>
+<p>ADTS is a container format designed for streaming audio over networks
+and broadcast systems. Unlike ADIF, ADTS prepends a small header to
+every single audio frame.</p>
+<p>Each ADTS header includes a synchronization word (a 12-bit sequence
+of all ones: <code>0xFFF</code>), frame length, protection bits, and
+configuration parameters. This structure allows a decoder to identify
+frame boundaries and configure itself dynamically at any point in the
+stream.</p>
+<h3 id="advantages-and-limitations-of-adts">Advantages and Limitations
+of ADTS</h3>
+<ul>
+<li><strong>Random Entry and Resynchronization:</strong> Receivers can
+begin playback at any point in the stream by scanning for the sync word.
+If data corruption occurs, the decoder can quickly discard bad data and
+resynchronize at the next frame.</li>
+<li><strong>Streaming Optimization:</strong> Ideal for internet radio,
+live feeds, and digital broadcasts (such as DVB and ATSC).</li>
+<li><strong>Higher Overhead:</strong> Repeating headers (typically 7 to
+9 bytes per frame) introduces constant bit rate overhead compared to raw
+audio or ADIF.</li>
+</ul>
+<h2 id="key-functional-differences">Key Functional Differences</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Feature</th>
+<th style="text-align: left;">ADIF</th>
+<th style="text-align: left;">ADTS</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Header Frequency</strong></td>
+<td style="text-align: left;">Single header at the beginning of the
+stream</td>
+<td style="text-align: left;">Header attached to every audio frame</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Primary Use Case</strong></td>
+<td style="text-align: left;">Local file storage and distribution</td>
+<td style="text-align: left;">Real-time network streaming and
+broadcasting</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Mid-Stream Playback</strong></td>
+<td style="text-align: left;">No (must start at byte 0)</td>
+<td style="text-align: left;">Yes (can join and decode at any
+frame)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Fault Tolerance</strong></td>
+<td style="text-align: left;">Low (loss of initial header breaks the
+file)</td>
+<td style="text-align: left;">High (self-synchronizes after packet
+loss)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Data Overhead</strong></td>
+<td style="text-align: left;">Very low</td>
+<td style="text-align: left;">Moderate (continuous header overhead)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="summary">Summary</h2>
+<p>The primary functional difference between ADTS and ADIF lies in how
+decoders access metadata and synchronize with the audio data. ADIF
+prioritizes minimal data overhead for fixed file storage by utilizing a
+single initial header, making mid-stream playback impossible. In
+contrast, ADTS prioritizes error resilience and dynamic synchronization
+by embedding headers in every frame, making it the standard choice for
+MPEG-4 audio streaming and broadcast environments.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

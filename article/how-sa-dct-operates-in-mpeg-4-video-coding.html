@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How SA-DCT Operates in MPEG-4 Video Coding - mpeg-4</title>
+    <meta name="description" content="The Shape-Adaptive Discrete Cosine Transform (SA-DCT) is a core coding tool used in MPEG-4 Part 2 to compress arbitrarily shaped visual objects without wasting bitrate on background pixels. Unlike traditional block-based Discrete Cosine Transforms that o">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/how-sa-dct-operates-in-mpeg-4-video-coding">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How SA-DCT Operates in MPEG-4 Video Coding - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/how-sa-dct-operates-in-mpeg-4-video-coding" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The Shape-Adaptive Discrete Cosine Transform (SA-DCT) is a core coding tool used in MPEG-4 Part 2 to compress arbitrarily shaped visual objects without wasting bitrate on background pixels. Unlike traditional block-based Discrete Cosine Transforms that o" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="how-sa-dct-operates-in-mpeg-4-video-coding">How SA-DCT Operates
+in MPEG-4 Video Coding</h1>
+<p>The Shape-Adaptive Discrete Cosine Transform (SA-DCT) is a core
+coding tool used in MPEG-4 Part 2 to compress arbitrarily shaped visual
+objects without wasting bitrate on background pixels. Unlike traditional
+block-based Discrete Cosine Transforms that operate uniformly on fixed
+<span class="math inline">\(8 \times 8\)</span> pixel grids, SA-DCT
+dynamically adjusts its transform size to fit the exact boundary of a
+segmented object. This article explains the underlying mechanism of
+SA-DCT, including vertical shifting, variable-length one-dimensional
+transforms, horizontal compaction, and the final coefficient
+arrangement.</p>
+<h3 id="the-role-of-arbitrary-shapes-in-mpeg-4">The Role of Arbitrary
+Shapes in MPEG-4</h3>
+<p>MPEG-4 introduced content-based video coding, allowing scenes to be
+decomposed into separate Video Object Planes (VOPs). In standard video
+coding, an <span class="math inline">\(8 \times 8\)</span> block that
+straddles the edge of an object requires padding background pixels to
+perform a standard transform. This often introduces artificial
+high-frequency edges and wastes bandwidth. SA-DCT solves this by
+applying 1D transforms exclusively to pixels belonging to the defined
+shape mask.</p>
+<h3 id="step-by-step-operation-of-sa-dct">Step-by-Step Operation of
+SA-DCT</h3>
+<p>The forward SA-DCT process converts an arbitrary set of active pixels
+inside an <span class="math inline">\(8 \times 8\)</span> boundary block
+into a compact set of frequency coefficients through two sequential 1D
+transform phases:</p>
+<ol type="1">
+<li><p><strong>Vertical Alignment and Shifting:</strong> The algorithm
+evaluates each column <span class="math inline">\(k\)</span> (where
+<span class="math inline">\(k \in [0, 7]\)</span>) within the <span
+class="math inline">\(8 \times 8\)</span> block. If a column contains
+<span class="math inline">\(N\)</span> foreground pixels (<span
+class="math inline">\(1 \le N \le 8\)</span>), those pixels are shifted
+upward so they sit contiguously at the top of the column, eliminating
+gaps.</p></li>
+<li><p><strong>Vertical 1D-DCT:</strong> A variable-length 1D-DCT of
+size <span class="math inline">\(N\)</span> is applied to the shifted
+pixels in each column. If a column has no foreground pixels (<span
+class="math inline">\(N = 0\)</span>), it is skipped. This operation
+concentrates the vertical spatial energy into the lower index positions
+(top rows).</p></li>
+<li><p><strong>Horizontal Alignment and Shifting:</strong> The resulting
+intermediate coefficients from the vertical transform are then examined
+row by row. For each row <span class="math inline">\(m\)</span>
+containing <span class="math inline">\(M\)</span> active coefficients
+(<span class="math inline">\(1 \le M \le 8\)</span>), the coefficients
+are shifted to the left edge of the block to form a contiguous
+horizontal segment.</p></li>
+<li><p><strong>Horizontal 1D-DCT:</strong> A variable-length 1D-DCT of
+size <span class="math inline">\(M\)</span> is applied to each row of
+shifted coefficients. This step compacts the horizontal spatial
+correlation.</p></li>
+</ol>
+<h3 id="coefficient-layout-and-quantization">Coefficient Layout and
+Quantization</h3>
+<p>After the horizontal transform, the total number of generated DCT
+coefficients matches the exact number of original foreground pixels in
+the block.</p>
+<p>Because the lowest-frequency components from both passes are shifted
+to the upper-left corner of the <span class="math inline">\(8 \times
+8\)</span> matrix, the most significant energy is densely packed into
+the top-left region. MPEG-4 applies adapted quantization matrices and
+tailored zigzag scan patterns that traverse only the positions occupied
+by valid coefficients, maximizing run-length coding efficiency before
+entropy encoding.</p>
+<h3 id="inverse-transformation-idct">Inverse Transformation (IDCT)</h3>
+<p>Decoding uses the exact reverse process:</p>
+<ul>
+<li>Horizontal 1D-IDCT is performed on each row using length <span
+class="math inline">\(M\)</span>, based on the transmitted shape
+information.</li>
+<li>Coefficients are shifted back to their respective column
+positions.</li>
+<li>Vertical 1D-IDCT of length <span class="math inline">\(N\)</span> is
+performed on each column.</li>
+<li>Reconstructed pixels are mapped back to their original spatial
+coordinates defined by the shape mask.</li>
+</ul></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

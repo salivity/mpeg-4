@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How DTS Handles Out-of-Order Frames in MPEG-4 - mpeg-4</title>
+    <meta name="description" content="In MPEG-4 video compression, the use of bidirectional predictive frames (B-frames) means that video frames are often decoded in a different sequence than they are displayed. Decoding Time Stamps (DTS) are critical metadata values embedded in the video st">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/how-dts-handles-out-of-order-frames-in-mpeg-4">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How DTS Handles Out-of-Order Frames in MPEG-4 - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/how-dts-handles-out-of-order-frames-in-mpeg-4" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="In MPEG-4 video compression, the use of bidirectional predictive frames (B-frames) means that video frames are often decoded in a different sequence than they are displayed. Decoding Time Stamps (DTS) are critical metadata values embedded in the video st" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="how-dts-handles-out-of-order-frames-in-mpeg-4">How DTS Handles
+Out-of-Order Frames in MPEG-4</h1>
+<p>In MPEG-4 video compression, the use of bidirectional predictive
+frames (B-frames) means that video frames are often decoded in a
+different sequence than they are displayed. Decoding Time Stamps (DTS)
+are critical metadata values embedded in the video stream that instruct
+the media decoder precisely when to unpack and reconstruct a specific
+compressed frame. Working in tandem with Presentation Time Stamps (PTS),
+DTS ensures that future reference frames are decoded ahead of time so
+dependent frames can be accurately rendered without visual artifacts or
+playback delays.</p>
+<h3 id="the-need-for-out-of-order-processing">The Need for Out-of-Order
+Processing</h3>
+<p>MPEG-4 video streams rely on three primary frame types to maximize
+compression efficiency:</p>
+<ul>
+<li><strong>I-Frames (Intra-coded):</strong> Complete, standalone images
+that require no other frames to decode.</li>
+<li><strong>P-Frames (Predicted):</strong> Compressed images that
+contain only the changes from a preceding I-frame or P-frame.</li>
+<li><strong>B-Frames (Bidirectional):</strong> Highly compressed images
+that calculate motion vectors using data from both previous and future
+reference frames (I-frames or P-frames).</li>
+</ul>
+<p>Because a B-frame depends on visual information from a frame that
+appears <em>after</em> it in time, the decoder must receive and process
+that future reference frame first. Consequently, the transmission and
+decoding order of the video stream diverges from the presentation
+(display) order.</p>
+<h3 id="the-specific-function-of-dts">The Specific Function of DTS</h3>
+<p>The Decoding Time Stamp serves as a scheduling directive for the
+decoder's buffer. Its primary functions include:</p>
+<ol type="1">
+<li><strong>Decoder Scheduling:</strong> DTS specifies the exact
+millisecond or clock-tick at which an encoded frame must be removed from
+the coded picture buffer and fed into the decoding pipeline.</li>
+<li><strong>Pre-Buffering Reference Frames:</strong> DTS ensures that
+future reference frames (P-frames or I-frames) are processed and placed
+in the Decoded Picture Buffer (DPB) before the B-frames that rely on
+them are decoded.</li>
+<li><strong>Buffer Management:</strong> DTS prevents decoder buffer
+underflows (running out of data during decoding) and buffer overflows
+(receiving more data than the hardware can hold) by regulating the pace
+of decompression.</li>
+</ol>
+<h3 id="dts-vs-pts-in-frame-reordering">DTS vs. PTS in Frame
+Reordering</h3>
+<p>While DTS dictates the time of decompression, the Presentation Time
+Stamp (PTS) dictates the time the uncompressed frame should be sent to
+the display screen.</p>
+<ul>
+<li><strong>Without B-Frames:</strong> DTS and PTS values are typically
+identical because frames are decoded and displayed in the exact same
+linear order (e.g., <code>I0, P1, P2</code>).</li>
+<li><strong>With B-Frames:</strong> DTS and PTS values diverge. For
+reference frames, DTS occurs earlier than PTS to allow the decoded image
+to sit in memory while the intermediate B-frames are calculated.</li>
+</ul>
+<h3 id="example-sequence">Example Sequence</h3>
+<p>Consider a four-frame sequence meant to be watched in the following
+display order:</p>
+<ul>
+<li><strong>Display Order (PTS):</strong> <code>I-0</code> <span
+class="math inline">\(\rightarrow\)</span> <code>B-1</code> <span
+class="math inline">\(\rightarrow\)</span> <code>B-2</code> <span
+class="math inline">\(\rightarrow\)</span> <code>P-3</code></li>
+</ul>
+<p>Because <code>B-1</code> and <code>B-2</code> require data from
+<code>P-3</code> to be constructed, the stream must be reordered for the
+decoder:</p>
+<ul>
+<li><strong>Decoding Order (DTS):</strong> <code>I-0</code> <span
+class="math inline">\(\rightarrow\)</span> <code>P-3</code> <span
+class="math inline">\(\rightarrow\)</span> <code>B-1</code> <span
+class="math inline">\(\rightarrow\)</span> <code>B-2</code></li>
+</ul>
+<p>In this scenario:</p>
+<ol type="1">
+<li><code>I-0</code> is decoded first (DTS 0) and immediately displayed
+(PTS 0).</li>
+<li><code>P-3</code> is decoded second (DTS 1) based on
+<code>I-0</code>, but its display is held (PTS 3).</li>
+<li><code>B-1</code> is decoded third (DTS 2) using reference data from
+both <code>I-0</code> and <code>P-3</code>, then displayed immediately
+(PTS 1).</li>
+<li><code>B-2</code> is decoded fourth (DTS 3) using the same references
+and displayed (PTS 2).</li>
+<li><code>P-3</code>, already in the buffer, is finally displayed on
+screen (PTS 3).</li>
+</ol>
+<p>Through this mechanism, DTS enables MPEG-4 decoders to resolve
+complex temporal dependencies smoothly, ensuring efficient compression
+without disrupting linear video playback.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

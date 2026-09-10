@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPEG-4 Face Animation: Standardizing Avatar Movements - mpeg-4</title>
+    <meta name="description" content="The MPEG-4 Simple Face Animation Profile establishes an open, vendor-neutral framework that enables consistent 3D and 2D facial animation across different software platforms and hardware environments. By defining a universal set of facial feature points,">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/mpeg-4-face-animation-standardizing-avatar-movements">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MPEG-4 Face Animation: Standardizing Avatar Movements - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/mpeg-4-face-animation-standardizing-avatar-movements" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The MPEG-4 Simple Face Animation Profile establishes an open, vendor-neutral framework that enables consistent 3D and 2D facial animation across different software platforms and hardware environments. By defining a universal set of facial feature points," />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="mpeg-4-face-animation-standardizing-avatar-movements">MPEG-4
+Face Animation: Standardizing Avatar Movements</h1>
+<p>The MPEG-4 Simple Face Animation Profile establishes an open,
+vendor-neutral framework that enables consistent 3D and 2D facial
+animation across different software platforms and hardware environments.
+By defining a universal set of facial feature points, normalized motion
+parameters, and efficient bitstream specifications, the profile
+separates facial animation data from proprietary graphics engines. This
+ensures that a single stream of animation data can drive different
+virtual avatars accurately and identically across web browsers, game
+engines, and mobile applications.</p>
+<h3 id="standardized-facial-geometry-via-feature-points">Standardized
+Facial Geometry via Feature Points</h3>
+<p>The MPEG-4 standard resolves model incompatibility by defining a
+standardized topological map called Facial Definition Parameters (FDPs).
+The specification identifies key feature points on a neutral human face,
+such as the corners of the mouth, the contours of the eyes, the tip of
+the nose, and the edges of the jawline.</p>
+<p>Software platforms implement this standard by mapping their
+proprietary 3D mesh vertices to these predefined MPEG-4 landmark points.
+Because every conforming software recognizes the exact same coordinate
+references, an avatar designed in one 3D modeling tool can align
+immediately with a runtime environment built in another without manual
+re-rigging.</p>
+<h3 id="normalized-motion-using-facial-animation-parameters">Normalized
+Motion Using Facial Animation Parameters</h3>
+<p>To standardise movement, the framework utilizes Facial Animation
+Parameters (FAPs). The standard specifies 68 distinct parameters that
+represent fundamental facial actions, such as raising the left eyebrow,
+opening the jaw, or pulling back the lip corners. These parameters cover
+both low-level muscle-like movements and high-level visemes
+(speech-related mouth shapes) and emotional expressions.</p>
+<p>To ensure that motion scales accurately across models with different
+shapes, sizes, and proportions, the MPEG-4 standard introduces Facial
+Animation Parameter Units (FAPUs). FAPUs normalize movement measurements
+based on the avatar's internal proportions—such as the distance between
+the eyes or the distance from the nose to the upper lip. As a
+result:</p>
+<ul>
+<li>A single motion value (e.g., "open mouth by 50% of the lip-to-chin
+distance") translates proportionally to a realistic human face, a
+cartoon character, or an anthropomorphic avatar.</li>
+<li>Developers do not need to rewrite or rescale animation curves for
+different character models.</li>
+</ul>
+<h3 id="decoupling-data-transmission-from-rendering">Decoupling Data
+Transmission from Rendering</h3>
+<p>The MPEG-4 Simple Face Animation Profile standardizes the data stream
+rather than the rendering pipeline. An animation server or
+motion-capture device only needs to transmit a lightweight stream of FAP
+values (numerical displacement offsets) over the network.</p>
+<p>When a client platform receives this standardized stream, its native
+rendering engine interprets the values and applies the geometric
+deformation according to its own rendering capabilities—whether using
+blend shapes, bone rigs, or procedural vertex shaders. This abstraction
+guarantees that the source data remains entirely agnostic of the target
+engine's proprietary rendering techniques.</p>
+<h3 id="low-bandwidth-interoperability">Low-Bandwidth
+Interoperability</h3>
+<p>The "Simple" profile focuses on essential, low-complexity facial
+movements, omitting non-essential deformations to minimize processing
+overhead and network bandwidth. Because the data stream consists
+exclusively of compact mathematical parameters rather than heavy vertex
+caches or video feeds, it can be transmitted with extremely low latency
+over standard network connections. This enables cross-platform virtual
+agents, real-time teleconferencing avatars, and interactive games to
+maintain synchronized, realistic facial animation across disparate
+client devices.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

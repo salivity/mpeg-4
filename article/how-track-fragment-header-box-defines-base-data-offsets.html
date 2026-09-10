@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How Track Fragment Header Box Defines Base Data Offsets - mpeg-4</title>
+    <meta name="description" content="In fragmented MPEG-4 (fMP4) streaming, the Track Fragment Header box (tfhd) establishes the baseline byte offset used to locate raw audio and video samples within a Media Data box (mdat). This article explains the technical mechanisms tfhd uses to define">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/how-track-fragment-header-box-defines-base-data-offsets">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How Track Fragment Header Box Defines Base Data Offsets - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/how-track-fragment-header-box-defines-base-data-offsets" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="In fragmented MPEG-4 (fMP4) streaming, the Track Fragment Header box (tfhd) establishes the baseline byte offset used to locate raw audio and video samples within a Media Data box (mdat). This article explains the technical mechanisms tfhd uses to define" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="how-track-fragment-header-box-defines-base-data-offsets">How
+Track Fragment Header Box Defines Base Data Offsets</h1>
+<p>In fragmented MPEG-4 (fMP4) streaming, the Track Fragment Header box
+(<code>tfhd</code>) establishes the baseline byte offset used to locate
+raw audio and video samples within a Media Data box (<code>mdat</code>).
+This article explains the technical mechanisms <code>tfhd</code> uses to
+define base data offsets, including flag configurations, explicit offset
+signaling, and relative reference points essential for streaming
+protocols like HLS and MPEG-DASH.</p>
+<h3 id="the-role-of-tfhd-in-fragmented-mp4">The Role of
+<code>tfhd</code> in Fragmented MP4</h3>
+<p>In the ISO Base Media File Format (ISOBMFF), fragmented streams
+divide content into Movie Fragment boxes (<code>moof</code>) followed by
+Media Data boxes (<code>mdat</code>). Each <code>moof</code> contains
+one or more Track Fragment boxes (<code>traf</code>), which house a
+<code>tfhd</code> box. The primary role of <code>tfhd</code> is to
+define default metadata for the fragment's samples, most critically the
+<code>base_data_offset</code> from which sample byte positions in the
+Track Run box (<code>trun</code>) are calculated.</p>
+<h3 id="explicit-base-data-offsets">Explicit Base Data Offsets</h3>
+<p>A <code>tfhd</code> box explicitly defines a base data offset using
+its internal <code>flags</code> field:</p>
+<ol type="1">
+<li><strong><code>base-data-offset-present</code> Flag
+(<code>0x000001</code>):</strong> When this flag is set in the
+<code>tfhd</code> header, an explicit 64-bit unsigned integer field
+named <code>base_data_offset</code> is included immediately following
+the track ID.</li>
+<li><strong>Absolute File Positioning:</strong> The value of
+<code>base_data_offset</code> represents the absolute byte position from
+the beginning of the entire presentation or file to the reference point
+for sample data.</li>
+</ol>
+<h3 id="implicit-and-relative-offsets">Implicit and Relative
+Offsets</h3>
+<p>When the <code>base-data-offset-present</code> flag is omitted,
+parsers determine the base data offset implicitly using standard
+fallback rules:</p>
+<ul>
+<li><strong><code>default-base-is-moof</code> Flag
+(<code>0x020000</code>):</strong> Introduced in later revisions of
+ISO/IEC 14496-12 and standard in CMAF (Common Media Application Format),
+this flag explicitly instructs the demuxer to set the base data offset
+to the first byte of the enclosing <code>moof</code> box. This enables
+independent segment processing and simplifies live stream
+stitching.</li>
+<li><strong>Default Fallback (Neither Flag Present):</strong> If neither
+<code>base-data-offset-present</code> nor
+<code>default-base-is-moof</code> is set, the base data offset defaults
+to the start of the enclosing <code>moof</code> box for the first track
+fragment, or to the end of the previous track fragment's data for
+subsequent fragments.</li>
+</ul>
+<h3 id="calculation-with-track-run-trun-offsets">Calculation with Track
+Run (<code>trun</code>) Offsets</h3>
+<p>Once the <code>tfhd</code> establishes the base data offset, the
+actual position of individual samples is resolved in conjunction with
+the Track Run box (<code>trun</code>):</p>
+<ul>
+<li>If the <code>trun</code> box contains a <code>data-offset</code>
+field (indicated by the <code>data-offset-present</code> flag
+<code>0x000001</code>), that value is added directly to the
+<code>base_data_offset</code> from <code>tfhd</code>.</li>
+<li>The resulting value points directly to the first byte of the first
+sample in the corresponding <code>mdat</code> box, with subsequent
+sample locations calculated sequentially based on individual sample
+sizes.</li>
+</ul></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

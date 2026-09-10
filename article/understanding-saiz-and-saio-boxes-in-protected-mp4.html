@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Understanding saiz and saio Boxes in Protected MP4 - mpeg-4</title>
+    <meta name="description" content="In protected MPEG-4 (ISOBMFF) streams utilizing Common Encryption (CENC), the Sample Auxiliary Information Sizes box (saiz) and Sample Auxiliary Information Offsets box (saio) provide the indexing mechanism for per-sample encryption metadata. This articl">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/understanding-saiz-and-saio-boxes-in-protected-mp4">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Understanding saiz and saio Boxes in Protected MP4 - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/understanding-saiz-and-saio-boxes-in-protected-mp4" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="In protected MPEG-4 (ISOBMFF) streams utilizing Common Encryption (CENC), the Sample Auxiliary Information Sizes box (saiz) and Sample Auxiliary Information Offsets box (saio) provide the indexing mechanism for per-sample encryption metadata. This articl" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1
+id="understanding-saiz-and-saio-boxes-in-protected-mp4">Understanding
+saiz and saio Boxes in Protected MP4</h1>
+<p>In protected MPEG-4 (ISOBMFF) streams utilizing Common Encryption
+(CENC), the Sample Auxiliary Information Sizes box (<code>saiz</code>)
+and Sample Auxiliary Information Offsets box (<code>saio</code>) provide
+the indexing mechanism for per-sample encryption metadata. This article
+explains the technical roles of <code>saiz</code> and <code>saio</code>,
+why they are essential for Digital Rights Management (DRM) systems, and
+how media decoders use them to locate and parse Initialization Vectors
+(IVs) and subsample encryption mapping data.</p>
+<h2 id="the-role-of-auxiliary-information-in-protected-streams">The Role
+of Auxiliary Information in Protected Streams</h2>
+<p>Standard MPEG-4 streams store sample timing, size, and chunk offsets
+within standard box structures such as <code>stsz</code>,
+<code>stts</code>, and <code>stco</code> (or <code>trun</code> in
+fragmented MP4). However, when a stream is protected using Common
+Encryption (ISO/IEC 23001-7), decoders require additional per-sample
+metadata to decrypt the content, including:</p>
+<ul>
+<li><strong>Initialization Vectors (IVs):</strong> Cryptographic nonces
+required for AES counter (CTR) or cipher block chaining (CBC) decryption
+modes.</li>
+<li><strong>Subsample Encryption Maps:</strong> Byte-range definitions
+indicating which portions of a sample are encrypted and which remain in
+the clear (common in video streams where NAL unit headers remain
+unencrypted for parsing).</li>
+</ul>
+<p>Because standard MP4 sample tables do not account for this dynamic
+DRM metadata, the ISO Base Media File Format specification introduced
+generic auxiliary information containers: <code>saiz</code> and
+<code>saio</code>.</p>
+<h2
+id="function-of-the-saiz-box-sample-auxiliary-information-sizes">Function
+of the <code>saiz</code> Box (Sample Auxiliary Information Sizes)</h2>
+<p>The <code>saiz</code> box specifies the exact size (in bytes) of the
+auxiliary data associated with each sample.</p>
+<ul>
+<li><strong>Uniform Data Sizes:</strong> If every sample in a track or
+fragment shares the exact same auxiliary data size (for instance, a
+fixed 8-byte or 16-byte IV with no subsample encryption),
+<code>saiz</code> defines a single default size parameter
+(<code>default_sample_info_size</code>), minimizing file overhead.</li>
+<li><strong>Variable Data Sizes:</strong> When samples require varying
+amounts of auxiliary data (such as variable subsample mapping tables),
+<code>saiz</code> contains an explicit array listing the byte size for
+each individual sample in order.</li>
+</ul>
+<h2
+id="function-of-the-saio-box-sample-auxiliary-information-offsets">Function
+of the <code>saio</code> Box (Sample Auxiliary Information Offsets)</h2>
+<p>The <code>saio</code> box specifies the memory location or file
+offset where the auxiliary information for each sample can be read.</p>
+<ul>
+<li><strong>Offset Mapping:</strong> It contains byte offsets pointing
+directly to the contiguous block of auxiliary data within the file or
+fragment.</li>
+<li><strong>Relative and Absolute Addressing:</strong> Offsets can be
+absolute within the entire file or relative to the start of an enclosing
+box (such as the <code>moof</code> box in fragmented MP4), allowing
+streaming clients to fetch encryption data without downloading unneeded
+media payloads.</li>
+</ul>
+<h2 id="how-saiz-and-saio-work-together-during-playback">How
+<code>saiz</code> and <code>saio</code> Work Together During
+Playback</h2>
+<p>When a DRM-enabled player or Decryptor processes an encrypted track,
+it follows a structured sequence:</p>
+<ol type="1">
+<li><strong>Identification:</strong> The player checks the
+<code>aux_info_type</code> and <code>aux_info_type_parameter</code>
+fields inside <code>saiz</code> and <code>saio</code> to confirm the
+auxiliary data represents CENC metadata (<code>cenc</code> or
+<code>cbc1</code>/<code>cbcs</code>).</li>
+<li><strong>Offset Lookup:</strong> The player references the
+<code>saio</code> box to locate the start of the auxiliary data
+block.</li>
+<li><strong>Size Parsing:</strong> The player reads the
+<code>saiz</code> box to calculate the boundary of the auxiliary data
+for sample <span class="math inline">\(N\)</span>.</li>
+<li><strong>Metadata Extraction:</strong> The player reads the allocated
+bytes to extract the sample's specific IV and subsample
+count/ranges.</li>
+<li><strong>Decryption:</strong> The Decryptor uses the extracted IV and
+subsample map alongside the decryption key obtained from the DRM license
+server to decrypt the protected sample bytes before passing them to the
+decoder.</li>
+</ol>
+<h2 id="placement-in-file-structures">Placement in File Structures</h2>
+<ul>
+<li><strong>Standard (Non-Fragmented) MP4:</strong> Located inside the
+Track Box (<code>moov/trak/mdia/minf/stbl</code>), providing global
+indexing for the entire duration of the track.</li>
+<li><strong>Fragmented MP4 (fMP4 / DASH / HLS):</strong> Located inside
+each Track Fragment Box (<code>moof/traf</code>), providing local
+indexing specific to the samples packaged within that particular media
+fragment.</li>
+</ul></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How Video Quality Tools Compute SSIM on MPEG-4 - mpeg-4</title>
+    <meta name="description" content="This article explains how video quality analysis tools calculate the Structural Similarity Index (SSIM) on MPEG-4 encoded video streams. It details the step-by-step process of decoding compressed video frames, extracting luminance channels, applying stat">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/how-video-quality-tools-compute-ssim-on-mpeg-4">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How Video Quality Tools Compute SSIM on MPEG-4 - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/how-video-quality-tools-compute-ssim-on-mpeg-4" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explains how video quality analysis tools calculate the Structural Similarity Index (SSIM) on MPEG-4 encoded video streams. It details the step-by-step process of decoding compressed video frames, extracting luminance channels, applying stat" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="how-video-quality-tools-compute-ssim-on-mpeg-4">How Video
+Quality Tools Compute SSIM on MPEG-4</h1>
+<p>This article explains how video quality analysis tools calculate the
+Structural Similarity Index (SSIM) on MPEG-4 encoded video streams. It
+details the step-by-step process of decoding compressed video frames,
+extracting luminance channels, applying statistical comparisons across
+sliding Gaussian windows, and aggregating individual frame scores into a
+comprehensive metric that reflects perceived visual quality.</p>
+<h3 id="1-video-decoding-and-frame-alignment">1. Video Decoding and
+Frame Alignment</h3>
+<p>Before computing SSIM, the analysis tool must access the uncompressed
+pixel data of both the original reference video and the compressed
+MPEG-4 video. The tool uses a decoder (such as FFmpeg or standard
+libavcodec libraries) to decompress the MPEG-4 bitstream into raw
+frames. The tool then synchronizes both streams frame-by-frame to ensure
+that the identical temporal instances are compared directly.</p>
+<h3 id="2-luminance-channel-extraction">2. Luminance Channel
+Extraction</h3>
+<p>Human vision is significantly more sensitive to variations in
+brightness (luminance) than to variations in color (chrominance).
+Because MPEG-4 video is typically encoded in the YUV (or <span
+class="math inline">\(\text{YC}_b\text{C}_r\)</span>) color space,
+quality analysis tools isolate the <strong>Y (luminance)
+channel</strong> for evaluation. While chrominance SSIM (CSSIM) can also
+be evaluated, standard SSIM calculations primarily focus on the Y
+component.</p>
+<h3 id="3-local-sliding-window-analysis">3. Local Sliding Window
+Analysis</h3>
+<p>SSIM evaluates visual quality locally rather than globally across an
+entire frame. The analysis tool moves a localized window—usually an
+<span class="math inline">\(11 \times 11\)</span> or <span
+class="math inline">\(8 \times 8\)</span> pixel circular-symmetric
+Gaussian weighting window—across the reference frame (<span
+class="math inline">\(x\)</span>) and the degraded frame (<span
+class="math inline">\(y\)</span>) pixel-by-pixel.</p>
+<p>Using this window, the tool computes local statistical properties for
+each patch:</p>
+<ul>
+<li><strong>Mean Intensity (<span class="math inline">\(\mu_x,
+\mu_y\)</span>):</strong> Measures local luminance.</li>
+<li><strong>Standard Deviation (<span class="math inline">\(\sigma_x,
+\sigma_y\)</span>):</strong> Measures local contrast.</li>
+<li><strong>Covariance (<span
+class="math inline">\(\sigma_{xy}\)</span>):</strong> Measures
+structural correlation between the two patches.</li>
+</ul>
+<h3 id="4-mathematical-computation-of-ssim-components">4. Mathematical
+Computation of SSIM Components</h3>
+<p>For every local window, the tool computes three distinct comparison
+functions:</p>
+<ol type="1">
+<li><strong>Luminance Comparison:</strong> <span
+class="math display">\[l(x, y) = \frac{2\mu_x\mu_y + C_1}{\mu_x^2 +
+\mu_y^2 + C_1}\]</span></li>
+<li><strong>Contrast Comparison:</strong> <span
+class="math display">\[c(x, y) = \frac{2\sigma_x\sigma_y +
+C_2}{\sigma_x^2 + \sigma_y^2 + C_2}\]</span></li>
+<li><strong>Structure Comparison:</strong> <span
+class="math display">\[s(x, y) = \frac{\sigma_{xy} +
+C_3}{\sigma_x\sigma_y + C_3}\]</span></li>
+</ol>
+<p>The constants <span class="math inline">\(C_1\)</span>, <span
+class="math inline">\(C_2\)</span>, and <span
+class="math inline">\(C_3\)</span> are small stabilization values
+included to avoid division by zero when denominators approach zero
+(typically <span class="math inline">\(C_3 = C_2 / 2\)</span>).</p>
+<p>These components are multiplied together to produce the local SSIM
+index for that specific window: <span
+class="math display">\[\text{SSIM}(x, y) = \frac{(2\mu_x\mu_y +
+C_1)(2\sigma_{xy} + C_2)}{(\mu_x^2 + \mu_y^2 + C_1)(\sigma_x^2 +
+\sigma_y^2 + C_2)}\]</span></p>
+<h3 id="5-frame-level-and-sequence-level-aggregation">5. Frame-Level and
+Sequence-Level Aggregation</h3>
+<p>To determine the quality of a complete frame, the tool calculates the
+<strong>Mean SSIM (MSSIM)</strong> by averaging the SSIM values across
+all sliding windows in the frame:</p>
+<p><span class="math display">\[\text{MSSIM} = \frac{1}{M}
+\sum_{j=1}^{M} \text{SSIM}(x_j, y_j)\]</span></p>
+<p>where <span class="math inline">\(M\)</span> is the total number of
+local windows in the frame.</p>
+<p>Finally, the tool aggregates the frame-level MSSIM values across the
+entire MPEG-4 video sequence. This is commonly performed by computing
+the arithmetic mean over all frames, though advanced video quality tools
+may also generate temporal quality graphs or compute percentile
+distributions (e.g., 5th percentile) to highlight transient artifacts
+such as dropped frames, blocking, or blur introduced during MPEG-4
+compression.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

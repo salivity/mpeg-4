@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How MPEG-4 AVC Intra-Prediction Works in I-Frames - mpeg-4</title>
+    <meta name="description" content="MPEG-4 AVC (also known as H.264) reduces spatial redundancies in I-frames through spatial domain intra-prediction, a technique that predicts the sample values of a current block using the previously decoded neighboring boundary pixels from the top and le">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/how-mpeg-4-avc-intra-prediction-works-in-i-frames">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How MPEG-4 AVC Intra-Prediction Works in I-Frames - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/how-mpeg-4-avc-intra-prediction-works-in-i-frames" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="MPEG-4 AVC (also known as H.264) reduces spatial redundancies in I-frames through spatial domain intra-prediction, a technique that predicts the sample values of a current block using the previously decoded neighboring boundary pixels from the top and le" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="how-mpeg-4-avc-intra-prediction-works-in-i-frames">How MPEG-4
+AVC Intra-Prediction Works in I-Frames</h1>
+<p>MPEG-4 AVC (also known as H.264) reduces spatial redundancies in
+I-frames through spatial domain intra-prediction, a technique that
+predicts the sample values of a current block using the previously
+decoded neighboring boundary pixels from the top and left. Unlike older
+standards that perform prediction only in the frequency domain, AVC
+models spatial correlations in the pixel domain across various
+directional modes, computes the difference between the original and
+predicted pixels, and transmits only the resulting residual data.</p>
+<h3 id="the-mechanism-of-spatial-intra-prediction">The Mechanism of
+Spatial Intra-Prediction</h3>
+<p>In intra-coded frames (I-frames), temporal prediction across
+different frames is not used. To compress image data, MPEG-4 AVC
+exploits the high correlation between adjacent pixels within the same
+frame.</p>
+<p>Before a block is encoded, the encoder gathers reconstructed pixel
+samples from the adjacent blocks directly to the left, top-left, top,
+and top-right. These boundary pixels serve as reference points to
+estimate the pixel values of the current target block. The encoder
+evaluates multiple prediction modes, selects the one that produces the
+smallest prediction error (residual), and encodes both the mode choice
+and the residual.</p>
+<h3 id="luma-prediction-modes">Luma Prediction Modes</h3>
+<p>MPEG-4 AVC dynamically chooses block sizes based on image complexity
+to balance precision and signaling overhead for luma (brightness)
+components:</p>
+<h4 id="1-intra-4x4-prediction">1. Intra 4x4 Prediction</h4>
+<p>Designed for high-detail and textured regions, the 16x16 macroblock
+is divided into sixteen 4x4 sub-blocks. Each 4x4 block can utilize one
+of nine prediction modes:</p>
+<ul>
+<li><strong>Mode 0 (Vertical):</strong> Extrapolates samples vertically
+from the upper boundary pixels.</li>
+<li><strong>Mode 1 (Horizontal):</strong> Extrapolates samples
+horizontally from the left boundary pixels.</li>
+<li><strong>Mode 2 (DC):</strong> Averages the available upper and left
+boundary pixels to fill the block with a single mean value.</li>
+<li><strong>Modes 3 to 8 (Directional/Diagonal):</strong> Extrapolate
+pixels along specific diagonal angles (e.g., Diagonal Down-Left,
+Diagonal Down-Right, Vertical-Right, Horizontal-Down, Vertical-Left, and
+Horizontal-Up) to accurately follow diagonal edges.</li>
+</ul>
+<h4 id="2-intra-16x16-prediction">2. Intra 16x16 Prediction</h4>
+<p>Designed for smooth, flat, or uniform areas, this mode predicts the
+entire 16x16 macroblock at once, reducing the overhead of transmitting
+multiple mode indicators. It offers four prediction modes:</p>
+<ul>
+<li><strong>Vertical:</strong> Copies top boundary pixels downward.</li>
+<li><strong>Horizontal:</strong> Copies left boundary pixels
+across.</li>
+<li><strong>DC:</strong> Fills the macroblock with the average of top
+and left pixels.</li>
+<li><strong>Plane:</strong> Applies a linear interpolation formula
+across the horizontal and vertical directions, creating a smooth
+gradient.</li>
+</ul>
+<h4 id="3-intra-8x8-prediction">3. Intra 8x8 Prediction</h4>
+<p>Introduced in the High Profile of AVC, Intra 8x8 provides a
+compromise between 4x4 and 16x16 modes. It utilizes the same nine
+directional modes as the 4x4 prediction but applies them to 8x8 blocks,
+utilizing an 8x8 integer transform to improve compression efficiency in
+detailed areas.</p>
+<h3 id="chroma-prediction">Chroma Prediction</h3>
+<p>For color representation (typically in 4:2:0 format), the chroma
+components (<span class="math inline">\(U\)</span> and <span
+class="math inline">\(V\)</span>) of a macroblock consist of two 8x8
+blocks. Both chroma blocks share the same prediction mode, which is
+selected independently of the luma mode. Chroma prediction supports four
+modes identical in concept to the Intra 16x16 luma modes: DC,
+Horizontal, Vertical, and Plane.</p>
+<h3 id="generating-and-encoding-the-residual">Generating and Encoding
+the Residual</h3>
+<p>Once the best prediction mode is selected:</p>
+<ol type="1">
+<li><strong>Subtraction:</strong> The predicted pixel block is
+subtracted from the original pixel block to produce a residual
+matrix.</li>
+<li><strong>Transform and Quantization:</strong> The residual matrix
+undergoes an integer DCT-like transform to concentrate the energy,
+followed by quantization to discard perceptually insignificant
+details.</li>
+<li><strong>Entropy Coding:</strong> The quantized coefficients and the
+chosen intra-prediction mode indices are encoded into the final
+bitstream using CAVLC (Context-Adaptive Variable-Length Coding) or CABAC
+(Context-Adaptive Binary Arithmetic Coding).</li>
+</ol>
+<p>By utilizing these multi-directional spatial modes, MPEG-4 AVC
+preserves sharp edges and smooth gradients within I-frames, achieving
+significantly higher compression efficiency than legacy intra-coding
+techniques.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPEG-4 Forward Error Correction in Transport Encapsulation - mpeg-4</title>
+    <meta name="description" content="This article provides an overview of how MPEG-4 implements Forward Error Correction (FEC) at the transport encapsulation level. It explains how MPEG-4 offloads transport-level error recovery to standard container and delivery formats—predominantly MPEG">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/mpeg-4-forward-error-correction-in-transport-encapsulation">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MPEG-4 Forward Error Correction in Transport Encapsulation - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/mpeg-4-forward-error-correction-in-transport-encapsulation" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article provides an overview of how MPEG-4 implements Forward Error Correction (FEC) at the transport encapsulation level. It explains how MPEG-4 offloads transport-level error recovery to standard container and delivery formats—predominantly MPEG" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1
+id="mpeg-4-forward-error-correction-in-transport-encapsulation">MPEG-4
+Forward Error Correction in Transport Encapsulation</h1>
+<p>This article provides an overview of how MPEG-4 implements Forward
+Error Correction (FEC) at the transport encapsulation level. It explains
+how MPEG-4 offloads transport-level error recovery to standard container
+and delivery formats—predominantly MPEG-2 Transport Streams (MPEG-2 TS)
+and Real-time Transport Protocol (RTP)—to reconstruct lost or corrupted
+packets using Reed-Solomon coding, 2D matrix parity schemes, and modern
+erasure codes before elementary streams reach the video decoder.</p>
+<h3 id="architecture-of-mpeg-4-transport-encapsulation">Architecture of
+MPEG-4 Transport Encapsulation</h3>
+<p>The MPEG-4 standard (ISO/IEC 14496) decouples media compression from
+transport mechanisms. The MPEG-4 Synchronization Layer (SL) packetizes
+Elementary Streams (ES) and adds timing, sequence, and continuity
+metadata. These SL packets are handed off to the Delivery Multimedia
+Integration Framework (DMIF) or directly encapsulated into transport
+layers, such as MPEG-2 Transport Streams (ISO/IEC 13818-1) for
+broadcasting or RTP (RFC 3640 / RFC 3016) for IP networks.</p>
+<p>FEC at the transport encapsulation layer operates outside the
+compression core, protecting the multiplexed or packetized payload
+rather than individual video macroblocks.</p>
+<h3 id="reed-solomon-coding-in-mpeg-2-ts-encapsulation">Reed-Solomon
+Coding in MPEG-2 TS Encapsulation</h3>
+<p>When MPEG-4 video is multiplexed into an MPEG-2 Transport Stream,
+error correction is implemented using block-based Reed-Solomon (RS)
+codes:</p>
+<ul>
+<li><strong>RS(204, 188) Outer Coding:</strong> Standard 188-byte MPEG
+TS packets carrying MPEG-4 payloads are appended with 16 parity bytes to
+form a 204-byte block. This enables the receiver to correct up to 8
+erroneous bytes per packet.</li>
+<li><strong>Interleaving:</strong> Convolutional interleaving is applied
+after the RS coding. It scatters consecutive bytes across multiple
+transport blocks, converting burst transmission errors into distributed
+single-byte errors that the RS decoder can reliably correct.</li>
+</ul>
+<h3 id="rtp-encapsulation-and-2d-matrix-fec-smpte-2022">RTP
+Encapsulation and 2D Matrix FEC (SMPTE 2022)</h3>
+<p>In IP network transmissions, packet loss replaces bit corruption as
+the primary failure mode. When MPEG-4 is encapsulated into RTP packets,
+transport-level FEC is implemented using XOR-based matrix schemes:</p>
+<ul>
+<li><strong>Column and Row Parity:</strong> Media packets are arranged
+in a virtual two-dimensional grid of <span
+class="math inline">\(L\)</span> columns and <span
+class="math inline">\(D\)</span> rows. FEC packets are generated by
+computing the XOR sum across columns (protecting against consecutive
+packet bursts) and rows (protecting against isolated packet loss).</li>
+<li><strong>Out-of-Band Transmission:</strong> The resulting FEC data is
+encapsulated in separate RTP streams (standardized under SMPTE 2022-1/2
+or RFC 5109) running on different UDP ports or SSRC identifiers. The
+receiver uses the sequence numbers of the base and FEC streams to
+recompute missing MPEG-4 RTP packets on the fly.</li>
+</ul>
+<h3
+id="application-layer-forward-error-correction-al-fec">Application-Layer
+Forward Error Correction (AL-FEC)</h3>
+<p>For mobile and IPTV multicast environments (such as 3GPP MBMS or
+DVB-IPTV), advanced erasure codes are deployed at the transport
+container layer:</p>
+<ul>
+<li><strong>Raptor and LDPC Codes:</strong> Raptor codes (RFC 6330) and
+Low-Density Parity-Check (LDPC) codes operate on larger transport blocks
+containing multiple MPEG-4 encapsulation frames.</li>
+<li><strong>Erasure Recovery:</strong> These codes generate a continuous
+stream of repair symbols from the original transport packets. The
+decoder can reconstruct the original MPEG-4 data blocks as long as it
+receives any subset of source and repair symbols slightly exceeding the
+original data size, offering near-optimal recovery on high-loss channels
+without back-channel retransmissions (ARQ).</li>
+</ul></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

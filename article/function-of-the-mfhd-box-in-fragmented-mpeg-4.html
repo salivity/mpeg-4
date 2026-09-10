@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Function of the MFHD Box in Fragmented MPEG-4 - mpeg-4</title>
+    <meta name="description" content="This article provides an overview of the Movie Fragment Header box (mfhd) within the ISO Base Media File Format (ISOBMFF) and fragmented MPEG-4 (fMP4) streams. It explains the structural role of the mfhd box, its core function of storing sequential fragm">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/function-of-the-mfhd-box-in-fragmented-mpeg-4">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Function of the MFHD Box in Fragmented MPEG-4 - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/function-of-the-mfhd-box-in-fragmented-mpeg-4" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article provides an overview of the Movie Fragment Header box (mfhd) within the ISO Base Media File Format (ISOBMFF) and fragmented MPEG-4 (fMP4) streams. It explains the structural role of the mfhd box, its core function of storing sequential fragm" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="function-of-the-mfhd-box-in-fragmented-mpeg-4">Function of the
+MFHD Box in Fragmented MPEG-4</h1>
+<p>This article provides an overview of the Movie Fragment Header box
+(<code>mfhd</code>) within the ISO Base Media File Format (ISOBMFF) and
+fragmented MPEG-4 (fMP4) streams. It explains the structural role of the
+<code>mfhd</code> box, its core function of storing sequential fragment
+counters, and why it is critical for maintaining stream continuity,
+error detection, and synchronization in modern adaptive streaming
+protocols like MPEG-DASH and HLS.</p>
+<h2 id="what-is-the-mfhd-box">What Is the <code>mfhd</code> Box?</h2>
+<p>In fragmented MPEG-4 files, media is divided into smaller,
+self-contained segments rather than being stored in a single large media
+data block. Each fragment consists of a Movie Fragment box
+(<code>moof</code>) containing metadata, immediately followed by a Media
+Data box (<code>mdat</code>) containing the raw audio or video
+samples.</p>
+<p>The Movie Fragment Header box (<code>mfhd</code>) is a mandatory box
+located directly inside the <code>moof</code> box. Defined by the
+ISO/IEC 14496-12 standard, its primary purpose is to carry specific
+control metadata for the parent fragment.</p>
+<h2 id="primary-function-the-sequence-number">Primary Function: The
+Sequence Number</h2>
+<p>The core payload of the <code>mfhd</code> box is a 32-bit integer
+called the <code>sequence_number</code>.</p>
+<p>When a media stream is fragmented, each successive <code>moof</code>
+box is assigned an incrementally increasing sequence number starting
+from 1. The <code>mfhd</code> box stores this number to serve several
+key operational functions:</p>
+<ul>
+<li><strong>Fragment Ordering:</strong> In network environments where
+delivery is non-guaranteed or multi-threaded, media fragments might
+arrive out of order. Media players read the <code>sequence_number</code>
+in the <code>mfhd</code> box to reassemble fragments in their intended
+chronological order.</li>
+<li><strong>Loss Detection:</strong> If a sequence jump occurs (for
+example, receiving fragment 14 directly after fragment 12), the media
+demuxer immediately knows that fragment 13 was dropped, allowing it to
+request a retransmission or handle the gap gracefully without corrupting
+playback.</li>
+<li><strong>Duplicate Detection:</strong> In adaptive streaming,
+redundant requests or alternate CDN paths can result in duplicate
+segments arriving at the client. The sequence number allows the player
+to identify and discard redundant fragments.</li>
+</ul>
+<h2 id="structure-of-the-mfhd-box">Structure of the <code>mfhd</code>
+Box</h2>
+<p>The <code>mfhd</code> box is a FullBox, meaning it extends the basic
+box structure with version and flag fields:</p>
+<ul>
+<li><strong>Size (32 bits):</strong> Total size of the <code>mfhd</code>
+box.</li>
+<li><strong>Type (32 bits):</strong> The four-character code
+<code>'mfhd'</code> (0x6D666864).</li>
+<li><strong>Version (8 bits):</strong> Set to 0.</li>
+<li><strong>Flags (24 bits):</strong> Reserved for future extensions,
+typically set to 0.</li>
+<li><strong>Sequence Number (32 bits):</strong> The sequential index of
+the movie fragment.</li>
+</ul>
+<h2 id="role-in-adaptive-streaming-protocols">Role in Adaptive Streaming
+Protocols</h2>
+<p>In traditional MP4 files, all structural and timing metadata is
+located in a single initial <code>moov</code> (Movie) box. This design
+is unsuitable for live streaming or low-latency playback because the
+entire file metadata must be generated beforehand.</p>
+<p>Fragmented MP4 solves this by using an initialization segment
+containing a minimal <code>moov</code> box, followed by a continuous
+series of <code>moof</code> and <code>mdat</code> pairs. In protocols
+such as MPEG-DASH, CMAF (Common Media Application Format), and
+fragmented HLS, the <code>mfhd</code> box provides the necessary
+timeline continuity to bind these independent chunks into a seamless,
+uninterrupted media stream.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

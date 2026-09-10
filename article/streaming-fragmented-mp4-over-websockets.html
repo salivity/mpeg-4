@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Streaming Fragmented MP4 Over WebSockets - mpeg-4</title>
+    <meta name="description" content="Streaming fragmented MPEG-4 (fMP4) over WebSocket protocols enables low-latency, bidirectional, and real-time media delivery directly to web browsers without the overhead of traditional chunk-based HTTP protocols. This article covers the core technical r">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/streaming-fragmented-mp4-over-websockets">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Streaming Fragmented MP4 Over WebSockets - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/streaming-fragmented-mp4-over-websockets" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Streaming fragmented MPEG-4 (fMP4) over WebSocket protocols enables low-latency, bidirectional, and real-time media delivery directly to web browsers without the overhead of traditional chunk-based HTTP protocols. This article covers the core technical r" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="streaming-fragmented-mp4-over-websockets">Streaming Fragmented
+MP4 Over WebSockets</h1>
+<p>Streaming fragmented MPEG-4 (fMP4) over WebSocket protocols enables
+low-latency, bidirectional, and real-time media delivery directly to web
+browsers without the overhead of traditional chunk-based HTTP protocols.
+This article covers the core technical requirements needed to implement
+an fMP4 over WebSocket pipeline, spanning media encoding, container
+fragmentation, transport handling, and client-side decoding using modern
+web APIs.</p>
+<h2 id="1-media-encoding-and-container-structure">1. Media Encoding and
+Container Structure</h2>
+<p>To stream MP4 data continuously without needing the entire file
+before playback begins, the media must be formatted into fragmented MP4
+(fMP4) rather than standard progressive MP4:</p>
+<ul>
+<li><strong>Supported Codecs:</strong> The underlying audio and video
+streams must use browser-compatible codecs, commonly H.264 (AVC) or
+H.265 (HEVC) for video, and AAC or Opus for audio.</li>
+<li><strong>Initialization Segment (<code>ftyp</code> and
+<code>moov</code> boxes):</strong> The stream must produce an initial
+setup segment containing the File Type (<code>ftyp</code>) and Movie
+(<code>moov</code>) boxes. This segment carries track definitions and
+codec parameters but no actual media frames.</li>
+<li><strong>Media Segments (<code>moof</code> and <code>mdat</code>
+boxes):</strong> Following the initialization segment, media data is
+split into discrete fragments composed of a Movie Fragment box
+(<code>moof</code>) containing metadata and timeline information, and a
+Media Data box (<code>mdat</code>) containing the encoded samples.</li>
+<li><strong>Keyframe Alignment:</strong> Each fragment should ideally
+begin with an IDR (Instantaneous Decoder Refresh) keyframe to allow
+immediate decoding and clean recovery from dropped packets.</li>
+</ul>
+<h2 id="2-server-side-pipeline-and-transport">2. Server-Side Pipeline
+and Transport</h2>
+<p>The WebSocket server acts as the delivery mechanism for the raw
+binary stream and must manage how fragments are dispatched to
+clients:</p>
+<ul>
+<li><strong>Binary Data Transmission:</strong> WebSockets must be
+configured to send raw binary frames (Opcode <code>0x2</code>) rather
+than base64-encoded text or JSON to prevent transport overhead.</li>
+<li><strong>Initialization Delivery:</strong> The server must cache the
+initialization segment (<code>ftyp</code> + <code>moov</code>) and
+immediately transmit it to any new client that establishes a connection
+before sending subsequent <code>moof</code> + <code>mdat</code>
+pairs.</li>
+<li><strong>Stream Multiplexing:</strong> Audio and video can be
+multiplexed into a single fMP4 stream or delivered across separate
+tracks. If separated, the client must manage synchronized playback
+pipelines.</li>
+<li><strong>Flow Control and Backpressure:</strong> The server must
+handle varying network speeds by monitoring socket buffer health,
+dropping non-keyframe segments if a client falls behind to maintain low
+latency.</li>
+</ul>
+<h2 id="3-client-side-playback-architecture">3. Client-Side Playback
+Architecture</h2>
+<p>Modern browsers cannot natively play a continuous fMP4 stream
+directly from a standard HTML5 <code>&lt;video&gt;</code> source URL
+without bridging APIs:</p>
+<ul>
+<li><strong>WebSocket Configuration:</strong> The client WebSocket
+instance must set its <code>binaryType</code> property to
+<code>'arraybuffer'</code> to receive raw chunks directly.</li>
+<li><strong>Media Source Extensions (MSE):</strong> The client must use
+the <code>MediaSource</code> API to attach a custom media stream to an
+HTML <code>&lt;video&gt;</code> element.</li>
+<li><strong>SourceBuffer Management:</strong>
+<ul>
+<li>A <code>SourceBuffer</code> is created with the exact MIME type and
+codec string matching the stream (for example,
+<code>video/mp4; codecs="avc1.42E01E, mp4a.40.2"</code>).</li>
+<li>The received binary chunks must be queued and passed to the
+<code>SourceBuffer.appendBuffer()</code> method sequentially, ensuring
+no new appends occur while the buffer's <code>updating</code> flag is
+true.</li>
+</ul></li>
+<li><strong>Buffer Eviction:</strong> For long-running live streams, the
+client must periodically remove older media segments from the
+<code>SourceBuffer</code> using <code>remove()</code> to avoid
+exhausting device memory.</li>
+</ul></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

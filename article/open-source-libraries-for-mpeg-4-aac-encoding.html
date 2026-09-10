@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Open Source Libraries for MPEG-4 AAC Encoding - mpeg-4</title>
+    <meta name="description" content="MPEG-4 Advanced Audio Coding (AAC) is the standard for lossy audio compression, widely used in streaming, broadcasting, and digital media. Developers looking to integrate AAC encoding into their applications rely on several key open-source libraries. Thi">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/open-source-libraries-for-mpeg-4-aac-encoding">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Open Source Libraries for MPEG-4 AAC Encoding - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/open-source-libraries-for-mpeg-4-aac-encoding" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="MPEG-4 Advanced Audio Coding (AAC) is the standard for lossy audio compression, widely used in streaming, broadcasting, and digital media. Developers looking to integrate AAC encoding into their applications rely on several key open-source libraries. Thi" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="open-source-libraries-for-mpeg-4-aac-encoding">Open Source
+Libraries for MPEG-4 AAC Encoding</h1>
+<p>MPEG-4 Advanced Audio Coding (AAC) is the standard for lossy audio
+compression, widely used in streaming, broadcasting, and digital media.
+Developers looking to integrate AAC encoding into their applications
+rely on several key open-source libraries. This article examines the
+primary open-source software libraries used for encoding MPEG-4 AAC
+audio, detailing their performance, features, and licensing.</p>
+<h2 id="1-fraunhofer-fdk-aac-libfdk_aac">1. Fraunhofer FDK AAC
+(libfdk_aac)</h2>
+<p>The Fraunhofer FDK AAC library is widely considered the
+highest-quality open-source encoder available for AAC. Developed by
+Fraunhofer IIS, the original co-developers of the AAC format, this
+library was initially released as part of the Android operating
+system.</p>
+<ul>
+<li><strong>Supported Profiles:</strong> It supports a wide range of AAC
+profiles, including AAC Low Complexity (AAC-LC), High-Efficiency AAC
+(HE-AAC v1 and v2), and Low Delay AAC (AAC-LD/ELD).</li>
+<li><strong>Performance:</strong> It delivers exceptional audio quality,
+especially at lower bitrates using HE-AAC.</li>
+<li><strong>Licensing:</strong> While the source code is openly
+available, its license contains specific patent grants that make it
+incompatible with the GNU General Public License (GPL). Consequently,
+while developers can compile it privately, distributing pre-compiled
+binaries combined with GPL software (like FFmpeg) can present licensing
+challenges.</li>
+</ul>
+<h2 id="2-ffmpeg-native-aac-encoder">2. FFmpeg Native AAC Encoder</h2>
+<p>FFmpeg features its own native, built-in AAC encoder, which is
+accessed via the <code>aac</code> codec name in the libavcodec
+library.</p>
+<ul>
+<li><strong>Supported Profiles:</strong> It primarily focuses on AAC-LC,
+but also supports Main and LD profiles.</li>
+<li><strong>Performance:</strong> Historically, the native encoder
+lagged behind proprietary options. However, after major rewrites, the
+native FFmpeg AAC encoder now offers excellent audio quality that rivals
+or exceeds older open-source encoders.</li>
+<li><strong>Licensing:</strong> It is licensed under the LGPL or GPL
+(depending on how FFmpeg is configured), making it the most accessible
+and easily distributable option for developers building open-source
+applications.</li>
+</ul>
+<h2 id="3-faac-freeware-advanced-audio-coder">3. FAAC (Freeware Advanced
+Audio Coder)</h2>
+<p>FAAC is one of the oldest open-source AAC encoders still in use.</p>
+<ul>
+<li><strong>Supported Profiles:</strong> It supports AAC-LC, Main, and
+Long Term Prediction (LTP) profiles.</li>
+<li><strong>Performance:</strong> While functional, FAAC's quality at
+lower bitrates is generally considered inferior to both FDK AAC and the
+modern FFmpeg native encoder. It is primarily used in legacy
+systems.</li>
+<li><strong>Licensing:</strong> FAAC is licensed under the LGPL, though
+some portions of the code have historical licensing complexities
+regarding patents.</li>
+</ul>
+<h2 id="4-exhale">4. Exhale</h2>
+<p>Exhale is a relatively newer open-source AAC encoder specifically
+designed to support the Extended High-Efficiency AAC (xHE-AAC / USAC)
+standard.</p>
+<ul>
+<li><strong>Supported Profiles:</strong> Unified Speech and Audio Coding
+(USAC / MPEG-D Part 3).</li>
+<li><strong>Performance:</strong> Exhale is highly optimized for extreme
+low-bitrate encoding, offering superior quality for speech and mixed
+content at bitrates where traditional AAC-LC would fail.</li>
+<li><strong>Licensing:</strong> It is released under a permissive
+open-source license, though developers must still remain aware of the
+patent portfolio associated with the USAC standard.</li>
+</ul></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

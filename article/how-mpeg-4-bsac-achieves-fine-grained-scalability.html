@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How MPEG-4 BSAC Achieves Fine-Grained Scalability - mpeg-4</title>
+    <meta name="description" content="MPEG-4 Bit Sliced Arithmetic Coding (BSAC) is an advanced audio coding tool designed to deliver high-quality audio across unstable and variable-bandwidth networks. By replacing the traditional Huffman noiseless coding used in Advanced Audio Coding (AAC)">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/how-mpeg-4-bsac-achieves-fine-grained-scalability">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How MPEG-4 BSAC Achieves Fine-Grained Scalability - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/how-mpeg-4-bsac-achieves-fine-grained-scalability" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="MPEG-4 Bit Sliced Arithmetic Coding (BSAC) is an advanced audio coding tool designed to deliver high-quality audio across unstable and variable-bandwidth networks. By replacing the traditional Huffman noiseless coding used in Advanced Audio Coding (AAC)" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="how-mpeg-4-bsac-achieves-fine-grained-scalability">How MPEG-4
+BSAC Achieves Fine-Grained Scalability</h1>
+<p>MPEG-4 Bit Sliced Arithmetic Coding (BSAC) is an advanced audio
+coding tool designed to deliver high-quality audio across unstable and
+variable-bandwidth networks. By replacing the traditional Huffman
+noiseless coding used in Advanced Audio Coding (AAC) with a combination
+of bit-slicing and context-based arithmetic coding, BSAC allows audio
+streams to be scaled in fine increments—typically in steps as small as 1
+kbps per channel. This article explains the core mechanics of BSAC,
+detailing how bit-slicing, layered encoding, and arithmetic compression
+work together to provide fine-grained scalability.</p>
+<h2 id="the-limitation-of-traditional-scalable-audio">The Limitation of
+Traditional Scalable Audio</h2>
+<p>Traditional scalable audio formats, such as basic scalable MPEG-4
+AAC, use coarse-grain scalability (CGS). In CGS, audio is structured
+into a base layer and a few large enhancement layers. If the available
+network bandwidth drops below the requirement for an enhancement layer,
+that entire layer must be discarded, resulting in noticeable drops in
+quality. BSAC solves this problem by enabling Fine-Grain Scalability
+(FGS), allowing the transmission rate to be tailored precisely to the
+available channel capacity.</p>
+<h2 id="the-bit-slicing-mechanism">The Bit-Slicing Mechanism</h2>
+<p>The foundation of BSAC's fine scalability lies in how it processes
+quantized spectral data:</p>
+<ol type="1">
+<li><strong>Spectral Decomposition:</strong> Like AAC, BSAC processes
+audio in the frequency domain using the Modified Discrete Cosine
+Transform (MDCT) and applies psychoacoustic modeling to quantize
+spectral coefficients.</li>
+<li><strong>Bit-Plane Conversion:</strong> Instead of encoding the
+entire integer value of each quantized coefficient at once, BSAC groups
+the coefficients into frequency bands and slices their binary
+representations horizontally into bit-planes.</li>
+<li><strong>Layer Ordering (MSB to LSB):</strong> The data is organized
+from the Most Significant Bit (MSB) down to the Least Significant Bit
+(LSB). The base layer contains the highest-order bits, which carry the
+most critical structural information of the sound. Successive layers
+contain lower-order bits that progressively refine the audio
+resolution.</li>
+</ol>
+<h2 id="context-based-arithmetic-coding">Context-Based Arithmetic
+Coding</h2>
+<p>Once the spectral data is sliced into bit-planes, it is compressed
+using arithmetic coding rather than static Huffman tables:</p>
+<ul>
+<li><strong>Statistical Modeling:</strong> Arithmetic coding evaluates
+the probability of each bit based on the values of neighboring frequency
+bins and higher-level bit-planes that have already been
+transmitted.</li>
+<li><strong>Higher Compression Efficiency:</strong> Because arithmetic
+coding represents a sequence of fractional probabilities as a single
+number, it avoids the integer-bit constraints of Huffman coding,
+achieving superior compression efficiency for thin slices of data.</li>
+<li><strong>Segmented Bitstreams:</strong> The encoded data is packaged
+into small, uniform segments. This structure allows the encoder or a
+network streaming server to truncate the bitstream at almost any point
+without corrupting the syntax required by the decoder.</li>
+</ul>
+<h2 id="how-fine-grained-bitrate-scaling-works-in-practice">How
+Fine-Grained Bitrate Scaling Works in Practice</h2>
+<p>When an audio file or live stream is encoded with BSAC, the bitstream
+is arranged in hierarchical layers starting with a minimal base layer
+(often around 16 kbps). Additional bit slices are appended as
+enhancement layers:</p>
+<ul>
+<li><strong>Dynamic Truncation:</strong> If network congestion occurs, a
+streaming server or intermediate network node does not need to re-encode
+the audio. It simply truncates the bitstream from the end of the packet,
+shedding the least significant bit slices.</li>
+<li><strong>Graceful Degradation:</strong> The decoder reconstructs the
+audio using whatever bit slices it successfully receives. If it only
+receives the base layer, the audio remains intelligible with reduced
+fidelity. As more slices arrive, the signal-to-noise ratio improves
+proportionally.</li>
+<li><strong>1 kbps Step Resolution:</strong> Because the bit slices are
+finely segmented, the bitrate can be adjusted dynamically in 1 kbps
+increments per audio channel, matching fluctuating channel capacities in
+real-time.</li>
+</ul>
+<h2 id="applications-and-benefits">Applications and Benefits</h2>
+<p>BSAC's architecture makes it particularly effective for broadcasting
+systems and mobile environments:</p>
+<ul>
+<li><strong>Digital Multimedia Broadcasting (DMB):</strong> BSAC is
+widely used in standards like T-DMB, where mobile receivers experience
+fluctuating signal strengths.</li>
+<li><strong>Zero Transcoding Overhead:</strong> Servers can serve
+multiple users with varying connection speeds from a single high-bitrate
+BSAC master file, simply by trimming the stream to match each client's
+bandwidth.</li>
+<li><strong>Error Robustness:</strong> The structured layer hierarchy
+enables prioritized packet transmission, ensuring that the base layer
+receives the highest error-protection priority during transmission.</li>
+</ul></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

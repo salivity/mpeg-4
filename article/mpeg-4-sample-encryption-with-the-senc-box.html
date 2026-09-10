@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPEG-4 Sample Encryption with the senc Box - mpeg-4</title>
+    <meta name="description" content="This article provides an overview of how the MPEG-4 ISO Base Media File Format (ISOBMFF) handles sample-level encryption through the Sample Encryption Box (senc). It covers the role of the senc box within the Common Encryption (CENC) standard, its intern">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/mpeg-4-sample-encryption-with-the-senc-box">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MPEG-4 Sample Encryption with the senc Box - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/mpeg-4-sample-encryption-with-the-senc-box" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article provides an overview of how the MPEG-4 ISO Base Media File Format (ISOBMFF) handles sample-level encryption through the Sample Encryption Box (senc). It covers the role of the senc box within the Common Encryption (CENC) standard, its intern" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="mpeg-4-sample-encryption-with-the-senc-box">MPEG-4 Sample
+Encryption with the senc Box</h1>
+<p>This article provides an overview of how the MPEG-4 ISO Base Media
+File Format (ISOBMFF) handles sample-level encryption through the Sample
+Encryption Box (<code>senc</code>). It covers the role of the
+<code>senc</code> box within the Common Encryption (CENC) standard, its
+internal binary structure, the handling of Subsample Encryption, and how
+it coordinates with related boxes to enable secure, byte-accurate media
+decryption.</p>
+<h2 id="the-role-of-the-senc-box-in-common-encryption">The Role of the
+<code>senc</code> Box in Common Encryption</h2>
+<p>In the MPEG-4 Common Encryption standard (ISO/IEC 23001-7),
+encryption is applied at the sample (individual frame or access unit)
+level rather than encrypting the entire container file. This
+architecture allows container metadata, track headers, and timing
+information to remain in the clear for smooth demuxing and
+streaming.</p>
+<p>The <code>senc</code> box is the dedicated container for per-sample
+encryption parameters. While static parameters—such as the Key
+Identifier (KID), encryption scheme, and default Initialization Vector
+(IV) size—are defined at the track level in the Track Encryption Box
+(<code>tenc</code>), dynamic parameters that change per sample are
+stored inside the <code>senc</code> box.</p>
+<h2 id="structure-of-the-senc-box">Structure of the <code>senc</code>
+Box</h2>
+<p>The <code>senc</code> box is defined as a <code>FullBox</code>,
+meaning it includes standard 4-byte version and flags fields followed by
+the sample encryption details:</p>
+<ol type="1">
+<li><strong>Box Header</strong>: Contains standard size and
+four-character code <code>'senc'</code>.</li>
+<li><strong>Version and Flags</strong>: A 1-byte version and a 3-byte
+flags field. The primary flag is <code>0x000002</code>
+(SubsampleEncryption), which indicates whether the box contains
+subsample-level mapping.</li>
+<li><strong>Sample Count</strong>: A 32-bit integer indicating the
+number of media samples described within the box.</li>
+<li><strong>Sample Entries</strong>: An array of per-sample structures
+containing:
+<ul>
+<li><strong>Initialization Vector (IV)</strong>: A byte array (typically
+8 or 16 bytes, as dictated by the track header) unique to the specific
+sample.</li>
+<li><strong>Subsample Mapping (Optional)</strong>: Included only if the
+<code>0x000002</code> flag is set.</li>
+</ul></li>
+</ol>
+<h2 id="handling-subsample-encryption">Handling Subsample
+Encryption</h2>
+<p>Most modern streaming codecs (such as H.264/AVC and H.265/HEVC)
+require NAL unit headers and slice headers to remain unencrypted so that
+decoders and parsers can read structural slice data without decrypting
+the payload. To achieve this, the <code>senc</code> box supports
+<strong>Subsample Encryption</strong>.</p>
+<p>When subsample encryption is active, each sample entry includes:</p>
+<ul>
+<li><strong><code>subsample_count</code></strong>: A 16-bit integer
+denoting the number of subsample ranges in the sample.</li>
+<li><strong>Subsample Map Array</strong>: A sequence of pairs:
+<ul>
+<li><strong><code>BytesOfClearData</code></strong> (16-bit integer): The
+number of unencrypted bytes at the start of the subsample.</li>
+<li><strong><code>BytesOfProtectedData</code></strong> (32-bit integer):
+The number of encrypted bytes that immediately follow the clear
+bytes.</li>
+</ul></li>
+</ul>
+<p>A single video frame can contain multiple subsamples. A decryptor
+iterates through each pair, skipping the clear bytes and decrypting only
+the protected bytes using the designated IV and cipher mode.</p>
+<h2 id="integration-with-saiz-and-saio-boxes">Integration with
+<code>saiz</code> and <code>saio</code> Boxes</h2>
+<p>In fragmented MP4 (fMP4) files commonly used in adaptive streaming
+(HLS and DASH), the encryption data inside the <code>senc</code> box is
+often indexed using the Sample Auxiliary Information Sizes
+(<code>saiz</code>) and Sample Auxiliary Information Offsets
+(<code>saio</code>) boxes:</p>
+<ul>
+<li><strong><code>saiz</code></strong>: Specifies the exact size (in
+bytes) of the encryption metadata for each sample.</li>
+<li><strong><code>saio</code></strong>: Provides byte offsets pointing
+directly to the location of the <code>senc</code> data within the
+<code>moov</code> or <code>moof</code> (Movie Fragment) boxes.</li>
+</ul>
+<p>This indexing structure allows demuxers and media engines to locate
+and read the required IV and subsample map rapidly without parsing the
+entire container payload sequentially.</p>
+<h2 id="the-decryption-process-flow">The Decryption Process Flow</h2>
+<p>When an MPEG-4 player encounters an encrypted track using
+<code>senc</code>:</p>
+<ol type="1">
+<li><strong>Parameter Initialization</strong>: The player extracts the
+encryption scheme (e.g., <code>cenc</code> for AES-CTR or
+<code>cbcs</code> for AES-CBC with pattern protection) and default Key
+ID from the <code>tenc</code> box.</li>
+<li><strong>Key Retrieval</strong>: The DRM system retrieves the
+decryption key matching the Key ID.</li>
+<li><strong>Sample Parsing</strong>: For each sample, the demuxer reads
+the IV from the <code>senc</code> box (or via
+<code>saio</code>/<code>saiz</code> offsets).</li>
+<li><strong>Range Application</strong>: If subsamples are present, the
+decryptor processes the clear/protected byte map, applying the AES
+decryption key and sample IV exclusively to the protected byte
+ranges.</li>
+<li><strong>Decoder Hand-off</strong>: The assembled, unencrypted sample
+data is passed downstream to the media decoder.</li>
+</ol></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

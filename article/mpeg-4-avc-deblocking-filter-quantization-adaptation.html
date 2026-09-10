@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPEG-4 AVC Deblocking Filter Quantization Adaptation - mpeg-4</title>
+    <meta name="description" content="The MPEG-4 AVC (H.264) video coding standard utilizes an adaptive in-loop deblocking filter designed to eliminate block boundary artifacts while preserving authentic image details. The filter dynamically adjusts its smoothing intensity primarily based on">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/mpeg-4-avc-deblocking-filter-quantization-adaptation">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MPEG-4 AVC Deblocking Filter Quantization Adaptation - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/mpeg-4-avc-deblocking-filter-quantization-adaptation" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The MPEG-4 AVC (H.264) video coding standard utilizes an adaptive in-loop deblocking filter designed to eliminate block boundary artifacts while preserving authentic image details. The filter dynamically adjusts its smoothing intensity primarily based on" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="mpeg-4-avc-deblocking-filter-quantization-adaptation">MPEG-4 AVC
+Deblocking Filter Quantization Adaptation</h1>
+<p>The MPEG-4 AVC (H.264) video coding standard utilizes an adaptive
+in-loop deblocking filter designed to eliminate block boundary artifacts
+while preserving authentic image details. The filter dynamically adjusts
+its smoothing intensity primarily based on the Quantization Parameter
+(QP) of the adjacent blocks, combined with the structural Boundary
+Strength (<span class="math inline">\(bS\)</span>). By scaling internal
+thresholds and clipping limits according to quantization levels, the
+codec applies aggressive smoothing to heavily quantized blocks and
+minimal to no filtering to finely detailed, low-quantization areas.</p>
+<h3 id="the-role-of-the-quantization-parameter-qp">The Role of the
+Quantization Parameter (QP)</h3>
+<p>In transform-based video coding, higher QP values result in coarser
+quantization of transform coefficients, which introduces more pronounced
+blocking artifacts at the edges of <span
+class="math inline">\(4\times4\)</span> and <span
+class="math inline">\(16\times16\)</span> blocks. Conversely, lower QP
+values preserve finer details, meaning visible transitions across block
+edges are more likely to represent true image content rather than
+compression distortion.</p>
+<p>To determine the appropriate filtering behavior for an edge between
+two adjacent blocks (<span class="math inline">\(P\)</span> and <span
+class="math inline">\(Q\)</span>), the deblocking filter first computes
+an average quantization parameter:</p>
+<p><span class="math display">\[QP_{avg} = \frac{QP_P + QP_Q +
+1}{2}\]</span></p>
+<h3
+id="calculation-of-threshold-indices-index_a-and-index_b">Calculation of
+Threshold Indices (<span class="math inline">\(Index_A\)</span> and
+<span class="math inline">\(Index_B\)</span>)</h3>
+<p>The filter derives two index values, <span
+class="math inline">\(Index_A\)</span> and <span
+class="math inline">\(Index_B\)</span>, which are used to look up
+adaptation parameters from predefined tables. These indices are
+calculated by combining <span class="math inline">\(QP_{avg}\)</span>
+with slice-level offset parameters (<span
+class="math inline">\(\alpha_{offset}\)</span> and <span
+class="math inline">\(\beta_{offset}\)</span>) specified in the slice
+header:</p>
+<ul>
+<li><span class="math inline">\(Index_A = \text{Clip3}(0, 51, QP_{avg} +
+\text{Offset}_A)\)</span></li>
+<li><span class="math inline">\(Index_B = \text{Clip3}(0, 51, QP_{avg} +
+\text{Offset}_B)\)</span></li>
+</ul>
+<p>The slice offsets give the encoder control over the default filtering
+curve, allowing customized tuning for specific content types (e.g.,
+preserving film grain or smoothing flat regions).</p>
+<h3 id="adaptation-via-alpha-and-beta-thresholds">Adaptation via <span
+class="math inline">\(\alpha\)</span> and <span
+class="math inline">\(\beta\)</span> Thresholds</h3>
+<p>Using <span class="math inline">\(Index_A\)</span> and <span
+class="math inline">\(Index_B\)</span>, the filter queries lookup tables
+to retrieve the threshold values <span
+class="math inline">\(\alpha(Index_A)\)</span> and <span
+class="math inline">\(\beta(Index_B)\)</span>. These thresholds govern
+the edge-activity conditions required to activate filtering.</p>
+<p>For samples <span class="math inline">\(p_0, p_1\)</span> in block
+<span class="math inline">\(P\)</span> and <span
+class="math inline">\(q_0, q_1\)</span> in block <span
+class="math inline">\(Q\)</span> situated across a boundary, filtering
+only occurs if all of the following conditions are satisfied:</p>
+<ol type="1">
+<li><span class="math inline">\(|p_0 - q_0| &lt;
+\alpha(Index_A)\)</span></li>
+<li><span class="math inline">\(|p_1 - p_0| &lt;
+\beta(Index_B)\)</span></li>
+<li><span class="math inline">\(|q_1 - q_0| &lt;
+\beta(Index_B)\)</span></li>
+</ol>
+<p>When the QP is low, <span class="math inline">\(\alpha\)</span> and
+<span class="math inline">\(\beta\)</span> are small, ensuring that even
+minor pixel variations are treated as genuine edges and left unfiltered.
+As QP increases, <span class="math inline">\(\alpha\)</span> and <span
+class="math inline">\(\beta\)</span> increase exponentially, enabling
+the filter to accept larger pixel differences across the boundary as
+artifacts and apply smoothing.</p>
+<h3 id="clipping-bounds-and-smoothing-control-c_0-and-t_c">Clipping
+Bounds and Smoothing Control (<span class="math inline">\(c_0\)</span>
+and <span class="math inline">\(t_C\)</span>)</h3>
+<p>To prevent excessive blurring and eliminate ringing artifacts, the
+filter limits the maximum pixel value modification using a clipping
+parameter, <span class="math inline">\(c_0\)</span> (or <span
+class="math inline">\(t_C\)</span>).</p>
+<p>The value of <span class="math inline">\(c_0\)</span> is derived from
+a lookup table indexed by <span class="math inline">\(Index_A\)</span>
+and the Boundary Strength (<span class="math inline">\(bS\)</span>). At
+higher QP values, the clipping range expands, allowing larger
+adjustments to pixel values to flatten steep artificial edges. At lower
+QP values, <span class="math inline">\(c_0\)</span> remains very small
+or zero, restricting changes to subtle adjustments that maintain sharp,
+natural textures.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

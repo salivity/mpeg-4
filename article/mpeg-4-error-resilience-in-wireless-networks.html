@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPEG-4 Error Resilience in Wireless Networks - mpeg-4</title>
+    <meta name="description" content="Delivering high-quality video over wireless networks is challenging due to signal interference, packet loss, and fluctuating bandwidth. The MPEG-4 standard addresses these issues by incorporating robust error-resilience and concealment tools designed spe">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/mpeg-4-error-resilience-in-wireless-networks">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MPEG-4 Error Resilience in Wireless Networks - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/mpeg-4-error-resilience-in-wireless-networks" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Delivering high-quality video over wireless networks is challenging due to signal interference, packet loss, and fluctuating bandwidth. The MPEG-4 standard addresses these issues by incorporating robust error-resilience and concealment tools designed spe" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="mpeg-4-error-resilience-in-wireless-networks">MPEG-4 Error
+Resilience in Wireless Networks</h1>
+<p>Delivering high-quality video over wireless networks is challenging
+due to signal interference, packet loss, and fluctuating bandwidth. The
+MPEG-4 standard addresses these issues by incorporating robust
+error-resilience and concealment tools designed specifically for
+error-prone environments. This article explores the key mechanisms
+MPEG-4 uses to maintain video quality and prevent stream corruption
+under unstable mobile network conditions.</p>
+<h2 id="video-packet-resynchronization">Video Packet
+Resynchronization</h2>
+<p>In standard video compression, an error in the bitstream can cause
+the decoder to lose synchronization, rendering the rest of the video
+frame unreadable. MPEG-4 mitigates this by dividing the coded bitstream
+into "Video Packets" of roughly equal length.</p>
+<p>Each packet begins with a unique resynchronization marker. If an
+error occurs within a packet, the decoder discards only the corrupted
+packet and searches for the next resynchronization marker. This limits
+the propagation of errors to a localized area rather than ruining the
+entire video frame.</p>
+<h2 id="data-partitioning">Data Partitioning</h2>
+<p>Within a standard video packet, motion vectors (which describe
+movement) and texture data (which describe color and detail) are mixed
+together. If an error occurs early in the packet, the motion data is
+lost, which severely degrades the image.</p>
+<p>MPEG-4 uses data partitioning to separate motion vectors from texture
+data within the packet, placing a distinct "motion marker" between them.
+Because motion vectors are crucial for rendering a recognizable image,
+placing them first ensures they can still be decoded and utilized even
+if the subsequent texture data is lost or corrupted.</p>
+<h2 id="reversible-variable-length-codes-rvlc">Reversible Variable
+Length Codes (RVLC)</h2>
+<p>Traditionally, when a decoder encounters an error in a
+variable-length coded bitstream, it must stop decoding because it cannot
+determine where the next codeword begins.</p>
+<p>MPEG-4 introduces Reversible Variable Length Codes (RVLC). These
+codes are designed to be decoded both forward and backward. If an error
+is detected while decoding forward, the decoder jumps to the next
+resynchronization marker and decodes the packet backward. This technique
+allows the decoder to recover and salvage significant portions of data
+that would otherwise be discarded.</p>
+<h2 id="header-extension-codes-hec">Header Extension Codes (HEC)</h2>
+<p>Video packet headers contain critical configuration information, such
+as spatial dimensions and coordinate points. If a header is lost or
+corrupted, the decoder cannot interpret any of the subsequent data in
+that frame.</p>
+<p>To prevent this, MPEG-4 allows for Header Extension Codes (HEC). This
+feature replicates important header information in subsequent video
+packets. If the primary header is lost due to a channel burst error, the
+decoder can retrieve the duplicate configuration data from a neighboring
+packet and continue decoding.</p>
+<h2 id="error-concealment-and-intra-refresh">Error Concealment and
+Intra-Refresh</h2>
+<p>When data is permanently lost despite transmission safeguards, MPEG-4
+decoders employ error concealment techniques to mask the missing
+information.</p>
+<ul>
+<li><strong>Spatial Concealment:</strong> The decoder estimates missing
+pixel blocks by interpolating data from surrounding, intact blocks
+within the same frame.</li>
+<li><strong>Temporal Concealment:</strong> The decoder uses motion
+vectors from previous frames to estimate what the missing block should
+look like in the current frame.</li>
+<li><strong>Intra-Refresh:</strong> To prevent errors from propagating
+across multiple frames (due to inter-frame compression), MPEG-4
+periodically updates random blocks as "Intra-blocks" (independent image
+data). This naturally cleanses the video stream of lingering errors over
+time.</li>
+</ul></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

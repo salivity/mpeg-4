@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How MPEG-4 Compresses 3D Models Using 3DMC - mpeg-4</title>
+    <meta name="description" content="This article provides an overview of how the MPEG-4 3D Mesh Coding (3DMC) standard compresses static 3D polygonal models. MPEG-4 3DMC drastically reduces the storage size and transmission bandwidth of 3D assets by decomposing a polygon mesh into its core">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/how-mpeg-4-compresses-3d-models-using-3dmc">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How MPEG-4 Compresses 3D Models Using 3DMC - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/how-mpeg-4-compresses-3d-models-using-3dmc" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article provides an overview of how the MPEG-4 3D Mesh Coding (3DMC) standard compresses static 3D polygonal models. MPEG-4 3DMC drastically reduces the storage size and transmission bandwidth of 3D assets by decomposing a polygon mesh into its core" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="how-mpeg-4-compresses-3d-models-using-3dmc">How MPEG-4
+Compresses 3D Models Using 3DMC</h1>
+<p>This article provides an overview of how the MPEG-4 3D Mesh Coding
+(3DMC) standard compresses static 3D polygonal models. MPEG-4 3DMC
+drastically reduces the storage size and transmission bandwidth of 3D
+assets by decomposing a polygon mesh into its core
+components—connectivity, geometry, and photometric attributes—and
+applying specialized compression techniques to each. Through techniques
+such as Topological Surgery, differential predictive coding,
+quantization, and entropy coding, 3DMC delivers high compression ratios
+while preserving visual fidelity.</p>
+<h2 id="the-structure-of-a-3d-mesh">The Structure of a 3D Mesh</h2>
+<p>A standard 3D polygonal mesh consists of three primary data
+categories:</p>
+<ol type="1">
+<li><strong>Connectivity (Topology):</strong> Describes how vertices
+connect to form edges, faces, and polygons.</li>
+<li><strong>Geometry:</strong> The 3D Cartesian coordinates <span
+class="math inline">\((x, y, z)\)</span> defining the exact spatial
+position of each vertex.</li>
+<li><strong>Attributes (Properties):</strong> Surface data such as
+normal vectors, texture coordinates <span class="math inline">\((u,
+v)\)</span>, and color values associated with vertices or faces.</li>
+</ol>
+<p>MPEG-4 3DMC processes each of these components independently to
+maximize compression efficiency.</p>
+<h2 id="1-connectivity-compression-topological-surgery">1. Connectivity
+Compression: Topological Surgery</h2>
+<p>Connectivity data typically accounts for a significant portion of
+uncompressed mesh files. MPEG-4 3DMC uses an algorithm known as
+<strong>Topological Surgery</strong> to compress this structure:</p>
+<ul>
+<li><strong>Cutting the Mesh:</strong> The algorithm makes a sequence of
+cuts along the edges of the 3D surface to convert an arbitrary manifold
+mesh into a simple, planar polygon without internal holes (a topological
+disk).</li>
+<li><strong>Vertex Graph and Triangle Tree:</strong> The cut path forms
+a spanning tree across the mesh vertices (the Vertex Graph), and the
+remaining connected faces form a spanning tree across the triangles (the
+Triangle Tree).</li>
+<li><strong>Run-Length Encoding:</strong> Both the Vertex Graph and the
+Triangle Tree are represented using simple planar graph properties and
+encoded as compact sequences of branch runs and leaf markers. This
+reduces the connectivity data to typically less than 2 bits per
+triangle.</li>
+</ul>
+<h2 id="2-geometry-compression">2. Geometry Compression</h2>
+<p>Geometry data represents the physical coordinates of the model's
+vertices. 3DMC compresses geometry using a three-step pipeline:</p>
+<h3 id="quantization">Quantization</h3>
+<p>Vertex coordinates are converted from 32-bit floating-point values
+into fixed-point integers using a uniform bounding-box quantizer. Users
+can define the precision (e.g., 8 to 16 bits per coordinate), directly
+controlling the trade-off between file size and spatial accuracy.</p>
+<h3 id="predictive-coding-the-parallelogram-rule">Predictive Coding (The
+Parallelogram Rule)</h3>
+<p>Because adjacent vertices in a 3D mesh tend to be spatially close,
+3DMC avoids storing raw coordinate values. Instead, it predicts the
+position of a new vertex based on already decoded adjacent triangles
+using the <strong>parallelogram rule</strong>:</p>
+<ul>
+<li>If two adjacent triangles share an edge, the fourth vertex is
+predicted to complete a flat parallelogram with the first triangle.</li>
+<li>The encoder computes a prediction error (residual) representing the
+difference between the actual quantized position and the predicted
+position.</li>
+</ul>
+<h3 id="residual-quantization">Residual Quantization</h3>
+<p>The resulting prediction residuals are tightly clustered around zero,
+drastically reducing the dynamic range of the coordinate data.</p>
+<h2 id="3-attribute-compression">3. Attribute Compression</h2>
+<p>Surface attributes like normal vectors, vertex colors, and texture
+mapping coordinates are compressed using methods analogous to geometry
+compression:</p>
+<ul>
+<li><strong>Normals:</strong> Transformed to spherical coordinates or
+local tangent frames, quantized, and predicted based on face
+orientations.</li>
+<li><strong>Texture Coordinates:</strong> Quantized and predicted across
+adjacent faces using 2D affine transformations.</li>
+<li><strong>Colors:</strong> Quantized in standard color spaces (such as
+RGB or YUV) and predicted across adjacent vertices.</li>
+</ul>
+<h2 id="4-entropy-coding">4. Entropy Coding</h2>
+<p>The final stage of the 3DMC pipeline is lossless entropy coding. The
+sequences of connectivity commands, geometry prediction residuals, and
+attribute residuals are encoded using adaptive arithmetic coding.
+Because the prediction and topological steps concentrate data into
+predictable, low-entropy distributions, the arithmetic coder achieves
+near-optimal bit-rate efficiency.</p>
+<h2 id="key-capabilities-of-3dmc">Key Capabilities of 3DMC</h2>
+<ul>
+<li><strong>High Compression Ratios:</strong> Achieves file size
+reductions between 90% and 98% compared to uncompressed formats like OBJ
+or raw VRML.</li>
+<li><strong>Hierarchical and Progressive Transmission:</strong> Supports
+scalable bitstreams where a low-resolution base mesh loads first,
+followed by successive refinement layers as bandwidth permits.</li>
+<li><strong>Error Resilience:</strong> Includes segmentation tools to
+packetize data for streaming over lossy networks without total model
+corruption.</li>
+</ul></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

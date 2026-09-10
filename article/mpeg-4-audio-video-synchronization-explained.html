@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPEG-4 Audio Video Synchronization Explained - mpeg-4</title>
+    <meta name="description" content="This article explains how the MPEG-4 standard synchronizes audio and video streams to ensure perfect playback, commonly known as lip-sync. It covers the core mechanisms involved, including Packetized Elementary Streams (PES), Presentation Time Stamps (PT">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/mpeg-4-audio-video-synchronization-explained">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MPEG-4 Audio Video Synchronization Explained - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/mpeg-4-audio-video-synchronization-explained" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explains how the MPEG-4 standard synchronizes audio and video streams to ensure perfect playback, commonly known as lip-sync. It covers the core mechanisms involved, including Packetized Elementary Streams (PES), Presentation Time Stamps (PT" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="mpeg-4-audio-video-synchronization-explained">MPEG-4 Audio Video
+Synchronization Explained</h1>
+<p>This article explains how the MPEG-4 standard synchronizes audio and
+video streams to ensure perfect playback, commonly known as lip-sync. It
+covers the core mechanisms involved, including Packetized Elementary
+Streams (PES), Presentation Time Stamps (PTS), Decoding Time Stamps
+(DTS), and the system clock references that coordinate these media
+elements.</p>
+<h2 id="the-role-of-packetized-elementary-streams-pes">The Role of
+Packetized Elementary Streams (PES)</h2>
+<p>In the MPEG-4 framework, raw audio and video data are first
+compressed into separate, individual streams called Elementary Streams
+(ES). To facilitate transmission and synchronization, these continuous
+streams are cut into packets, creating Packetized Elementary Streams
+(PES).</p>
+<p>Each PES packet header contains vital timing information that the
+decoder uses to reconstruct and align the media. Without these packet
+headers, the playback device would have no way of knowing which audio
+segment corresponds to which video frame.</p>
+<h2 id="time-stamps-pts-and-dts">Time Stamps: PTS and DTS</h2>
+<p>The actual synchronization relies on two primary types of timestamps
+embedded within the PES packet headers:</p>
+<ul>
+<li><strong>Decoding Time Stamp (DTS):</strong> This timestamp tells the
+decoder exactly when to decode a specific frame or audio packet. DTS is
+critical for video formats that use bidirectional prediction (B-frames),
+where frames must be decoded in a different order than they are
+displayed.</li>
+<li><strong>Presentation Time Stamp (PTS):</strong> This timestamp
+instructs the player exactly when to display a video frame or play an
+audio sample to the user. The player aligns the audio and video by
+matching their respective PTS values to a shared timeline.</li>
+</ul>
+<h2 id="the-system-clock-and-object-clock-reference">The System Clock
+and Object Clock Reference</h2>
+<p>To make sense of PTS and DTS, both the encoder and the decoder must
+refer to a common clock. In MPEG-4 Systems, this is managed through
+clock references:</p>
+<ul>
+<li><strong>System Time Clock (STC):</strong> The master clock at the
+decoder that ticks at a standard frequency (typically 27 MHz or 90
+kHz).</li>
+<li><strong>Object Clock Reference (OCR) / System Clock Reference
+(SCR):</strong> These timing signals are periodically inserted into the
+stream. They allow the receiver's internal clock to synchronize with the
+encoder's original clock, correcting any drift caused by hardware
+variations.</li>
+</ul>
+<h2 id="how-the-player-achieves-synchronization">How the Player Achieves
+Synchronization</h2>
+<p>During playback, the media player continuously compares the PTS of
+the incoming audio and video packets against its internal System Time
+Clock (STC).</p>
+<ol type="1">
+<li><strong>Audio-to-Video Alignment:</strong> Because the human ear is
+highly sensitive to audio gaps or pitch shifts, players typically use
+the audio stream as the "master" clock.</li>
+<li><strong>Video Adjustments:</strong> If the video stream drifts ahead
+of the audio (the STC is behind the video PTS), the player will delay
+the display of video frames. If the video falls behind the audio (the
+STC is ahead of the video PTS), the player will skip or drop video
+frames to catch up.</li>
+</ol>
+<p>By constantly monitoring these timestamps against the shared system
+clock, MPEG-4 decoders maintain tight synchronization, preventing
+noticeable lag between what is seen and what is heard.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

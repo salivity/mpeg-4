@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How MPEG-4 SVC Adapts to Varying Network Conditions - mpeg-4</title>
+    <meta name="description" content="MPEG-4 Scalable Video Coding (SVC) is an extension of the H.264/MPEG-4 AVC standard designed to optimize video transmission across highly unpredictable networks. This article explains how SVC functions under varying network conditions, detailing its mult">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/how-mpeg-4-svc-adapts-to-varying-network-conditions">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How MPEG-4 SVC Adapts to Varying Network Conditions - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/how-mpeg-4-svc-adapts-to-varying-network-conditions" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="MPEG-4 Scalable Video Coding (SVC) is an extension of the H.264/MPEG-4 AVC standard designed to optimize video transmission across highly unpredictable networks. This article explains how SVC functions under varying network conditions, detailing its mult" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="how-mpeg-4-svc-adapts-to-varying-network-conditions">How MPEG-4
+SVC Adapts to Varying Network Conditions</h1>
+<p>MPEG-4 Scalable Video Coding (SVC) is an extension of the
+H.264/MPEG-4 AVC standard designed to optimize video transmission across
+highly unpredictable networks. This article explains how SVC functions
+under varying network conditions, detailing its multi-layered encoding
+structure and its ability to dynamically adapt video resolution, frame
+rate, and quality to prevent buffering and packet loss.</p>
+<p>At the core of MPEG-4 SVC is a layered coding structure consisting of
+a single "base layer" and multiple "enhancement layers." The base layer
+contains the minimum amount of data required to decode a basic,
+low-quality version of the video stream. The enhancement layers contain
+additional data that, when combined with the base layer, reconstruct
+higher resolutions, frame rates, or visual fidelity.</p>
+<p>When network conditions fluctuate, SVC manages the stream through
+three primary scalability dimensions:</p>
+<h3 id="temporal-scalability">Temporal Scalability</h3>
+<p>Temporal scalability allows the video stream to adapt its frame rate
+based on available network bandwidth. If a network experiences sudden
+congestion, the streaming server or routing nodes can drop temporal
+enhancement layers. This instantly reduces the frame rate (for example,
+from 60 frames per second down to 30 or 15 fps) without interrupting the
+stream or requiring a new connection.</p>
+<h3 id="spatial-scalability">Spatial Scalability</h3>
+<p>Spatial scalability enables the adaptation of video resolution. A
+single SVC stream can contain a 360p base layer, a 720p enhancement
+layer, and a 1080p enhancement layer. If the network bandwidth degrades,
+the transmission drops the higher-resolution enhancement layers,
+delivering a lower-resolution stream that fits the current network
+capacity without causing the video to freeze or buffer.</p>
+<h3 id="quality-snr-scalability">Quality (SNR) Scalability</h3>
+<p>Quality, or Signal-to-Noise Ratio (SNR) scalability, adjusts the
+visual fidelity of the video while maintaining the same resolution and
+frame rate. When network congestion occurs, the stream drops quality
+enhancement layers, reducing the overall bitrate and slightly degrading
+the sharpness of the image while keeping the video playing smoothly.</p>
+<h3 id="error-resilience-and-packet-prioritization">Error Resilience and
+Packet Prioritization</h3>
+<p>In networks prone to packet loss, SVC utilizes prioritization. Base
+layer packets are marked with high delivery priority, while enhancement
+layers are given lower priority. If congestion occurs, routers discard
+the lower-priority enhancement packets first. Because the critical base
+layer packets are preserved, the viewer experiences a temporary drop in
+video quality rather than a complete screen freeze or dropped
+connection.</p>
+<p>By utilizing these mechanisms, MPEG-4 SVC eliminates the need for
+expensive, real-time transcoding at the server side, allowing network
+devices to seamlessly trim the video stream on-the-fly to match the
+instantaneous capacity of any connection.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

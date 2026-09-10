@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How MPEG-4 HVXC Synthesizes Natural Speech - mpeg-4</title>
+    <meta name="description" content="MPEG-4 Harmonic Vector Excitation Coding (HVXC) is an ultra-low-bitrate parametric speech coding standard operating between 2 and 4 kbps that delivers natural-sounding speech by decomposing signals into harmonic and stochastic components. Instead of tran">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/how-mpeg-4-hvxc-synthesizes-natural-speech">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How MPEG-4 HVXC Synthesizes Natural Speech - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/how-mpeg-4-hvxc-synthesizes-natural-speech" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="MPEG-4 Harmonic Vector Excitation Coding (HVXC) is an ultra-low-bitrate parametric speech coding standard operating between 2 and 4 kbps that delivers natural-sounding speech by decomposing signals into harmonic and stochastic components. Instead of tran" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="how-mpeg-4-hvxc-synthesizes-natural-speech">How MPEG-4 HVXC
+Synthesizes Natural Speech</h1>
+<p>MPEG-4 Harmonic Vector Excitation Coding (HVXC) is an
+ultra-low-bitrate parametric speech coding standard operating between 2
+and 4 kbps that delivers natural-sounding speech by decomposing signals
+into harmonic and stochastic components. Instead of transmitting raw
+audio waveforms, HVXC extracts fundamental acoustic parameters—such as
+pitch, spectral envelope, and harmonic amplitudes—and reconstructs the
+speech signal at the decoder using sinusoidal additive synthesis and
+phase estimation. This approach eliminates the robotic artifacts typical
+of traditional vocoders while preserving human vocal characteristics at
+minimal data rates.</p>
+<h3 id="speech-classification-and-parametric-analysis">Speech
+Classification and Parametric Analysis</h3>
+<p>The HVXC encoder segments input speech into frames (typically 20 ms)
+and classifies each frame as voiced, unvoiced, or transition.</p>
+<ul>
+<li><strong>Voiced Speech:</strong> Dominated by quasi-periodic vocal
+fold vibrations, voiced segments are analyzed using harmonic modeling.
+The encoder extracts the fundamental frequency (<span
+class="math inline">\(F_0\)</span>), the spectral envelope using Line
+Spectral Pairs (LSP), and the residual harmonic magnitudes.</li>
+<li><strong>Unvoiced Speech:</strong> Fricatives and noise-like sounds
+lack periodicity and are encoded using standard Vector Excitation Coding
+(VXC), a form of Code-Excited Linear Prediction (CELP).</li>
+</ul>
+<h3 id="harmonic-magnitude-and-envelope-representation">Harmonic
+Magnitude and Envelope Representation</h3>
+<p>For voiced segments, speech is treated as a sum of harmonically
+related sinusoids. The encoder measures the amplitude of each harmonic
+at integer multiples of <span class="math inline">\(F_0\)</span>. To fit
+these parameters into bitrates as low as 2.0 kbps, the spectral envelope
+is quantized using vector quantization (VQ), while fine harmonic
+deviations are encoded using lower-dimension codebooks. This captures
+both the general vocal tract resonance (formants) and the specific
+timbre of the speaker.</p>
+<h3 id="harmonic-additive-synthesis">Harmonic Additive Synthesis</h3>
+<p>At the decoder, voiced speech is synthesized by summing individual
+harmonic oscillators:</p>
+<p><span class="math display">\[s(t) = \sum_{k=1}^{K} A_k(t)
+\cos(\theta_k(t))\]</span></p>
+<p>Where:</p>
+<ul>
+<li><span class="math inline">\(K\)</span> is the number of active
+harmonics within the signal bandwidth.</li>
+<li><span class="math inline">\(A_k(t)\)</span> is the interpolated
+amplitude of the <span class="math inline">\(k\)</span>-th harmonic over
+time.</li>
+<li><span class="math inline">\(\theta_k(t)\)</span> is the
+instantaneous phase of the <span class="math inline">\(k\)</span>-th
+harmonic.</li>
+</ul>
+<p>The decoder smoothly interpolates the harmonic amplitudes <span
+class="math inline">\(A_k(t)\)</span> across frame boundaries to prevent
+abrupt energy steps, ensuring continuous and glitch-free
+transitions.</p>
+<h3 id="phase-reconstruction-and-naturalness">Phase Reconstruction and
+Naturalness</h3>
+<p>Transmitting explicit phase information for every harmonic requires
+substantial bandwidth, which low-bitrate vocoders cannot afford. HVXC
+overcomes this by algorithmically synthesizing phase:</p>
+<ol type="1">
+<li><strong>Phase Integration:</strong> The instantaneous phase is
+generated by integrating the fundamental frequency over time, ensuring
+phase continuity between frames.</li>
+<li><strong>Predictive Phase Alignment:</strong> A fixed dispersion
+model or synthetic phase model applies frequency-dependent phase shifts
+that mimic the natural acoustic properties of the human glottal pulse
+and vocal tract.</li>
+</ol>
+<p>This phase-modeling strategy prevents the "metallic" or "buzzy"
+distortion common in older vocoders without requiring extra transmission
+bits.</p>
+<h3 id="mixed-excitation-and-post-filtering">Mixed Excitation and
+Post-Filtering</h3>
+<p>Real human speech is rarely purely harmonic; voiced sounds often
+contain breathiness or turbulent noise in the higher frequencies. HVXC
+addresses this by applying a mixed excitation model:</p>
+<ul>
+<li>Lower frequencies are synthesized using pure harmonic sinusoidal
+modeling.</li>
+<li>Higher frequencies blend harmonic components with band-pass filtered
+stochastic noise based on a voicing-degree parameter.</li>
+</ul>
+<p>Finally, an adaptive formant post-filter enhances spectral peaks and
+attenuates valleys, reducing perceived quantization noise and resulting
+in clear, natural-sounding synthetic speech.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hadamard Transform in MPEG-4 AVC Luma DC Processing - mpeg-4</title>
+    <meta name="description" content="In MPEG-4 AVC (also known as H.264), the Hadamard transform plays a vital role in compressing smooth, flat regions by providing an extra stage of transform coding for luma DC coefficients in 16x16 Intra-prediction modes. When a macroblock is encoded usin">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/hadamard-transform-in-mpeg-4-avc-luma-dc-processing">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Hadamard Transform in MPEG-4 AVC Luma DC Processing - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/hadamard-transform-in-mpeg-4-avc-luma-dc-processing" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="In MPEG-4 AVC (also known as H.264), the Hadamard transform plays a vital role in compressing smooth, flat regions by providing an extra stage of transform coding for luma DC coefficients in 16x16 Intra-prediction modes. When a macroblock is encoded usin" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="hadamard-transform-in-mpeg-4-avc-luma-dc-processing">Hadamard
+Transform in MPEG-4 AVC Luma DC Processing</h1>
+<p>In MPEG-4 AVC (also known as H.264), the Hadamard transform plays a
+vital role in compressing smooth, flat regions by providing an extra
+stage of transform coding for luma DC coefficients in 16x16
+Intra-prediction modes. When a macroblock is encoded using the
+Intra_16x16 prediction mode, the primary integer transform yields
+sixteen individual DC coefficients across the sixteen 4x4 luma
+sub-blocks. Applying a secondary 4x4 Hadamard transform across these
+gathered DC coefficients further decorrelates low-frequency energy,
+significantly reducing spatial redundancy, preventing banding artifacts,
+and maximizing compression efficiency without introducing significant
+computational complexity.</p>
+<h3 id="context-intra_16x16-prediction-mode">Context: Intra_16x16
+Prediction Mode</h3>
+<p>MPEG-4 AVC divides 16x16 macroblocks into sixteen 4x4 sub-blocks for
+spatial transformation. In Intra_16x16 mode—which the encoder selects
+for smooth, homogenous image areas such as clear skies or flat
+backgrounds—there is strong spatial correlation not just within
+individual 4x4 sub-blocks, but across the entire 16x16 macroblock.</p>
+<p>When the standard core 4x4 integer transform (an approximation of the
+Discrete Cosine Transform) is applied to each 4x4 sub-block, each
+operation produces one DC coefficient (representing the average
+brightness of that sub-block) and fifteen AC coefficients (representing
+high-frequency variations).</p>
+<h3 id="secondary-transformation-of-luma-dc-coefficients">Secondary
+Transformation of Luma DC Coefficients</h3>
+<p>Because the scene content in Intra_16x16 mode is relatively uniform,
+the DC coefficients of the sixteen 4x4 sub-blocks remain highly
+correlated with one another. To eliminate this remaining redundancy:</p>
+<ol type="1">
+<li><strong>Assembly:</strong> The sixteen DC coefficients are extracted
+from their respective 4x4 sub-blocks and arranged into a single 4x4
+matrix of DC coefficients.</li>
+<li><strong>Transformation:</strong> A 4x4 Hadamard transform is applied
+exclusively to this matrix before quantization.</li>
+<li><strong>Energy Compaction:</strong> The Hadamard transform
+concentrates almost all the low-frequency energy of the entire 16x16
+macroblock into a single, dominant DC component at the top-left of the
+matrix, driving the remaining fifteen secondary coefficients close to
+zero.</li>
+</ol>
+<h3 id="mathematical-simplicity-and-efficiency">Mathematical Simplicity
+and Efficiency</h3>
+<p>The Hadamard transform matrix consists solely of values equal to
+<span class="math inline">\(+1\)</span> and <span
+class="math inline">\(-1\)</span>:</p>
+<p><span class="math display">\[H_4 = \begin{bmatrix} 1 &amp; 1 &amp; 1
+&amp; 1 \\ 1 &amp; 1 &amp; -1 &amp; -1 \\ 1 &amp; -1 &amp; -1 &amp; 1 \\
+1 &amp; -1 &amp; 1 &amp; -1 \end{bmatrix}\]</span></p>
+<p>This structure allows the transform to be computed entirely through
+16-bit integer additions and subtractions (using a butterfly structure)
+without requiring multiplication operations or floating-point
+arithmetic. This ensures exact mathematical reversibility in hardware
+and software decoders, eliminating mismatch errors between the encoder
+and decoder loops.</p>
+<h3 id="impact-on-video-quality-and-compression">Impact on Video Quality
+and Compression</h3>
+<ul>
+<li><strong>Elimination of Blocking and Banding:</strong> Flat regions
+are particularly vulnerable to contouring and block artifacts. By
+grouping and transforming DC coefficients across the full 16x16 region,
+quantization noise is distributed more smoothly, preserving subtle
+gradients.</li>
+<li><strong>Higher Coding Efficiency:</strong> After the Hadamard
+transform, quantization leaves most of the fifteen secondary
+coefficients at zero. Entropy coders (CAVLC or CABAC) can encode these
+long runs of zeros using very few bits.</li>
+<li><strong>Optimized Hierarchical Transform:</strong> This two-stage
+approach provides the energy compaction benefits of a larger 16x16
+transform while maintaining the lightweight, low-complexity architecture
+of a 4x4 integer transform pipeline.</li>
+</ul></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

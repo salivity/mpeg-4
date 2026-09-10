@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Picture Order Count POC in MPEG-4 AVC Explained - mpeg-4</title>
+    <meta name="description" content="Picture Order Count (POC) is a fundamental syntax element in MPEG-4 AVC (H.264) video coding that specifies the precise output and display order of decoded frames. Because modern compression schemes frequently decode frames out of temporal sequence to op">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/picture-order-count-poc-in-mpeg-4-avc-explained">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Picture Order Count POC in MPEG-4 AVC Explained - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/picture-order-count-poc-in-mpeg-4-avc-explained" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Picture Order Count (POC) is a fundamental syntax element in MPEG-4 AVC (H.264) video coding that specifies the precise output and display order of decoded frames. Because modern compression schemes frequently decode frames out of temporal sequence to op" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="picture-order-count-poc-in-mpeg-4-avc-explained">Picture Order
+Count POC in MPEG-4 AVC Explained</h1>
+<p>Picture Order Count (POC) is a fundamental syntax element in MPEG-4
+AVC (H.264) video coding that specifies the precise output and display
+order of decoded frames. Because modern compression schemes frequently
+decode frames out of temporal sequence to optimize predictive coding
+efficiency, POC acts as the definitive temporal reference to ensure
+frames are presented correctly to the viewer. This article explains how
+POC decouples decoding order from display order, how it is derived
+across different modes, and its crucial functions in motion vector
+scaling and buffer management.</p>
+<h3 id="decoupling-decoding-order-from-display-order">Decoupling
+Decoding Order from Display Order</h3>
+<p>In advanced video compression like MPEG-4 AVC, video frames are not
+always decoded in the order they are meant to be viewed. The inclusion
+of B-slices (bi-predictive pictures) allows a frame to reference both
+past and future pictures. Consequently, a "future" reference picture
+must be decoded before any intermediate B-frame that depends on it.</p>
+<p>While the syntax element <code>frame_num</code> tracks the sequence
+in which reference frames are decoded, it cannot indicate when those
+frames should be displayed. POC resolves this issue by assigning a
+relative temporal timestamp to each decoded picture, ensuring the
+Decoded Picture Buffer (DPB) outputs frames in the correct chronological
+sequence regardless of the order in which they were transmitted and
+decoded.</p>
+<h3 id="the-role-of-poc-in-the-decoded-picture-buffer">The Role of POC
+in the Decoded Picture Buffer</h3>
+<p>The Decoded Picture Buffer (DPB) holds decoded pictures until they
+are either used as references for subsequent frames or output to the
+display. The DPB uses POC values to execute the "bumping process"—a
+mechanism that selects the picture with the lowest POC value that is
+marked as "needed for output" and sends it to the display pipeline.</p>
+<p>POC values reset at every Instantaneous Decoder Refresh (IDR) frame,
+establishing a new temporal baseline for all subsequent pictures. For
+non-IDR frames, POC values monotonically increase according to the
+timeline of the source video, handling arbitrary frame reordering
+seamlessly.</p>
+<h3 id="motion-vector-scaling-in-temporal-direct-prediction">Motion
+Vector Scaling in Temporal Direct Prediction</h3>
+<p>Beyond determining presentation order, POC plays an active role in
+the decoding process itself through motion vector derivation. In B-slice
+direct mode (specifically temporal direct mode), motion vectors are
+calculated based on the temporal distance between the current picture
+and its reference pictures.</p>
+<p>The decoder uses the difference between POC values (<span
+class="math inline">\(\Delta\text{POC}\)</span>) to determine the exact
+temporal spacing between frames. By calculating ratios of these POC
+differences, the decoder mathematically scales motion vectors from
+co-located blocks to predict movement accurately without requiring extra
+motion vector data in the bitstream.</p>
+<h3 id="handling-interlaced-video-and-field-coding">Handling Interlaced
+Video and Field Coding</h3>
+<p>MPEG-4 AVC supports both progressive and interlaced video content.
+Interlaced video consists of alternating top and bottom fields that are
+sampled at distinct points in time.</p>
+<p>POC is assigned separately to each individual field as well as to
+full frames:</p>
+<ul>
+<li><strong>Top Field POC:</strong> Represents the display instant of
+the top field.</li>
+<li><strong>Bottom Field POC:</strong> Represents the display instant of
+the bottom field.</li>
+</ul>
+<p>This separate tracking allows the decoder to display interlaced
+fields sequentially with correct temporal parity, avoiding
+field-inversion artifacts.</p>
+<h3 id="poc-derivation-types">POC Derivation Types</h3>
+<p>MPEG-4 AVC provides three distinct methods for calculating POC,
+signaled in the Sequence Parameter Set (SPS) to balance bitstream
+overhead and flexibility:</p>
+<ol type="1">
+<li><strong>Type 0:</strong> Explicitly signals the least significant
+bits of the POC in each slice header. This is the most flexible mode and
+is commonly used when complex frame reordering occurs.</li>
+<li><strong>Type 1:</strong> Encodes expected POC increments and cycles
+in the SPS, minimizing the bits needed in individual slice headers for
+content with predictable frame structures.</li>
+<li><strong>Type 2:</strong> Derives POC directly from
+<code>frame_num</code> using mathematical rules, requiring zero
+additional bits in the slice header. This mode does not support
+arbitrary reordering or consecutive non-reference frames where display
+order differs from decode order.</li>
+</ol></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

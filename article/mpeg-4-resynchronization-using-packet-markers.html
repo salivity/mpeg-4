@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPEG-4 Resynchronization Using Packet Markers - mpeg-4</title>
+    <meta name="description" content="MPEG-4 video compression operates over diverse networks, including error-prone wireless channels where packet loss and bit corruption frequently occur. To prevent a single transmission error from corrupting an entire video frame, MPEG-4 incorporates erro">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/mpeg-4-resynchronization-using-packet-markers">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MPEG-4 Resynchronization Using Packet Markers - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/mpeg-4-resynchronization-using-packet-markers" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="MPEG-4 video compression operates over diverse networks, including error-prone wireless channels where packet loss and bit corruption frequently occur. To prevent a single transmission error from corrupting an entire video frame, MPEG-4 incorporates erro" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="mpeg-4-resynchronization-using-packet-markers">MPEG-4
+Resynchronization Using Packet Markers</h1>
+<p>MPEG-4 video compression operates over diverse networks, including
+error-prone wireless channels where packet loss and bit corruption
+frequently occur. To prevent a single transmission error from corrupting
+an entire video frame, MPEG-4 incorporates error-resilience tools,
+primarily resynchronization markers that segment the bitstream into
+self-contained video packets. This mechanism enables the video decoder
+to discard corrupted data segments, locate the next valid marker, and
+resume correct decoding at a known spatial location within the
+frame.</p>
+<h3 id="the-challenge-of-variable-length-coding">The Challenge of
+Variable-Length Coding</h3>
+<p>MPEG-4 relies heavily on Variable-Length Coding (VLC) and predictive
+coding techniques to maximize compression efficiency. While effective
+for reducing data size, VLC is highly sensitive to bit errors. Because
+codewords have varying bit lengths, a single flipped or missing bit
+causes the decoder to lose codeword synchronization. As a result, every
+subsequent macroblock in that frame is incorrectly decoded, leading to
+massive spatial distortion or complete frame loss.</p>
+<h3 id="video-packets-and-resynchronization-markers">Video Packets and
+Resynchronization Markers</h3>
+<p>To limit error propagation, MPEG-4 replaces standard slice structures
+with adaptive <strong>Video Packets</strong>. A video packet is an
+independently decodable segment of the bitstream delineated by a
+<strong>Resynchronization Marker (RM)</strong>.</p>
+<p>The Resynchronization Marker is a unique, distinct bit sequence that
+cannot be duplicated by any valid combination of VLC codewords. When
+generating packets, the encoder typically limits the packet size to a
+fixed number of bits rather than a fixed number of macroblocks. This
+ensures that when the channel quality degrades, data loss is constrained
+to roughly the same physical volume of data across all packets.</p>
+<h3 id="structure-of-a-video-packet">Structure of a Video Packet</h3>
+<p>Following the Resynchronization Marker, each video packet includes
+essential header data to allow immediate, independent decoding without
+relying on previously received macroblocks:</p>
+<ul>
+<li><strong>Resync Marker (RM):</strong> A unique synchronization code
+that signals the start of a new, valid data segment.</li>
+<li><strong>Macroblock Address / Number:</strong> Specifies the exact
+spatial coordinate of the first macroblock contained within the packet,
+allowing the decoder to place the decoded blocks in the correct position
+on the display grid.</li>
+<li><strong>Quantization Parameter (QP):</strong> Resets the
+quantization step size so the decoder does not depend on differential QP
+values from preceding macroblocks.</li>
+<li><strong>Header Extension Code (HEC):</strong> An optional flag that
+repeats critical frame-level header information (such as timestamp and
+frame type). If the original frame header was corrupted earlier in the
+stream, the HEC allows the decoder to salvage subsequent video
+packets.</li>
+<li><strong>Macroblock Data:</strong> The actual compressed video
+payload for the macroblocks in that packet.</li>
+</ul>
+<h3 id="the-resynchronization-process-during-data-corruption">The
+Resynchronization Process During Data Corruption</h3>
+<p>When corruption occurs during streaming or playback, the decoder
+follows a defined recovery sequence:</p>
+<ol type="1">
+<li><strong>Error Detection:</strong> The decoder identifies an error
+condition, such as an invalid VLC codeword, out-of-range motion vectors,
+or a mismatch in expected block counts.</li>
+<li><strong>Data Discarding:</strong> Upon detecting corruption, the
+decoder immediately stops decoding the current packet and discards the
+remaining unparsed bits within that segment, as their alignment is
+compromised.</li>
+<li><strong>Marker Hunting:</strong> The decoder scans the incoming
+bitstream bit-by-bit to locate the next unambiguous Resynchronization
+Marker.</li>
+<li><strong>Context Restoration:</strong> Once the marker is located,
+the decoder reads the packet header, extracts the macroblock address,
+resets the quantization parameter, and updates the spatial coordinate
+pointers.</li>
+<li><strong>Resuming Playback:</strong> The decoder resumes standard
+decoding from the new packet's starting macroblock.</li>
+<li><strong>Error Concealment:</strong> The missing macroblocks between
+the point of failure and the new resynchronization point are
+reconstructed using error concealment algorithms, such as copying data
+from the co-located macroblocks of the previous reference frame.</li>
+</ol>
+<p>By isolating errors to individual packets, MPEG-4's resynchronization
+markers ensure that transmission failures cause only brief, localized
+visual artifacts rather than catastrophic frame drops.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

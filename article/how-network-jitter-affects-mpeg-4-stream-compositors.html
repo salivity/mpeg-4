@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How Network Jitter Affects MPEG-4 Stream Compositors - mpeg-4</title>
+    <meta name="description" content="Network jitter significantly disrupts the synchronization, decoding, and rendering pipeline of the MPEG-4 Systems elementary stream compositor. Because MPEG-4 Systems (ISO/IEC 14496-1) allows independent Elementary Streams (ES)—such as video, audio, 3D">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/how-network-jitter-affects-mpeg-4-stream-compositors">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How Network Jitter Affects MPEG-4 Stream Compositors - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/how-network-jitter-affects-mpeg-4-stream-compositors" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Network jitter significantly disrupts the synchronization, decoding, and rendering pipeline of the MPEG-4 Systems elementary stream compositor. Because MPEG-4 Systems (ISO/IEC 14496-1) allows independent Elementary Streams (ES)—such as video, audio, 3D" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="how-network-jitter-affects-mpeg-4-stream-compositors">How
+Network Jitter Affects MPEG-4 Stream Compositors</h1>
+<p>Network jitter significantly disrupts the synchronization, decoding,
+and rendering pipeline of the MPEG-4 Systems elementary stream
+compositor. Because MPEG-4 Systems (ISO/IEC 14496-1) allows independent
+Elementary Streams (ES)—such as video, audio, 3D graphics, and Binary
+Format for Scenes (BIFS)—to be multiplexed and rendered into a single
+coherent scene, precise timing is critical. When packet transit delay
+varies across a network, it alters packet arrival times, directly
+compromising buffer management, clock recovery mechanisms, and the
+timely execution of Composition Time Stamps (CTS).</p>
+<h3 id="the-role-of-timing-in-mpeg-4-systems">The Role of Timing in
+MPEG-4 Systems</h3>
+<p>The MPEG-4 Systems architecture relies on a synchronized timing model
+governed by the Synchronization Layer (SL). Each Elementary Stream
+carries its own timing information, defined by:</p>
+<ul>
+<li><strong>Object Clock Reference (OCR):</strong> Establishes the time
+base for an individual stream or a group of streams.</li>
+<li><strong>Decoding Time Stamp (DTS):</strong> Dictates the exact
+instant a node or decoder must decode an Access Unit (AU).</li>
+<li><strong>Composition Time Stamp (CTS):</strong> Specifies the precise
+time when the decoded Composition Unit (CU) must be presented by the
+compositor within the scene graph.</li>
+</ul>
+<p>The compositor pulls decoded data from individual stream buffers to
+render the final interactive or visual scene at intervals dictated by
+the master system time base.</p>
+<h3 id="direct-effects-of-network-jitter-on-the-compositor">Direct
+Effects of Network Jitter on the Compositor</h3>
+<p>When network jitter occurs, delivery times for SL packets fluctuate
+unpredictably, triggering several cascading failures in the composition
+pipeline:</p>
+<h4
+id="1-buffer-underflows-overflows-and-missed-presentation-deadlines">1.
+Buffer Underflows, Overflows, and Missed Presentation Deadlines</h4>
+<p>Decoders and compositors utilize elastic buffers to smooth out
+incoming streams.</p>
+<ul>
+<li><strong>Underflow:</strong> Packets delayed by positive jitter
+spikes arrive past their designated DTS or CTS. The compositor cannot
+wait indefinitely; it must either freeze the previous frame, drop the
+missing element, or render an incomplete scene.</li>
+<li><strong>Overflow:</strong> Negative jitter causes a burst of
+arriving packets that can exceed the pre-allocated buffer size in
+low-latency implementations, forcing the receiver to discard packets
+before they reach the compositor.</li>
+</ul>
+<h4 id="2-clock-recovery-instability">2. Clock Recovery Instability</h4>
+<p>Receivers use incoming OCR values to synchronize their local clocks
+via Phase-Locked Loops (PLLs). Jitter introduces noise into the OCR
+arrival intervals. As a result:</p>
+<ul>
+<li>The recovered clock may suffer from frequency drift and phase
+instability.</li>
+<li>If the local clock speeds up or slows down abruptly to compensate
+for erratic arrivals, the compositor's rendering loop becomes
+inconsistent, causing micro-stutter and frame judder.</li>
+</ul>
+<h4 id="3-inter-stream-desynchronization-skew">3. Inter-Stream
+Desynchronization (Skew)</h4>
+<p>In MPEG-4 Systems, visual objects, audio tracks, and scene
+description updates (BIFS) often travel over separate elementary streams
+with independent network paths or packetization schemes. Differential
+jitter between streams causes:</p>
+<ul>
+<li><strong>Lip-sync errors:</strong> Audio streams drifting out of sync
+with corresponding video textures.</li>
+<li><strong>BIFS animation misalignment:</strong> Scene graph
+modifications (e.g., node transformations, color shifts, or user
+interface updates) triggering too early or too late relative to the
+underlying video object, resulting in broken visual interactivity and
+temporal artifacts.</li>
+</ul>
+<h3 id="mitigation-in-the-composition-pipeline">Mitigation in the
+Composition Pipeline</h3>
+<p>To counteract network jitter, MPEG-4 implementations employ de-jitter
+buffering at the transport and synchronization layers. By deliberately
+introducing a buffering delay before feeding data to the decoders, the
+system absorbs transit time variations. The compositor can then access
+decoded Composition Units precisely at their CTS, preserving scene
+synchronization at the expense of end-to-end latency.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

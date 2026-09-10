@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How MPEG-4 AAC-LD Achieves Sub-20ms Latency - mpeg-4</title>
+    <meta name="description" content="MPEG-4 AAC-LD (Low Delay) is an audio coding standard designed to deliver full-bandwidth, high-fidelity audio for real-time, two-way communication systems like video conferencing and VoIP. Standard perceptual audio codecs typically introduce latencies ex">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/how-mpeg-4-aac-ld-achieves-sub-20ms-latency">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How MPEG-4 AAC-LD Achieves Sub-20ms Latency - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/how-mpeg-4-aac-ld-achieves-sub-20ms-latency" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="MPEG-4 AAC-LD (Low Delay) is an audio coding standard designed to deliver full-bandwidth, high-fidelity audio for real-time, two-way communication systems like video conferencing and VoIP. Standard perceptual audio codecs typically introduce latencies ex" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="how-mpeg-4-aac-ld-achieves-sub-20ms-latency">How MPEG-4 AAC-LD
+Achieves Sub-20ms Latency</h1>
+<p>MPEG-4 AAC-LD (Low Delay) is an audio coding standard designed to
+deliver full-bandwidth, high-fidelity audio for real-time, two-way
+communication systems like video conferencing and VoIP. Standard
+perceptual audio codecs typically introduce latencies exceeding 100
+milliseconds, which disrupts natural conversation. AAC-LD successfully
+reduces algorithmic encoding latency to under 20 milliseconds through
+four primary architectural modifications: reducing frame size,
+eliminating block switching, optimizing filter bank overlap, and
+constraining the bit reservoir.</p>
+<h3 id="1-reduced-frame-size">1. Reduced Frame Size</h3>
+<p>Standard MPEG-4 AAC uses a default transform block size of 1024
+samples (or 960 samples). At a standard 48 kHz sampling rate, capturing
+a 1024-sample frame requires approximately 21.3 milliseconds of
+buffering time before the encoder can even begin processing the
+data.</p>
+<p>AAC-LD cuts the transform frame size in half, supporting either 480
+or 512 samples:</p>
+<ul>
+<li>A 512-sample frame requires <strong>10.67 ms</strong> of buffering
+at 48 kHz.</li>
+<li>A 480-sample frame requires <strong>10.0 ms</strong> of buffering at
+48 kHz (or 15 ms at 32 kHz).</li>
+</ul>
+<p>Halving the frame duration cuts the fundamental buffering latency in
+half while retaining sufficient frequency resolution for perceptual
+audio coding.</p>
+<h3 id="2-low-overlap-filter-bank-eliminating-look-ahead">2. Low-Overlap
+Filter Bank (Eliminating Look-Ahead)</h3>
+<p>Standard AAC uses a Modified Discrete Cosine Transform (MDCT) with a
+50% overlap-add structure. To process a 1024-sample frame, standard AAC
+requires a 2048-sample window, creating an inherent look-ahead delay
+equal to the frame length.</p>
+<p>AAC-LD replaces standard windowing with an asymmetric low-overlap
+MDCT filter bank. By reshaping the transform window, the codec
+eliminates or substantially minimizes the look-ahead window into future
+audio samples. The algorithmic look-ahead delay is reduced to a fraction
+of a frame, allowing the encoder to transform and quantize audio nearly
+instantaneously once the current frame's samples are buffered.</p>
+<h3 id="3-removal-of-window-switching">3. Removal of Window
+Switching</h3>
+<p>Standard AAC switches dynamically between long windows (for
+steady-state signals) and sequences of eight short windows (to prevent
+pre-echo artifacts on transient sounds). Determining when to switch
+windows requires analyzing upcoming audio data, adding additional
+look-ahead delay.</p>
+<p>AAC-LD eliminates window switching entirely. Instead, it relies on a
+fixed window length and uses Temporal Noise Shaping (TNS) along with
+optimized frequency domain quantization to manage transient audio
+without requiring future-sample look-ahead buffers.</p>
+<h3 id="4-elimination-of-the-bit-reservoir">4. Elimination of the Bit
+Reservoir</h3>
+<p>Standard perceptual codecs use a bit reservoir to distribute bits
+across variable-complexity audio segments. Complex passages borrow bits
+from simpler passages, requiring receiver-side smoothing buffers that
+introduce decoding latency.</p>
+<p>AAC-LD strictly minimizes or eliminates the bit reservoir. Each frame
+is encoded within a tightly bound bit budget, ensuring that frames can
+be transmitted, received, and decoded immediately without waiting for
+buffer accumulation.</p>
+<h3 id="total-algorithmic-latency">Total Algorithmic Latency</h3>
+<p>Algorithmic delay consists solely of the frame buffer time plus the
+filter bank look-ahead time. With a 480-sample frame at 48 kHz (10 ms)
+combined with minimal filter bank look-ahead overhead, MPEG-4 AAC-LD
+achieves an algorithmic latency between <strong>10 ms and 15
+ms</strong>, well below the 20 ms threshold required for imperceptible
+latency in interactive communications.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

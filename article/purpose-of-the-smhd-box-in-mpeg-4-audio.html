@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Purpose of the smhd Box in MPEG-4 Audio - mpeg-4</title>
+    <meta name="description" content="The Sound Media Header box, identified by the four-character code 'smhd', is an essential structural element within the MPEG-4 container format (ISO/IEC 14496-14 / ISO Base Media File Format). Its primary purpose is to signal to media decoders and demuxe">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/purpose-of-the-smhd-box-in-mpeg-4-audio">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Purpose of the smhd Box in MPEG-4 Audio - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/purpose-of-the-smhd-box-in-mpeg-4-audio" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The Sound Media Header box, identified by the four-character code 'smhd', is an essential structural element within the MPEG-4 container format (ISO/IEC 14496-14 / ISO Base Media File Format). Its primary purpose is to signal to media decoders and demuxe" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="purpose-of-the-smhd-box-in-mpeg-4-audio">Purpose of the smhd Box
+in MPEG-4 Audio</h1>
+<p>The Sound Media Header box, identified by the four-character code
+<code>'smhd'</code>, is an essential structural element within the
+MPEG-4 container format (ISO/IEC 14496-14 / ISO Base Media File Format).
+Its primary purpose is to signal to media decoders and demuxers that a
+specific track contains audio information, while also carrying basic
+presentation parameters, such as audio balance. Located inside the media
+information box of an MP4 file, the <code>'smhd'</code> atom provides
+the media-independent metadata necessary for properly initializing and
+routing sound playback.</p>
+<h3 id="structural-placement-in-the-mp4-hierarchy">Structural Placement
+in the MP4 Hierarchy</h3>
+<p>In the MP4 box hierarchy, the <code>'smhd'</code> box resides within
+the track architecture as follows:</p>
+<p><code>moov</code> (Movie Box) ➔ <code>trak</code> (Track Box) ➔
+<code>mdia</code> (Media Box) ➔ <code>minf</code> (Media Information
+Box) ➔ <code>smhd</code> (Sound Media Header Box)</p>
+<p>Every track in an ISO-compliant media file must contain a media
+header box inside its Media Information Box (<code>minf</code>). The
+type of header used depends on the media type. While video tracks use
+the Video Media Header (<code>'vmhd'</code>) and subtitle tracks use the
+Subtitle Media Header (<code>'sthd'</code>), audio tracks strictly
+require the <code>'smhd'</code> box.</p>
+<h3 id="key-functions-of-the-smhd-box">Key Functions of the 'smhd'
+Box</h3>
+<ol type="1">
+<li><strong>Media Identification:</strong> The presence of the
+<code>'smhd'</code> atom explicitly declares that the track contains
+sound data rather than video, text, or hint information. This allows the
+demuxer to route the payload to the appropriate audio decoding
+pipeline.</li>
+<li><strong>Audio Spatial Balancing:</strong> The box stores basic
+spatial positioning data for mono and stereo presentation before stream
+decoding occurs.</li>
+</ol>
+<h3 id="internal-data-fields-of-smhd">Internal Data Fields of
+'smhd'</h3>
+<p>The <code>'smhd'</code> box extends the standard <code>FullBox</code>
+structure and contains the following binary fields:</p>
+<ul>
+<li><strong>Version (8 bits):</strong> Specifies the format version of
+the header (typically set to <code>0</code>).</li>
+<li><strong>Flags (24 bits):</strong> Reserved attributes, usually set
+to <code>0</code>.</li>
+<li><strong>Balance (16-bit Fixed-Point):</strong> A signed 8.8
+fixed-point number that controls the stereo placement of the audio
+track.
+<ul>
+<li>A value of <code>0.0</code> (represented as <code>0x0000</code>)
+centers the sound equally between left and right channels.</li>
+<li>A value of <code>-1.0</code> (represented as <code>0xFF00</code>)
+pans the audio entirely to the left.</li>
+<li>A value of <code>1.0</code> (represented as <code>0x0100</code>)
+pans the audio entirely to the right.</li>
+</ul></li>
+<li><strong>Reserved (16 bits):</strong> Allocated for future standard
+expansions and always initialized to <code>0</code>.</li>
+</ul>
+<h3 id="importance-in-playback">Importance in Playback</h3>
+<p>Although modern audio formats (such as AAC, ALAC, or Opus) carry
+their own channel layouts and spatial configurations inside their
+specific sample entries (like the <code>'mp4a'</code> box), the
+<code>'smhd'</code> box remains mandatory in the MPEG-4 specification.
+It enables media parsers to quickly inspect and configure the high-level
+playback environment without needing to parse the compressed audio
+bitstream first.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

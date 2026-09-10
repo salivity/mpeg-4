@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPEG-4 Sync Layer Header in Stream Segmentation - mpeg-4</title>
+    <meta name="description" content="The Sync Layer (SL) packet header in MPEG-4 Systems (ISO/IEC 14496-1) provides the essential protocol mechanisms required to segment continuous or discrete Elementary Streams (ES) into manageable, synchronized transport units. By encapsulating raw media">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/mpeg-4-sync-layer-header-in-stream-segmentation">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MPEG-4 Sync Layer Header in Stream Segmentation - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/mpeg-4-sync-layer-header-in-stream-segmentation" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The Sync Layer (SL) packet header in MPEG-4 Systems (ISO/IEC 14496-1) provides the essential protocol mechanisms required to segment continuous or discrete Elementary Streams (ES) into manageable, synchronized transport units. By encapsulating raw media" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="mpeg-4-sync-layer-header-in-stream-segmentation">MPEG-4 Sync
+Layer Header in Stream Segmentation</h1>
+<p>The Sync Layer (SL) packet header in MPEG-4 Systems (ISO/IEC 14496-1)
+provides the essential protocol mechanisms required to segment
+continuous or discrete Elementary Streams (ES) into manageable,
+synchronized transport units. By encapsulating raw media payloads with
+precise timing, continuity, and structural metadata, the SL header
+enables decoders to reconstruct Access Units (AUs), maintain
+inter-stream synchronization, and manage data loss independently of the
+underlying delivery layer.</p>
+<h3 id="core-functions-in-stream-segmentation">Core Functions in Stream
+Segmentation</h3>
+<h4 id="1-access-unit-demarcation-and-fragmentation">1. Access Unit
+Demarcation and Fragmentation</h4>
+<p>An Access Unit (such as an individual video frame or audio block) is
+often too large to be transmitted as a single entity across network
+layers. The SL packet header manages the segmentation of AUs into
+multiple SL packets using explicit structural flags:</p>
+<ul>
+<li><strong>Access Unit Start and End Flags:</strong> Signal whether an
+SL packet contains the start, continuation, or end of an Access Unit,
+enabling the receiver to reassemble fragments accurately.</li>
+<li><strong>AU Sequence Numbering:</strong> Distinguishes individual
+AUs, ensuring that fragments from consecutive frames are not conflated
+during reassembly.</li>
+<li><strong>Packet Sequence Numbering:</strong> Provides packet-level
+ordering within an Elementary Stream, allowing decoders to detect packet
+loss or out-of-order delivery during transport.</li>
+</ul>
+<h4 id="2-timing-and-synchronization">2. Timing and Synchronization</h4>
+<p>Segmentation disrupts the linear flow of time-dependent media. The SL
+packet header restores temporal consistency by carrying the timing
+context directly associated with the segmented payload:</p>
+<ul>
+<li><strong>Decoding Time Stamp (DTS):</strong> Specifies the exact
+instant the enclosed Access Unit must be removed from the decoding
+buffer and decoded.</li>
+<li><strong>Composition Time Stamp (CTS):</strong> Specifies the exact
+presentation time of the decoded unit, resolving discrepancies caused by
+frame reordering (such as B-frames in video).</li>
+<li><strong>Object Clock Reference (OCR):</strong> Conveys the stream’s
+local time base to allow the receiver to lock its clock to the sender's
+clock, ensuring lip-sync and multi-stream alignment.</li>
+</ul>
+<h4 id="3-stream-resilience-and-priority-management">3. Stream
+Resilience and Priority Management</h4>
+<p>During segmentation, different portions of a stream hold varying
+degrees of importance for decoding. The SL packet header provides
+metadata to assist buffer management and error mitigation:</p>
+<ul>
+<li><strong>Random Access Point (RAP) Flag:</strong> Identifies whether
+a segment contains an independently decodable frame (e.g., an I-frame),
+allowing receivers to join an ongoing stream or seek without decoding
+prior packets.</li>
+<li><strong>Degradation Priority:</strong> Assigns a priority level to
+individual packets or fragments, directing downstream multiplexers and
+decoders to drop lower-priority data first during network
+congestion.</li>
+<li><strong>Payload Padding Bits:</strong> Indicates the presence and
+size of padding bytes needed to align payload boundaries to fixed
+transport sizes.</li>
+</ul>
+<h3 id="adaptability-via-the-slconfigdescriptor">Adaptability via the
+SLConfigDescriptor</h3>
+<p>Unlike fixed-size transport headers, the SL packet header is fully
+configurable. Through the <code>SLConfigDescriptor</code>, the sender
+and receiver negotiate which header fields are present and specify their
+exact bit lengths (such as the resolution of time stamps and sequence
+numbers). This configurability eliminates redundant overhead, allowing
+the SL segmentation process to be optimized for high-bandwidth video,
+low-bitrate audio, or low-latency interactive streams.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

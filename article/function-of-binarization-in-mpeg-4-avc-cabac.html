@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Function of Binarization in MPEG-4 AVC CABAC - mpeg-4</title>
+    <meta name="description" content="In the MPEG-4 AVC (H.264) video compression standard, Context-Adaptive Binary Arithmetic Coding (CABAC) serves as an advanced entropy coding tool that significantly reduces bitrate. The binarization stage is the initial phase of the CABAC pipeline, respo">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/function-of-binarization-in-mpeg-4-avc-cabac">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Function of Binarization in MPEG-4 AVC CABAC - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/function-of-binarization-in-mpeg-4-avc-cabac" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="In the MPEG-4 AVC (H.264) video compression standard, Context-Adaptive Binary Arithmetic Coding (CABAC) serves as an advanced entropy coding tool that significantly reduces bitrate. The binarization stage is the initial phase of the CABAC pipeline, respo" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="function-of-binarization-in-mpeg-4-avc-cabac">Function of
+Binarization in MPEG-4 AVC CABAC</h1>
+<p>In the MPEG-4 AVC (H.264) video compression standard,
+Context-Adaptive Binary Arithmetic Coding (CABAC) serves as an advanced
+entropy coding tool that significantly reduces bitrate. The binarization
+stage is the initial phase of the CABAC pipeline, responsible for
+translating multi-valued, non-binary syntax elements into intermediate
+sequences of binary decisions known as "bins." This article details the
+primary functions of the binarization stage, the mapping methods it
+uses, and its vital role in preparing video data for subsequent context
+modeling and binary arithmetic encoding.</p>
+<h2 id="primary-purpose-of-binarization">Primary Purpose of
+Binarization</h2>
+<p>The core arithmetic coding engine within CABAC is fundamentally
+designed to process only binary alphabets consisting of two symbols:
+<code>0</code> and <code>1</code>. Most video syntax elements—such as
+transform coefficient levels, motion vector differences (MVDs), intra
+prediction modes, and macroblock types—contain non-binary, multi-valued
+data.</p>
+<p>Binarization bridges this gap by mapping each non-binary syntax
+element into an unambiguous, uniquely decodable binary code (a bin
+string). This conversion reduces the alphabet complexity, allowing the
+downstream arithmetic coder to operate at peak efficiency.</p>
+<h2 id="core-functions-in-the-cabac-pipeline">Core Functions in the
+CABAC Pipeline</h2>
+<h3 id="1-alphabet-reduction">1. Alphabet Reduction</h3>
+<p>By converting complex, non-binary symbols into binary decisions,
+binarization simplifies the probability estimation process. Instead of
+maintaining probability distributions across large sets of multi-value
+symbols, CABAC only tracks the probabilities of binary <code>0</code>s
+and <code>1</code>s for each bin position.</p>
+<h3 id="2-statistical-matching">2. Statistical Matching</h3>
+<p>Binarization structures the bin strings so that more frequently
+occurring values are assigned shorter codes, while less frequent values
+receive longer codes. This structural optimization ensures that the
+entropy of the resulting binary sequence is minimized prior to
+arithmetic coding.</p>
+<h3 id="3-separation-into-regular-and-bypass-paths">3. Separation into
+Regular and Bypass Paths</h3>
+<p>Binarization classifies the resulting bins for downstream
+processing:</p>
+<ul>
+<li><strong>Regular Coding Mode:</strong> Bins with non-uniform
+probability distributions are assigned specific context models, allowing
+adaptive probability tracking.</li>
+<li><strong>Bypass Coding Mode:</strong> Bins with near-uniform (50/50)
+probability distributions bypass the context modeling stage entirely,
+speeding up computation without sacrificing compression efficiency.</li>
+</ul>
+<h2 id="standard-binarization-methods-in-mpeg-4-avc">Standard
+Binarization Methods in MPEG-4 AVC</h2>
+<p>CABAC uses several standard mapping techniques depending on the
+statistical characteristics of the syntax element:</p>
+<ul>
+<li><strong>Unary and Truncated Unary (TU) Binarization:</strong>
+Represents an unsigned integer <span class="math inline">\(x\)</span> as
+a sequence of <span class="math inline">\(x\)</span> ones followed by a
+zero (or truncated if an upper bound exists). This is ideal for syntax
+elements with monotonically decreasing probability distributions.</li>
+<li><strong>Exp-Golomb (EG) Binarization:</strong> Combines prefix and
+suffix codes to efficiently represent syntax elements that can take
+arbitrarily large values, such as motion vector differences.</li>
+<li><strong>Fixed-Length (FL) Binarization:</strong> Assigns a fixed
+number of bits to syntax elements with a known, uniform distribution
+across a limited range.</li>
+<li><strong>Concatenated / Custom Binarization:</strong> Combines
+multiple methods (such as Truncated Unary for small values and
+Exp-Golomb for large values) to handle syntax elements like transform
+coefficient levels (<code>coeff_abs_level_minus1</code>).</li>
+</ul>
+<p>By converting multi-level data into optimized bin sequences, the
+binarization stage establishes the necessary structure for precise
+probability modeling, making the high compression ratios of MPEG-4 AVC
+CABAC possible.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

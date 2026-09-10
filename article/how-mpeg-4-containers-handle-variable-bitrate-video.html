@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How MPEG-4 Containers Handle Variable Bitrate Video - mpeg-4</title>
+    <meta name="description" content="The MPEG-4 Part 14 (MP4) container achieves seamless, continuous playback across variable bitrate (VBR) video tracks by decoupling temporal data from file offsets using a dedicated time-to-sample indexing architecture. Instead of relying on a constant st">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/how-mpeg-4-containers-handle-variable-bitrate-video">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How MPEG-4 Containers Handle Variable Bitrate Video - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/how-mpeg-4-containers-handle-variable-bitrate-video" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The MPEG-4 Part 14 (MP4) container achieves seamless, continuous playback across variable bitrate (VBR) video tracks by decoupling temporal data from file offsets using a dedicated time-to-sample indexing architecture. Instead of relying on a constant st" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="how-mpeg-4-containers-handle-variable-bitrate-video">How MPEG-4
+Containers Handle Variable Bitrate Video</h1>
+<p>The MPEG-4 Part 14 (MP4) container achieves seamless, continuous
+playback across variable bitrate (VBR) video tracks by decoupling
+temporal data from file offsets using a dedicated time-to-sample
+indexing architecture. Instead of relying on a constant stream of bytes
+to determine time progression, the MP4 format stores comprehensive
+metadata tables within the movie atom (<code>moov</code>). This
+structural approach allows the media player’s demuxer to know the exact
+presentation timestamp, decoding timestamp, byte length, and file
+position of every frame in advance, ensuring uninterrupted playback
+regardless of fluctuations in the bitstream's data density.</p>
+<h3 id="the-sample-table-box-stbl">The Sample Table Box
+(<code>stbl</code>)</h3>
+<p>Continuous playback in VBR streams is driven by the Sample Table Box
+(<code>stbl</code>), located within the track structure
+(<code>moov</code> &gt; <code>trak</code> &gt; <code>mdia</code> &gt;
+<code>minf</code> &gt; <code>stbl</code>). In MPEG-4 terminology, a
+"sample" represents an individual video frame. The container provides
+continuous synchronization by cross-referencing several discrete index
+tables inside the <code>stbl</code>:</p>
+<ul>
+<li><strong>Time-to-Sample Box (<code>stts</code>):</strong> Defines the
+delta (duration) of each sample in the media's timescale. Because frame
+durations are explicitly mapped to time units rather than byte counts,
+the player maintains an accurate timeline regardless of whether an
+individual frame is large (complex scene) or small (static scene).</li>
+<li><strong>Composition Time to Sample Box (<code>ctts</code>):</strong>
+Essential for video encoded with bidirectional predictive frames
+(B-frames). It provides composition time offsets, resolving differences
+between the decoding order and presentation order to prevent playback
+stutter.</li>
+<li><strong>Sample Size Box (<code>stsz</code> /
+<code>stz2</code>):</strong> Directly accommodates variable bitrates by
+defining the exact size in bytes for every single sample in the stream.
+The demuxer reads this table to extract individual frames from the media
+data (<code>mdat</code>) atom without needing uniform frame sizes.</li>
+<li><strong>Chunk Offset Box (<code>stco</code> /
+<code>co64</code>):</strong> Groups samples into chunks and indexes
+their exact 32-bit or 64-bit byte offsets in the file. This allows
+non-linear access and reliable pre-buffering.</li>
+<li><strong>Sync Sample Box (<code>stss</code>):</strong> Identifies
+random access points (keyframe/I-frame positions), enabling instant
+seeking and reference recovery during playback transitions.</li>
+</ul>
+<h3 id="playback-synchronization-workflow">Playback Synchronization
+Workflow</h3>
+<p>When an MP4 container is parsed, the media engine constructs a
+precise timeline before rendering begins:</p>
+<ol type="1">
+<li><strong>Decoupled Fetching:</strong> The demuxer uses
+<code>stco</code> and <code>stsz</code> to calculate the precise byte
+range of upcoming frames in the <code>mdat</code> container and fetches
+them into memory.</li>
+<li><strong>Clock Alignment:</strong> The demuxer references
+<code>stts</code> and <code>ctts</code> to assign exact presentation
+timestamps (PTS) and decoding timestamps (DTS) to the fetched
+samples.</li>
+<li><strong>Buffer Management:</strong> Because the container specifies
+sample boundaries and presentation timings beforehand, the media engine
+dynamically scales buffer consumption according to the byte sizes
+specified in <code>stsz</code>, preventing buffer underflow or
+overflow.</li>
+</ol>
+<p>By relying on this deterministic, table-based time index, the MPEG-4
+container eliminates timing drift and ensures smooth playback across
+video streams of any variable bitrate profile.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

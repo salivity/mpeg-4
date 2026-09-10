@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ringing Artifacts in MPEG-4 Part 2 Video - mpeg-4</title>
+    <meta name="description" content="Ringing artifacts are common compression distortions in MPEG-4 Part 2 video streams that appear as spurious ripples, halos, or ghosting patterns around high-contrast edges. This article explains how these visual errors manifest, the mathematical and algo">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/ringing-artifacts-in-mpeg-4-part-2-video">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Ringing Artifacts in MPEG-4 Part 2 Video - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/ringing-artifacts-in-mpeg-4-part-2-video" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Ringing artifacts are common compression distortions in MPEG-4 Part 2 video streams that appear as spurious ripples, halos, or ghosting patterns around high-contrast edges. This article explains how these visual errors manifest, the mathematical and algo" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="ringing-artifacts-in-mpeg-4-part-2-video">Ringing Artifacts in
+MPEG-4 Part 2 Video</h1>
+<p>Ringing artifacts are common compression distortions in MPEG-4 Part 2
+video streams that appear as spurious ripples, halos, or ghosting
+patterns around high-contrast edges. This article explains how these
+visual errors manifest, the mathematical and algorithmic reasons behind
+their formation during the compression process, their dynamic behavior
+across video frames, and how they differ from other compression
+artifacts like blockiness.</p>
+<h3 id="the-mechanism-behind-ringing-artifacts">The Mechanism Behind
+Ringing Artifacts</h3>
+<p>Ringing artifacts in MPEG-4 Part 2 (commonly associated with codecs
+like DivX and Xvid) stem from the loss of high-frequency visual data
+during the Discrete Cosine Transform (DCT) and quantization stages.
+MPEG-4 Part 2 divides frames into <span
+class="math inline">\(8\times8\)</span> pixel blocks and converts
+spatial pixel data into frequency components.</p>
+<p>When heavy compression is applied, the quantization matrix
+aggressively zeros out or coarsely quantizes high-frequency AC
+coefficients, which are responsible for defining fine details and sharp
+transitions. When the decoder applies the Inverse Discrete Cosine
+Transform (IDCT) to reconstruct the image from this truncated data,
+mathematical oscillations occur—a manifestation of the Gibbs phenomenon.
+These oscillations produce artificial wave-like patterns around sharp
+boundaries.</p>
+<h3 id="visual-manifestation-in-frames">Visual Manifestation in
+Frames</h3>
+<p>In a static frame, ringing artifacts typically display the following
+visual characteristics:</p>
+<ul>
+<li><strong>Edge Halos:</strong> Faint, repeated outlines or glow-like
+bands running parallel to sharp, high-contrast borders, such as white
+text on a black background, hard edges of buildings against the sky, or
+object silhouettes.</li>
+<li><strong>Texture Smearing:</strong> Ripples that bleed into adjacent
+smooth or flat areas, making clean gradients appear noisy or
+stepped.</li>
+<li><strong>Overshoot and Undershoot:</strong> Brightness fluctuations
+near sharp luminance transitions, where pixels immediately adjacent to
+an edge appear unnaturally brighter or darker than intended.</li>
+</ul>
+<h3 id="temporal-behavior-the-mosquito-noise-effect">Temporal Behavior:
+The "Mosquito Noise" Effect</h3>
+<p>In moving video, ringing artifacts do not remain static. Because
+MPEG-4 Part 2 utilizes inter-frame predictive coding (P-frames and
+B-frames) alongside motion compensation, the exact location and
+intensity of high-frequency loss vary from frame to frame.</p>
+<p>This frame-to-frame variance causes the ringing around moving objects
+or complex edges to rapidly fluctuate, creating an effect known as
+"mosquito noise." It appears to the viewer as a swarm of buzzing, hazy
+pixels hovering around moving contours, significantly degrading
+perceived clarity.</p>
+<h3 id="mpeg-4-part-2-limitations-and-mitigation">MPEG-4 Part 2
+Limitations and Mitigation</h3>
+<p>Unlike modern codecs such as H.264 (AVC) or H.265 (HEVC), the
+baseline MPEG-4 Part 2 standard lacks an integrated in-loop deblocking
+and deringing filter. As a result, ringing artifacts directly enter the
+reconstructed reference frames, propagating temporal errors through
+subsequent predicted frames.</p>
+<p>To mitigate these artifacts, decoders and playback software often
+apply post-processing deringing filters. These spatial adaptive filters
+detect sharp edges and smooth the surrounding oscillating pixels without
+compromising the primary edge boundary.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

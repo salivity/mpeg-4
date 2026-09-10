@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ADTS Header Synchronization in MPEG-4 AAC - mpeg-4</title>
+    <meta name="description" content="The Audio Data Transport Stream (ADTS) format enables seamless playback and mid-stream synchronization in MPEG-4 Advanced Audio Coding (AAC) by embedding a dedicated metadata header before every audio frame. This article explains how the structural compo">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/adts-header-synchronization-in-mpeg-4-aac">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="ADTS Header Synchronization in MPEG-4 AAC - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/adts-header-synchronization-in-mpeg-4-aac" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The Audio Data Transport Stream (ADTS) format enables seamless playback and mid-stream synchronization in MPEG-4 Advanced Audio Coding (AAC) by embedding a dedicated metadata header before every audio frame. This article explains how the structural compo" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="adts-header-synchronization-in-mpeg-4-aac">ADTS Header
+Synchronization in MPEG-4 AAC</h1>
+<p>The Audio Data Transport Stream (ADTS) format enables seamless
+playback and mid-stream synchronization in MPEG-4 Advanced Audio Coding
+(AAC) by embedding a dedicated metadata header before every audio frame.
+This article explains how the structural components of the ADTS
+header—including the syncword, stream configuration parameters, and
+frame length fields—allow decoders to locate audio boundaries, configure
+playback settings on the fly, and recover rapidly from data loss or
+transmission errors.</p>
+<h3 id="the-syncword-locating-frame-boundaries">The Syncword: Locating
+Frame Boundaries</h3>
+<p>At the beginning of every ADTS header lies a 12-bit sequence known as
+the <strong>syncword</strong>, represented in binary as
+<code>1111 1111 1111</code> (or hexadecimal <code>0xFFF</code>). Because
+ADTS streams are often transmitted over unreliable networks or broadcast
+channels without separate container metadata, decoders continuously scan
+the incoming bitstream for this specific 12-bit pattern to identify the
+potential start of a new audio frame.</p>
+<h3 id="mid-stream-configuration-via-header-metadata">Mid-Stream
+Configuration via Header Metadata</h3>
+<p>Unlike formats that require an initial global header (such as an MP4
+container's <code>moov</code> atom), the ADTS header is self-contained
+and repeated for every frame. Directly following the syncword, the
+header provides critical decoding parameters:</p>
+<ul>
+<li><strong>MPEG Version:</strong> Identifies whether the stream is
+MPEG-2 or MPEG-4 AAC.</li>
+<li><strong>Profile:</strong> Specifies the AAC profile (e.g., AAC Main,
+LC, or SSR).</li>
+<li><strong>Sampling Frequency Index:</strong> Defines the sample rate
+of the audio data.</li>
+<li><strong>Channel Configuration:</strong> Dictates the channel layout
+(such as mono, stereo, or 5.1 surround).</li>
+</ul>
+<p>Because these parameters appear with each frame, a decoder tuning
+into a live stream mid-broadcast can immediately configure its internal
+decoding pipeline and begin playback without waiting for a separate
+metadata packet.</p>
+<h3 id="false-positive-protection-using-frame-length">False-Positive
+Protection Using Frame Length</h3>
+<p>Because audio payload data can randomly contain the 12-bit sequence
+<code>1111 1111 1111</code>, decoders must verify that a detected
+syncword is authentic. The ADTS header includes a 13-bit <strong>frame
+length</strong> field indicating the total size of the header plus the
+audio data block.</p>
+<p>To confirm synchronization:</p>
+<ol type="1">
+<li>The decoder detects a syncword and reads the
+<code>frame_length</code> value.</li>
+<li>It offsets its read pointer by that exact number of bytes.</li>
+<li>It checks whether another valid syncword exists at the new
+position.</li>
+</ol>
+<p>If the subsequent syncword is verified across multiple consecutive
+frames, the decoder locks synchronization. If not, the decoder treats
+the initial match as a false positive within the payload and resumes
+scanning.</p>
+<h3 id="error-detection-with-crc">Error Detection with CRC</h3>
+<p>The header contains a <code>protection_absent</code> flag. If this
+bit is set to <code>0</code>, a 16-bit Cyclic Redundancy Check (CRC)
+field is appended to the header. This allows the decoder to validate
+data integrity. If a frame is corrupted during transmission, the decoder
+can discard the damaged frame and jump immediately to the next frame
+boundary, preventing audio distortion while maintaining timing
+synchronization.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPEG-4 Audio Error Protection for Wireless Voice - mpeg-4</title>
+    <meta name="description" content="The MPEG-4 Audio Error Protection (EP) tool provides a flexible framework designed to safeguard voice and audio data transmitted over unreliable, noisy wireless channels. By classifying encoded audio bits according to their perceptual importance and appl">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/mpeg-4-audio-error-protection-for-wireless-voice">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MPEG-4 Audio Error Protection for Wireless Voice - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/mpeg-4-audio-error-protection-for-wireless-voice" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The MPEG-4 Audio Error Protection (EP) tool provides a flexible framework designed to safeguard voice and audio data transmitted over unreliable, noisy wireless channels. By classifying encoded audio bits according to their perceptual importance and appl" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="mpeg-4-audio-error-protection-for-wireless-voice">MPEG-4 Audio
+Error Protection for Wireless Voice</h1>
+<p>The MPEG-4 Audio Error Protection (EP) tool provides a flexible
+framework designed to safeguard voice and audio data transmitted over
+unreliable, noisy wireless channels. By classifying encoded audio bits
+according to their perceptual importance and applying Unequal Error
+Protection (UEP), the tool optimizes bandwidth while ensuring that
+critical frame components remain intact. This mechanism allows decoders
+to maintain intelligible audio output, detect frame corruption, and
+trigger seamless error concealment strategies even under severe channel
+degradation.</p>
+<h3 id="bitstream-partitioning-into-sensitivity-classes">Bitstream
+Partitioning into Sensitivity Classes</h3>
+<p>Audio codecs produce bitstreams where different bits possess varying
+degrees of perceptual importance. The MPEG-4 EP tool exploits this
+characteristic by separating voice frames into distinct error
+sensitivity classes (typically Class A, Class B, and Class C):</p>
+<ul>
+<li><strong>Class A (Most Sensitive):</strong> Contains critical control
+data, frame headers, and core spectral parameters. Bit errors in this
+class cause complete frame corruption, catastrophic acoustic artifacts,
+or decoder synchronization loss.</li>
+<li><strong>Class B (Moderately Sensitive):</strong> Contains primary
+spectral data and scale factors. Errors degrade audio quality noticeably
+but do not disrupt basic synthesis or frame synchronization.</li>
+<li><strong>Class C (Least Sensitive):</strong> Contains fine
+quantization data and residual spectral parameters. Errors in this class
+produce minimal perceptual degradation and are often masked by
+psychoacoustic effects.</li>
+</ul>
+<h3 id="unequal-error-protection-uep">Unequal Error Protection
+(UEP)</h3>
+<p>Rather than applying a uniform Forward Error Correction (FEC) rate
+across the entire frame—which introduces high overhead—the EP tool
+applies Unequal Error Protection tailored to each sensitivity class:</p>
+<ol type="1">
+<li><strong>Heavy FEC for High-Priority Classes:</strong> Class A bits
+receive robust channel coding, such as low-rate punctured convolutional
+codes or Reed-Solomon (RS) codes, ensuring maximum survivability against
+bit errors and fading.</li>
+<li><strong>Lighter FEC for Low-Priority Classes:</strong> Class B and
+Class C bits receive higher-rate codes or minimal parity overhead,
+preserving overall channel capacity.</li>
+</ol>
+<h3 id="cyclic-redundancy-checks-and-error-detection">Cyclic Redundancy
+Checks and Error Detection</h3>
+<p>The EP tool integrates Cyclic Redundancy Check (CRC) codes directly
+into the most critical bit partitions (Class A). When a corrupted frame
+arrives at the receiver, the CRC immediately flags whether Class A bits
+have been altered beyond the FEC's correction capability. If a severe
+error is detected, the decoder aborts decoding that specific corrupted
+payload and activates error concealment mechanisms, such as frame
+repetition, parameter interpolation, or systematic muting, preventing
+loud clicks and audio distortions.</p>
+<h3 id="interleaving-against-burst-errors">Interleaving Against Burst
+Errors</h3>
+<p>Wireless channels are prone to deep fading and multipath
+interference, which generate long bursts of sequential bit errors. The
+MPEG-4 EP tool implements bit-level and frame-level interleaving. By
+rearranging the temporal order of bits before transmission, burst errors
+are dispersed across the entire payload when de-interleaved at the
+receiver. This converts a concentrated block of errors into isolated,
+single-bit errors that the FEC algorithms can successfully correct.</p>
+<h3 id="dynamic-adaptability">Dynamic Adaptability</h3>
+<p>The EP tool features a modular frame structure that can dynamically
+adapt to changing channel conditions. In environments with fluctuating
+Signal-to-Noise Ratios (SNR), the protection configuration can adjust
+FEC strengths and class definitions in real time, maintaining optimal
+voice intelligibility and link robustness without unnecessary bandwidth
+consumption.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

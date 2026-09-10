@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPEG-4 Part 12 Shared Sample Data Handling - mpeg-4</title>
+    <meta name="description" content="The MPEG-4 Part 12 standard, formally known as the ISO Base Media File Format (ISOBMFF), provides a flexible architecture that allows multiple media tracks to share identical sample data without physical duplication. By strictly separating structural met">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/mpeg-4-part-12-shared-sample-data-handling">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MPEG-4 Part 12 Shared Sample Data Handling - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/mpeg-4-part-12-shared-sample-data-handling" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The MPEG-4 Part 12 standard, formally known as the ISO Base Media File Format (ISOBMFF), provides a flexible architecture that allows multiple media tracks to share identical sample data without physical duplication. By strictly separating structural met" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="mpeg-4-part-12-shared-sample-data-handling">MPEG-4 Part 12
+Shared Sample Data Handling</h1>
+<p>The MPEG-4 Part 12 standard, formally known as the ISO Base Media
+File Format (ISOBMFF), provides a flexible architecture that allows
+multiple media tracks to share identical sample data without physical
+duplication. By strictly separating structural metadata from the raw
+media payload, the file format enables independent track definitions to
+point directly to the same byte ranges in storage. This mechanism
+maximizes storage efficiency, reduces bandwidth consumption during
+authoring, and facilitates complex multi-track presentation scenarios
+such as multi-language audio, alternate camera angles, and
+non-destructive editing.</p>
+<h3 id="separation-of-metadata-and-media-data">Separation of Metadata
+and Media Data</h3>
+<p>The core architecture of MPEG-4 Part 12 relies on hierarchical object
+structures called "boxes" (or atoms). The file format decouples
+presentation and structural metadata, located in the Movie Box
+(<code>moov</code>), from the raw binary media samples, stored in the
+Media Data Box (<code>mdat</code>).</p>
+<p>Because the <code>mdat</code> box is merely a contiguous container of
+unformatted byte streams, it does not define ownership of any specific
+sample. The structure, interpretation, and playback timing of the data
+are entirely dictated by the metadata contained within the
+<code>moov</code> box.</p>
+<h3 id="sample-table-mapping">Sample Table Mapping</h3>
+<p>Every track in an ISOBMFF file is represented by a separate Track Box
+(<code>trak</code>) inside the <code>moov</code> container. Inside each
+<code>trak</code>, a Sample Table Box (<code>stbl</code>) acts as an
+index that translates media track time into physical file locations.</p>
+<p>When two or more tracks share identical sample data, the system
+handles the reference mapping using standard sample table sub-boxes:</p>
+<ul>
+<li><strong>Chunk Offset Boxes (<code>stco</code> or
+<code>co64</code>):</strong> These boxes store file offsets pointing to
+the beginning of data chunks in the <code>mdat</code> box. Multiple
+tracks can contain identical offset values, directing demuxers to the
+exact same byte locations.</li>
+<li><strong>Sample-to-Chunk Box (<code>stsc</code>):</strong> This box
+defines how samples are grouped into chunks. Different tracks can
+reference the same chunks using identical or distinct sample
+groupings.</li>
+<li><strong>Sample Size Box (<code>stsz</code>):</strong> This box
+defines the size in bytes for each sample, allowing multiple tracks to
+read the exact byte boundaries from the shared location.</li>
+</ul>
+<p>Because each track maintains its own independent <code>stbl</code>
+instance, parsers read the shared data independently without causing
+resource locking or decoding conflicts.</p>
+<h3 id="independent-timing-and-track-control">Independent Timing and
+Track Control</h3>
+<p>Even when physical sample data is shared, MPEG-4 Part 12 allows each
+track to maintain completely independent presentation properties:</p>
+<ul>
+<li><strong>Time-to-Sample (<code>stts</code>) and Composition Time
+Offset (<code>ctts</code>):</strong> Tracks can interpret the decoding
+and presentation timestamps of shared samples differently, enabling
+varying frame rates or playback speeds for the same underlying
+data.</li>
+<li><strong>Edit List Box (<code>edts</code> /
+<code>elst</code>):</strong> Tracks can define non-destructive timeline
+modifications. For example, two tracks can reference identical video
+footage in the <code>mdat</code> box while using separate edit lists to
+play different segments, reorder scenes, or loop specific sample
+sequences.</li>
+<li><strong>Track Reference Box (<code>tref</code>):</strong> When
+tracks have functional relationships—such as timed text referencing a
+primary video track or auxiliary audio layers—the <code>tref</code> box
+creates formal links between the tracks while sample pointers remain
+shared.</li>
+</ul>
+<h3 id="practical-applications">Practical Applications</h3>
+<p>Sharing identical sample data across tracks is widely used in media
+production and streaming workflows:</p>
+<ul>
+<li><strong>Multi-Language or Multi-Channel Audio:</strong> Multiple
+audio tracks can share common background audio or silence samples while
+mapping only dialogue variations separately.</li>
+<li><strong>Trick-Play and Alternate Renditions:</strong> Fast-forward
+or summary tracks can reference selected keyframes from the main video
+track without storing duplicate intra-coded (I-frame) samples.</li>
+<li><strong>Non-Destructive Versioning:</strong> A single file can
+contain both theatrical and extended cuts of a presentation by sharing
+common scenes within the <code>mdat</code> payload and using separate
+<code>trak</code> entries to manage sequence differences.</li>
+</ul></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

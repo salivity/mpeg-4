@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPEG-4 Distributed Media Composition Explained - mpeg-4</title>
+    <meta name="description" content="MPEG-4 coordinates media composition across distinct local and remote network nodes through an object-based architecture powered by the Binary Format for Scenes (BIFS), the Delivery Multimedia Integration Framework (DMIF), and precise synchronization lay">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/mpeg-4-distributed-media-composition-explained">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MPEG-4 Distributed Media Composition Explained - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/mpeg-4-distributed-media-composition-explained" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="MPEG-4 coordinates media composition across distinct local and remote network nodes through an object-based architecture powered by the Binary Format for Scenes (BIFS), the Delivery Multimedia Integration Framework (DMIF), and precise synchronization lay" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="mpeg-4-distributed-media-composition-explained">MPEG-4
+Distributed Media Composition Explained</h1>
+<p>MPEG-4 coordinates media composition across distinct local and remote
+network nodes through an object-based architecture powered by the Binary
+Format for Scenes (BIFS), the Delivery Multimedia Integration Framework
+(DMIF), and precise synchronization layer protocols. Unlike traditional
+monolithic video codecs, MPEG-4 treats media as an aggregation of
+independent visual, audio, and synthetic objects that can be transmitted
+from disparate locations and assembled dynamically at the client
+terminal.</p>
+<h2 id="object-based-architecture">Object-Based Architecture</h2>
+<p>MPEG-4 conceptualizes a multimedia presentation as a collection of
+discrete media objects rather than a single flat video frame. These
+objects include natural video, multi-channel audio, 2D vector graphics,
+synthetic 3D meshes, and interactive text. Because each object is
+encoded as an individual Elementary Stream (ES), elements of a single
+scene can reside on a local hard drive, an on-premises media server, or
+multiple remote servers worldwide.</p>
+<h2 id="scene-description-with-bifs">Scene Description with BIFS</h2>
+<p>The structural blueprint that binds these disparate objects together
+is the Binary Format for Scenes (BIFS). BIFS functions similarly to an
+optimized, binary version of VRML (Virtual Reality Modeling Language)
+and provides the following core mechanisms:</p>
+<ul>
+<li><strong>Spatiotemporal Layout:</strong> BIFS defines the exact 2D or
+3D spatial coordinates, hierarchy, and temporal activation points for
+every object within the presentation.</li>
+<li><strong>Dynamic Node Updates:</strong> The scene graph can receive
+continuous BIFS Command streams that modify object properties, add new
+elements, or remove expired nodes in real time.</li>
+<li><strong>Client-Side Composition:</strong> The heavy lifting of
+compositing layers, blending graphics, and rendering animations occurs
+at the end-user's display device rather than on the transmitting
+server.</li>
+</ul>
+<h2 id="network-abstraction-via-dmif">Network Abstraction via DMIF</h2>
+<p>To pull media assets across diverse network topologies without
+complicating the composition engine, MPEG-4 employs the Delivery
+Multimedia Integration Framework (DMIF).</p>
+<p>DMIF decouples the application layer from the transport layer. It
+presents a uniform interface (the DMIF-Application Interface, or DAI) to
+the media compositor regardless of the delivery medium. Whether an
+object stream originates from a local disk, an RTP/RTSP IP network, or a
+broadcast channel, the composition engine accesses each stream through
+identical calls. DMIF handles the session establishment, resource
+management, and protocol translations specific to each remote node.</p>
+<h2 id="stream-synchronization-and-the-sync-layer">Stream
+Synchronization and the Sync Layer</h2>
+<p>Distributing media components across distinct nodes introduces
+variable network latency and jitter. MPEG-4 resolves this through its
+Synchronization Layer (SL):</p>
+<ul>
+<li><strong>Elementary Stream Management:</strong> Every object stream
+is packaged into an SL packet stream containing critical timing
+metadata.</li>
+<li><strong>Object Clock References (OCR):</strong> Each stream can
+carry its own time base or synchronize against a master clock, enabling
+nodes with independent clocks to stay aligned.</li>
+<li><strong>Time Stamps:</strong> Decoding Time Stamps (DTS) and
+Composition Time Stamps (CTS) instruct the terminal exactly when an
+object must be decoded and when it must appear in the composited
+scene.</li>
+</ul>
+<h2 id="terminal-assembly-and-rendering">Terminal Assembly and
+Rendering</h2>
+<p>When the presentation plays, the client terminal establishes
+connections to the designated local and remote nodes via DMIF. The
+terminal decodes the scene graph via BIFS and buffers incoming
+elementary streams. Using the synchronization timestamps, the terminal's
+composition engine renders each independent audio and visual element
+into a unified, interactive presentation according to the rules defined
+by the scene graph.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

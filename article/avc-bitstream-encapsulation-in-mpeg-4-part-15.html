@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AVC Bitstream Encapsulation in MPEG-4 Part 15 - mpeg-4</title>
+    <meta name="description" content="This article outlines the technical rules and structure defined by ISO/IEC 14496-15 for encapsulating Advanced Video Coding (AVC / H.264) bitstreams into MPEG-4 Part 12-based containers (such as .mp4). It covers the transition from Annex B byte streams t">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/avc-bitstream-encapsulation-in-mpeg-4-part-15">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="AVC Bitstream Encapsulation in MPEG-4 Part 15 - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/avc-bitstream-encapsulation-in-mpeg-4-part-15" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article outlines the technical rules and structure defined by ISO/IEC 14496-15 for encapsulating Advanced Video Coding (AVC / H.264) bitstreams into MPEG-4 Part 12-based containers (such as .mp4). It covers the transition from Annex B byte streams t" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="avc-bitstream-encapsulation-in-mpeg-4-part-15">AVC Bitstream
+Encapsulation in MPEG-4 Part 15</h1>
+<p>This article outlines the technical rules and structure defined by
+ISO/IEC 14496-15 for encapsulating Advanced Video Coding (AVC / H.264)
+bitstreams into MPEG-4 Part 12-based containers (such as
+<code>.mp4</code>). It covers the transition from Annex B byte streams
+to length-delimited NAL units, the structure of the AVC Decoder
+Configuration Record, the differences between sample entry types, and
+the mechanisms for handling timestamps and random access points.</p>
+<h3 id="1-nal-unit-framing-length-prefixing-vs-byte-stream">1. NAL Unit
+Framing: Length-Prefixing vs. Byte Stream</h3>
+<p>In standard AVC Annex B byte streams, Network Abstraction Layer Units
+(NALUs) are delimited by start codes (<code>0x000001</code> or
+<code>0x00000001</code>). Under ISO/IEC 14496-15:</p>
+<ul>
+<li><strong>No Start Codes:</strong> Start code prefixes are stripped
+from the bitstream.</li>
+<li><strong>Length Fields:</strong> Each NAL unit is preceded by a
+length field indicating the size of the NAL unit in bytes (excluding the
+length field itself).</li>
+<li><strong>Length Field Size:</strong> The size of the length field is
+configured to be 1, 2, or 4 bytes, with 4 bytes
+(<code>lengthSizeMinusOne = 3</code>) being the industry standard for
+general compatibility.</li>
+</ul>
+<h3 id="2-the-avc-decoder-configuration-record-avcc">2. The AVC Decoder
+Configuration Record (<code>avcC</code>)</h3>
+<p>The decoder initialization data is placed in an <code>avcC</code> box
+located within the sample entry in the sample description box
+(<code>stsd</code>). The <code>AVCDecoderConfigurationRecord</code>
+contains critical parameters required to initialize the AVC decoder:</p>
+<ul>
+<li><strong>Configuration Version:</strong> Typically set to
+<code>1</code>.</li>
+<li><strong>Profile, Compatibility, and Level:</strong>
+<code>AVCProfileIndication</code>, <code>profile_compatibility</code>,
+and <code>AVCLevelIndication</code> bytes.</li>
+<li><strong>Length Size Minus One:</strong> Specifies the byte size of
+the length field prepending each NALU (e.g., a value of <code>3</code>
+denotes a 4-byte prefix).</li>
+<li><strong>Parameter Sets:</strong> Stored lists of Sequence Parameter
+Sets (SPS) and Picture Parameter Sets (PPS) NAL units used across the
+sequence.</li>
+</ul>
+<h3 id="3-sample-entry-types-avc1-vs-avc3">3. Sample Entry Types
+(<code>avc1</code> vs. <code>avc3</code>)</h3>
+<p>MPEG-4 Part 15 defines distinct four-character codes (FourCC) for
+sample entries to denote where parameter sets reside:</p>
+<ul>
+<li><strong><code>avc1</code>:</strong> Parameter sets (SPS and PPS) are
+stored strictly out-of-band inside the <code>avcC</code> box. Video
+samples should not carry redundant SPS/PPS NALUs unless they match the
+configuration record.</li>
+<li><strong><code>avc3</code>:</strong> Parameter sets are permitted
+in-band within the sample stream itself. This mode is widely used in
+adaptive streaming protocols (such as DASH and HLS with fragmented MP4)
+where parameter sets may change mid-stream or need frequent repetition
+for stream switching.</li>
+<li><strong><code>avc2</code> / <code>avc4</code>:</strong> Extensions
+analogous to <code>avc1</code> and <code>avc3</code> that allow for
+parameter sets and slice extensions related to SVC (Scalable Video
+Coding) or MVC (Multiview Video Coding).</li>
+</ul>
+<h3 id="4-sample-and-access-unit-definitions">4. Sample and Access Unit
+Definitions</h3>
+<ul>
+<li><strong>One Access Unit per Sample:</strong> An individual MP4
+sample corresponds precisely to one AVC access unit (a primary coded
+picture).</li>
+<li><strong>Sample Content:</strong> A sample consists of all NAL units
+belonging to that access unit (e.g., Supplemental Enhancement
+Information (SEI), primary coded slice NAL units, redundant coded
+slices), each preceded by its designated length field.</li>
+<li><strong>Prohibited NALUs:</strong> End of Sequence (EOS) and End of
+Stream (EOB) NAL units must not be included within samples unless
+required for specific multi-sequence splicing architectures.</li>
+</ul>
+<h3 id="5-timing-reordering-and-random-access">5. Timing, Reordering,
+and Random Access</h3>
+<ul>
+<li><strong>Decoding vs. Composition Timing:</strong> Because AVC
+utilizes B-frames (hierarchical and bi-directional prediction), decoding
+order differs from presentation order.
+<ul>
+<li>The <code>stts</code> (Time-to-Sample) box provides the Decoding
+Time (DTS).</li>
+<li>The <code>ctts</code> (Composition Time-to-Sample) box provides the
+signed or unsigned offset to calculate Presentation Time (PTS = DTS +
+Composition Offset).</li>
+</ul></li>
+<li><strong>Sync Samples (<code>stss</code>):</strong> Random access
+points corresponding to Instantaneous Decoder Refresh (IDR) frames must
+be indexed in the <code>stss</code> box.</li>
+<li><strong>Open GOPs and Recovery Points:</strong> Non-IDR random
+access points (such as Clean Random Access frames or frames relying on
+SEI recovery point messages) are marked using sample group descriptions
+(<code>sbgp</code> and <code>sgpd</code> boxes) with a <code>roll</code>
+or <code>rap </code> grouping type to signal that decoding must begin
+before the presentation point.</li>
+</ul></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

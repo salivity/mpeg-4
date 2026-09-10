@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Managing Field Dominance in MPEG-4 Encoding - mpeg-4</title>
+    <meta name="description" content="This article explores how the MPEG-4 standard manages field dominance when compressing legacy interlaced video. It covers the signaling mechanisms, syntax flags, adaptive coding structures, and motion compensation techniques used to preserve temporal ord">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/managing-field-dominance-in-mpeg-4-encoding">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Managing Field Dominance in MPEG-4 Encoding - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/managing-field-dominance-in-mpeg-4-encoding" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explores how the MPEG-4 standard manages field dominance when compressing legacy interlaced video. It covers the signaling mechanisms, syntax flags, adaptive coding structures, and motion compensation techniques used to preserve temporal ord" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="managing-field-dominance-in-mpeg-4-encoding">Managing Field
+Dominance in MPEG-4 Encoding</h1>
+<p>This article explores how the MPEG-4 standard manages field dominance
+when compressing legacy interlaced video. It covers the signaling
+mechanisms, syntax flags, adaptive coding structures, and motion
+compensation techniques used to preserve temporal order and eliminate
+playback artifacts caused by mismatched field priorities.</p>
+<h3 id="the-challenge-of-field-dominance">The Challenge of Field
+Dominance</h3>
+<p>Interlaced video relies on splitting a single video frame into two
+separate fields captured at different moments in time: the top field
+(odd lines) and the bottom field (even lines). Field dominance
+determines which field must be displayed first to preserve correct
+temporal motion. Standard-definition broadcast standards vary; for
+instance, NTSC typically uses Bottom Field First (BFF), while PAL
+typically uses Top Field First (TFF). If an encoder misinterprets field
+dominance, the playback displays a characteristic stuttering or temporal
+jitter, where motion appears to jump backward and forward.</p>
+<h3 id="bitstream-signaling-and-flags">Bitstream Signaling and
+Flags</h3>
+<p>MPEG-4 addresses field dominance primarily through explicit signaling
+in the video bitstream headers:</p>
+<ul>
+<li><strong><code>top_field_first</code> (TFF) Flag:</strong> This
+syntax element explicitly instructs the decoder which field was captured
+first and must be presented first during playback. Setting this value to
+<code>1</code> indicates Top Field First, while <code>0</code> indicates
+Bottom Field First.</li>
+<li><strong><code>repeat_first_field</code> Flag:</strong> Used in
+conjunction with the TFF flag, this allows proper 3:2 pulldown handling
+for telecined material, ensuring that repeated fields maintain accurate
+temporal phase without disrupting dominance.</li>
+<li><strong>Picture Structure Signaling:</strong> MPEG-4 enables streams
+to be coded either as progressive frames, interlaced frames containing
+both fields, or discrete field pictures where top and bottom fields are
+coded separately.</li>
+</ul>
+<h3 id="adaptive-coding-tools">Adaptive Coding Tools</h3>
+<p>MPEG-4 implementations—particularly MPEG-4 Part 2 (Advanced Simple
+Profile) and MPEG-4 Part 10 (AVC/H.264)—provide structural tools to
+optimize the compression of interlaced content:</p>
+<ul>
+<li><strong>Picture-Adaptive Frame/Field (PAFF) Coding:</strong> Allows
+the encoder to choose dynamically between coding a video frame as a
+single interlaced frame or as two separate field pictures, depending on
+the level of motion.</li>
+<li><strong>Macroblock-Adaptive Frame/Field (MBAFF) Coding:</strong>
+Available in MPEG-4 AVC, this allows individual macroblock pairs (16x32
+pixel blocks) to be coded either in frame mode or field mode. This
+ensures high-motion areas are treated with field-level precision while
+static areas retain the spatial efficiency of frame coding.</li>
+</ul>
+<h3 id="motion-compensation-and-field-parity">Motion Compensation and
+Field Parity</h3>
+<p>During motion estimation, MPEG-4 algorithms respect field parity.
+Reference fields are labeled according to their temporal relationship
+(same parity vs. opposite parity). Motion vectors can reference previous
+top fields or previous bottom fields independently. By calculating
+vertical motion vector offsets relative to the correct field origin, the
+encoder prevents interlacing artifacts, vertical blurring, and polarity
+inversion.</p>
+<p>Through explicit syntax flags, parity-aware motion estimation, and
+flexible frame/field coding structures, MPEG-4 ensures that legacy
+interlaced content retains its original temporal fidelity across modern
+decoding and display pipelines.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

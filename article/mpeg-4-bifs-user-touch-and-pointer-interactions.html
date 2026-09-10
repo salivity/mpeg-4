@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPEG-4 BIFS User Touch and Pointer Interactions - mpeg-4</title>
+    <meta name="description" content="MPEG-4 Binary Format for Scenes (BIFS) enables dynamic, interactive rich-media experiences by integrating structured scene-graph elements derived from the VRML standard. This article explores the core mechanisms MPEG-4 BIFS uses to capture, route, and re">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/mpeg-4-bifs-user-touch-and-pointer-interactions">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MPEG-4 BIFS User Touch and Pointer Interactions - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/mpeg-4-bifs-user-touch-and-pointer-interactions" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="MPEG-4 Binary Format for Scenes (BIFS) enables dynamic, interactive rich-media experiences by integrating structured scene-graph elements derived from the VRML standard. This article explores the core mechanisms MPEG-4 BIFS uses to capture, route, and re" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="mpeg-4-bifs-user-touch-and-pointer-interactions">MPEG-4 BIFS
+User Touch and Pointer Interactions</h1>
+<p>MPEG-4 Binary Format for Scenes (BIFS) enables dynamic, interactive
+rich-media experiences by integrating structured scene-graph elements
+derived from the VRML standard. This article explores the core
+mechanisms MPEG-4 BIFS uses to capture, route, and respond to user touch
+and pointer interactions, detailing the roles of specialized sensor
+nodes, event-routing architectures, and script-based event handling.</p>
+<h3 id="sensor-nodes-detecting-user-input">Sensor Nodes: Detecting User
+Input</h3>
+<p>The primary mechanism for capturing pointer and touch interactions in
+MPEG-4 BIFS is the sensor node family. Sensors are integrated directly
+into the hierarchical scene graph alongside visual geometry:</p>
+<ul>
+<li><strong>TouchSensor:</strong> Detects pointing device actions over
+its sibling and child geometry. It tracks states such as hovering
+(<code>isOver</code>), pressing/activating (<code>isActive</code>), and
+completion of a click or tap (<code>touchTime</code>). It also outputs
+spatial data, including the exact intersection coordinates
+(<code>hitPoint_changed</code>), surface normal vectors
+(<code>hitNormal_changed</code>), and texture coordinates
+(<code>hitTexCoord_changed</code>).</li>
+<li><strong>Drag and Manipulation Sensors:</strong> Specialized sensors
+map continuous pointer movement or dragging into specific coordinate
+transformations:
+<ul>
+<li><code>PlaneSensor</code>: Translates 2D drag movements into
+translation vectors along a defined plane.</li>
+<li><code>CylinderSensor</code>: Maps pointer movement into rotational
+angles around a cylinder's axis.</li>
+<li><code>SphereSensor</code>: Maps free-form pointer movement into 3D
+rotations about a sphere.</li>
+</ul></li>
+<li><strong>Anchor Nodes:</strong> Provide high-level interaction by
+triggering URL navigation or scene replacements when the user activates
+the child geometry.</li>
+</ul>
+<h3 id="the-event-routing-architecture">The Event-Routing
+Architecture</h3>
+<p>MPEG-4 BIFS decouples event generation from event handling using
+explicit event paths defined by <code>ROUTE</code> statements. When a
+user touches or clicks a target geometry, the associated sensor
+generates an event containing a timestamp and payload.</p>
+<p>A <code>ROUTE</code> directs these event outputs
+(<code>eventOut</code>) directly into the event inputs
+(<code>eventIn</code>) or exposed fields of other scene graph nodes. For
+example:</p>
+<ol type="1">
+<li>A user touches a 3D object containing a
+<code>TouchSensor</code>.</li>
+<li>The <code>TouchSensor</code> generates a boolean
+<code>isActive</code> event set to <code>TRUE</code>.</li>
+<li>A <code>ROUTE</code> delivers this event to a
+<code>TimeSensor</code> node to start an animation, or directly to a
+<code>Transform</code> node to alter scale, position, or
+orientation.</li>
+</ol>
+<p>This declarative model allows basic interactive behaviors—such as
+toggling visibility, triggering sound clips, or starting animations—to
+execute efficiently without procedural code.</p>
+<h3 id="script-nodes-and-complex-logic">Script Nodes and Complex
+Logic</h3>
+<p>For interactions requiring conditional logic, mathematical
+processing, or dynamic state tracking, BIFS provides <code>Script</code>
+nodes.</p>
+<p><code>Script</code> nodes can receive events from touch and drag
+sensors via routes, execute logic using ECMAScript (JavaScript) or
+MPEG-J (Java-based execution engine), and generate new events that
+update other scene elements. This allows applications to implement
+advanced touch interactions, such as multi-step interface controls,
+gesture recognition, drag-and-drop mechanics, and custom collision
+boundaries.</p>
+<h3 id="dynamic-updates-via-bifs-command">Dynamic Updates via
+BIFS-Command</h3>
+<p>In addition to local scene-graph routing, pointer interactions can
+trigger <code>BIFS-Command</code> protocols. When an interaction occurs,
+the player can dynamically modify the scene graph structure—adding,
+deleting, or replacing nodes and routes on the fly—allowing real-time
+interface transformations in response to user inputs.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

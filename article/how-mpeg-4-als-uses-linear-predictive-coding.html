@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How MPEG-4 ALS Uses Linear Predictive Coding - mpeg-4</title>
+    <meta name="description" content="This article provides an overview of how MPEG-4 Audio Lossless Coding (ALS) leverages Linear Prediction Coefficients (LPC) to achieve high-efficiency, mathematically lossless audio compression. By analyzing the time-domain correlation of audio signals, A">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/how-mpeg-4-als-uses-linear-predictive-coding">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How MPEG-4 ALS Uses Linear Predictive Coding - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/how-mpeg-4-als-uses-linear-predictive-coding" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article provides an overview of how MPEG-4 Audio Lossless Coding (ALS) leverages Linear Prediction Coefficients (LPC) to achieve high-efficiency, mathematically lossless audio compression. By analyzing the time-domain correlation of audio signals, A" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="how-mpeg-4-als-uses-linear-predictive-coding">How MPEG-4 ALS
+Uses Linear Predictive Coding</h1>
+<p>This article provides an overview of how MPEG-4 Audio Lossless Coding
+(ALS) leverages Linear Prediction Coefficients (LPC) to achieve
+high-efficiency, mathematically lossless audio compression. By analyzing
+the time-domain correlation of audio signals, ALS estimates future
+samples from past observations, subtracts these estimates to generate a
+low-energy residual, and encodes this residual alongside the filter
+parameters to allow bit-perfect reconstruction.</p>
+<h2 id="the-principle-of-linear-prediction-in-als">The Principle of
+Linear Prediction in ALS</h2>
+<p>Linear Predictive Coding (LPC) operates on the assumption that an
+audio sample at time index <span class="math inline">\(n\)</span>,
+denoted as <span class="math inline">\(x[n]\)</span>, can be modeled as
+a linear combination of its preceding <span
+class="math inline">\(P\)</span> samples:</p>
+<p><span class="math display">\[\hat{x}[n] = \sum_{k=1}^{P} a_k \cdot
+x[n-k]\]</span></p>
+<p>Here, <span class="math inline">\(P\)</span> represents the
+prediction order, and <span class="math inline">\(a_k\)</span> are the
+linear prediction coefficients.</p>
+<p>In MPEG-4 ALS, the encoder computes the predicted sample <span
+class="math inline">\(\hat{x}[n]\)</span> and calculates the residual
+(or error) signal:</p>
+<p><span class="math display">\[e[n] = x[n] -
+\text{round}(\hat{x}[n])\]</span></p>
+<p>Because audio signals typically exhibit strong temporal correlation,
+the residual signal <span class="math inline">\(e[n]\)</span> contains
+significantly lower variance and entropy than the original waveform.
+Transmitting the small residual values along with the quantized filter
+coefficients requires fewer bits than transmitting the raw pulse-code
+modulation (PCM) data.</p>
+<h2 id="coefficient-estimation-and-order-selection">Coefficient
+Estimation and Order Selection</h2>
+<p>MPEG-4 ALS segments the incoming audio stream into frames and
+sub-blocks. For each block, the encoder calculates the optimal
+prediction coefficients:</p>
+<ol type="1">
+<li><strong>Autocorrelation and Levinson-Durbin:</strong> The encoder
+computes the autocorrelation matrix of the windowed frame. It then
+applies the Levinson-Durbin recursion algorithm to efficiently solve the
+Yule-Walker equations, deriving the optimal LPC coefficients that
+minimize the mean squared error of the residual.</li>
+<li><strong>Adaptive Prediction Order:</strong> ALS supports a wide
+range of prediction orders, scaling from low orders (e.g., <span
+class="math inline">\(P = 4\)</span> to <span
+class="math inline">\(30\)</span>) for simpler material up to extremely
+high orders (e.g., <span class="math inline">\(P \le 1023\)</span>) for
+complex harmonic structures. The encoder evaluates rate-distortion
+trade-offs to choose the optimal order for each frame.</li>
+</ol>
+<h2 id="coefficient-representation-and-stability">Coefficient
+Representation and Stability</h2>
+<p>Direct quantization of linear prediction coefficients <span
+class="math inline">\(a_k\)</span> can cause the prediction filter to
+become unstable or sensitive to quantization noise. To resolve this,
+MPEG-4 ALS transforms the LPC coefficients into alternative
+representations before quantization:</p>
+<ul>
+<li><strong>Parcor (Partial Correlation) Coefficients:</strong> The
+Levinson-Durbin algorithm naturally produces reflection coefficients
+(Parcor coefficients). If the magnitude of every reflection coefficient
+remains strictly less than one (<span class="math inline">\(|k_i| &lt;
+1\)</span>), filter stability is guaranteed.</li>
+<li><strong>Log Area Ratios (LAR):</strong> ALS often converts
+reflection coefficients into Log Area Ratios or arcsine representations.
+This non-linear mapping reduces spectral sensitivity to quantization
+errors, allowing efficient transmission using a limited number of bits
+per coefficient.</li>
+</ul>
+<h2 id="short-term-and-long-term-prediction">Short-Term and Long-Term
+Prediction</h2>
+<p>MPEG-4 ALS extends basic LPC by combining short-term and long-term
+predictive models:</p>
+<ul>
+<li><strong>Forward-Adaptive Short-Term LPC:</strong> The standard LPC
+filter captures the spectral envelope and local sample correlations over
+short durations. The coefficients are calculated once per block and sent
+explicitly in the bitstream header.</li>
+<li><strong>Backward-Adaptive Prediction:</strong> For enhanced
+performance without increasing header overhead, ALS can optionally use
+adaptive algorithms (such as normalized Least Mean Squares) where both
+the encoder and decoder continuously adjust prediction taps based on
+reconstructed past samples.</li>
+<li><strong>Long-Term Prediction (LTP):</strong> To model tonal and
+harmonic components with periods longer than the short-term LPC window,
+ALS can employ a pitch predictor. LTP identifies repeating periodic
+structures across hundreds of samples, removing pitch-related redundancy
+prior to residual entropy coding.</li>
+</ul>
+<h2 id="lossless-reconstruction">Lossless Reconstruction</h2>
+<p>At the decoding stage, the process is fully deterministic:</p>
+<ol type="1">
+<li>The decoder parses the bitstream to extract and dequantize the LPC
+parameters, reconstructing the prediction filter.</li>
+<li>The decoder reads and entropy-decodes the residual samples <span
+class="math inline">\(e[n]\)</span> using Golomb-Rice or arithmetic
+decoding.</li>
+<li>The original sample is reconstructed by adding the integer-rounded
+prediction to the decoded residual:</li>
+</ol>
+<p><span class="math display">\[x[n] = e[n] + \text{round}\left(
+\sum_{k=1}^{P} a_k \cdot x[n-k] \right)\]</span></p>
+<p>Because the identical rounding and filtering operations are performed
+at both the encoder and decoder, the restored output matches the
+original input bit-for-bit.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

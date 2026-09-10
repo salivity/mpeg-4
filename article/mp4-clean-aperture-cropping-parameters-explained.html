@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MP4 Clean Aperture Cropping Parameters Explained - mpeg-4</title>
+    <meta name="description" content="In MPEG-4 container files, clean aperture parameters define the precise, artifact-free display region of a video frame by dictating fractional cropping boundaries and positioning offsets. Stored within the track metadata as a Clean Aperture Box (clap), t">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/mp4-clean-aperture-cropping-parameters-explained">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MP4 Clean Aperture Cropping Parameters Explained - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/mp4-clean-aperture-cropping-parameters-explained" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="In MPEG-4 container files, clean aperture parameters define the precise, artifact-free display region of a video frame by dictating fractional cropping boundaries and positioning offsets. Stored within the track metadata as a Clean Aperture Box (clap), t" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="mp4-clean-aperture-cropping-parameters-explained">MP4 Clean
+Aperture Cropping Parameters Explained</h1>
+<p>In MPEG-4 container files, clean aperture parameters define the
+precise, artifact-free display region of a video frame by dictating
+fractional cropping boundaries and positioning offsets. Stored within
+the track metadata as a Clean Aperture Box (<code>clap</code>), this
+mechanism allows video players to crop unwanted edge artifacts—such as
+blanking lines or digitization noise—and properly align the active
+picture area before rendering the image to a display.</p>
+<h3 id="the-purpose-of-clean-aperture-in-mpeg-4">The Purpose of Clean
+Aperture in MPEG-4</h3>
+<p>Digital video frames often contain edge pixels that should not be
+visible to the end user. This frequently occurs in transfers from legacy
+analog formats, standard definition digital broadcasts, or non-square
+pixel conversions where active video area does not span the entire
+encoded pixel grid.</p>
+<p>To resolve this without re-encoding the raw video data, the ISO Base
+Media File Format (ISO/IEC 14496-12), which forms the foundation of
+MPEG-4 Part 14 (MP4), provides clean aperture metadata. This specifies a
+sub-rectangle within the encoded frame dimensions that represents the
+pure image area suitable for display.</p>
+<h3 id="the-clean-aperture-box-clap">The Clean Aperture Box
+(<code>clap</code>)</h3>
+<p>Clean aperture information is contained within the video track’s
+sample table box structure:</p>
+<p><code>moov</code> &gt; <code>trak</code> &gt; <code>mdia</code> &gt;
+<code>minf</code> &gt; <code>stbl</code> &gt; <code>stsd</code> &gt;
+<em>Visual Sample Entry (e.g., <code>avc1</code>, <code>mp4v</code>,
+<code>hvc1</code>)</em> &gt; <code>clap</code></p>
+<p>The <code>clap</code> atom contains eight 32-bit unsigned/signed
+integers organized as four rational fractional numbers (a numerator and
+a denominator for each parameter):</p>
+<ol type="1">
+<li><strong><code>cleanApertureWidthN</code> /
+<code>cleanApertureWidthD</code></strong>: Defines the fractional width
+of the clean aperture rectangle in pixels.</li>
+<li><strong><code>cleanApertureHeightN</code> /
+<code>cleanApertureHeightD</code></strong>: Defines the fractional
+height of the clean aperture rectangle in pixels.</li>
+<li><strong><code>horizOffN</code> / <code>horizOffD</code></strong>:
+Defines the fractional horizontal offset of the clean aperture center
+relative to the encoded frame's center.</li>
+<li><strong><code>vertOffN</code> / <code>vertOffD</code></strong>:
+Defines the fractional vertical offset of the clean aperture center
+relative to the encoded frame's center.</li>
+</ol>
+<h3 id="mathematical-representation-and-positioning">Mathematical
+Representation and Positioning</h3>
+<p>The positioning of the clean aperture box is relative to the center
+of the stored image rather than the top-left corner:</p>
+<ul>
+<li><strong>Frame Center</strong>: The spatial center of the encoded
+frame is calculated as <span
+class="math inline">\((\frac{\text{Width}}{2},
+\frac{\text{Height}}{2})\)</span>.</li>
+<li><strong>Aperture Center</strong>: The center of the clean aperture
+area is placed at <span class="math inline">\((\frac{\text{Width}}{2} +
+\text{horizOff}, \frac{\text{Height}}{2} +
+\text{vertOff})\)</span>.</li>
+<li><strong>Bounding Boundaries</strong>: The cropped display edges are
+determined by extending half the clean aperture width left and right of
+the aperture center, and half the height up and down.</li>
+</ul>
+<p>Using fractional values (numerators and denominators) ensures that
+cropping parameters retain exact mathematical precision, avoiding
+floating-point rounding errors across different playback
+architectures.</p>
+<h3 id="container-level-vs-bitstream-level-cropping">Container-Level vs.
+Bitstream-Level Cropping</h3>
+<p>In MPEG-4 environments, clean aperture representation can exist at
+two distinct layers:</p>
+<ul>
+<li><strong>Container Level (<code>clap</code>)</strong>: Applied by the
+media parser or player during track rendering, independent of the
+underlying compression format.</li>
+<li><strong>Elementary Stream Level</strong>: Many video codecs
+encapsulated within MP4 (such as H.264/AVC and H.265/HEVC) have internal
+cropping flags within their Sequence Parameter Sets (SPS), such as
+<code>frame_cropping_flag</code> or conformance cropping windows.</li>
+</ul>
+<p>Standard-compliant MPEG-4 video players prioritize container-level
+<code>clap</code> definitions when processing display dimensions,
+calculating the final display aspect ratio (DAR) using both the clean
+aperture bounds and the Pixel Aspect Ratio (<code>pasp</code>) box.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

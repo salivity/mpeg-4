@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why IP Cameras Use MPEG 4 AVC Sub-Streams - mpeg-4</title>
+    <meta name="description" content="Modern IP surveillance cameras frequently output dual or multiple video feeds simultaneously, pairing a high-resolution primary stream with a lower-resolution MPEG-4 AVC (H.264) sub-stream. This article examines the technical and operational reasons for">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/why-ip-cameras-use-mpeg-4-avc-sub-streams">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Why IP Cameras Use MPEG 4 AVC Sub-Streams - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/why-ip-cameras-use-mpeg-4-avc-sub-streams" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Modern IP surveillance cameras frequently output dual or multiple video feeds simultaneously, pairing a high-resolution primary stream with a lower-resolution MPEG-4 AVC (H.264) sub-stream. This article examines the technical and operational reasons for" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="why-ip-cameras-use-mpeg-4-avc-sub-streams">Why IP Cameras Use
+MPEG 4 AVC Sub-Streams</h1>
+<p>Modern IP surveillance cameras frequently output dual or multiple
+video feeds simultaneously, pairing a high-resolution primary stream
+with a lower-resolution MPEG-4 AVC (H.264) sub-stream. This article
+examines the technical and operational reasons for this design,
+detailing how multi-streaming manages network bandwidth, reduces
+client-side processing loads, guarantees broad device compatibility, and
+optimizes video management software performance.</p>
+<h3 id="reducing-network-bandwidth-and-latency">Reducing Network
+Bandwidth and Latency</h3>
+<p>High-resolution primary streams—such as 4K, 5MP, or 1080p
+feeds—generate massive amounts of data. Transmitting these
+full-resolution streams continuously over local networks or the internet
+can quickly saturate bandwidth, especially in environments with multiple
+cameras or constrained remote connections.</p>
+<p>A sub-stream operates at a significantly reduced resolution (such as
+D1, VGA, or 720p) and lower frame rate. By utilizing a lower bitrate
+MPEG-4 AVC sub-stream for live monitoring and mobile viewing, systems
+prevent network congestion while preserving the full-resolution primary
+stream for local storage and forensic analysis.</p>
+<h3 id="lowering-client-side-hardware-decoding-demands">Lowering
+Client-Side Hardware Decoding Demands</h3>
+<p>Displaying multiple high-resolution video streams on a single
+monitoring station requires immense processing power. If a security
+operator views a grid of 16 or 32 cameras simultaneously in 4K, the
+client machine's CPU and GPU would quickly become overwhelmed, leading
+to dropped frames, latency, or software crashes.</p>
+<p>Video Management Systems (VMS) and Network Video Recorders (NVRs)
+solve this by automatically pulling the lightweight MPEG-4 AVC
+sub-stream when cameras are displayed in multi-view grid layouts.
+Because the display tile for each camera in a grid is physically small
+on the screen, the lower resolution of the sub-stream is visually
+imperceptible. The system only switches to the primary stream when an
+operator selects a single camera for full-screen viewing.</p>
+<h3 id="universal-compatibility-and-legacy-support">Universal
+Compatibility and Legacy Support</h3>
+<p>While modern primary streams often use newer codecs like H.265 (HEVC)
+or AV1 to maximize storage efficiency, these formats require specialized
+hardware decoding that may not be supported by older client devices, web
+browsers, or legacy hardware decoders.</p>
+<p>MPEG-4 AVC (H.264) remains the global standard for digital video with
+near-universal hardware acceleration across virtually all smartphones,
+web platforms, and operating systems. Providing an MPEG-4 AVC sub-stream
+ensures that users can access live video feeds reliably through web
+browsers, mobile applications, and third-party integrations without
+requiring specialized proprietary plugins or advanced decoding
+hardware.</p>
+<h3 id="efficient-motion-detection-and-edge-analytics">Efficient Motion
+Detection and Edge Analytics</h3>
+<p>Many IP camera systems utilize the sub-stream to process server-side
+or client-side video analytics and motion detection. Analyzing a
+lower-resolution MPEG-4 AVC feed drastically reduces the mathematical
+complexity and processing overhead required to detect motion, read
+patterns, or trigger alarms, allowing analytics engines to run faster
+and scale across more channels simultaneously.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

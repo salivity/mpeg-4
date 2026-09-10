@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Purpose of LATM in MPEG-4 Audio Transport - mpeg-4</title>
+    <meta name="description" content="This article provides an overview of the Low-overhead Audio Transport Multiplex (LATM) layer defined in the MPEG-4 standard (ISO/IEC 14496-3). It explains LATM’s primary purpose, its operational role in transporting Advanced Audio Coding (AAC) data, an">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/purpose-of-latm-in-mpeg-4-audio-transport">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Purpose of LATM in MPEG-4 Audio Transport - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/purpose-of-latm-in-mpeg-4-audio-transport" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article provides an overview of the Low-overhead Audio Transport Multiplex (LATM) layer defined in the MPEG-4 standard (ISO/IEC 14496-3). It explains LATM’s primary purpose, its operational role in transporting Advanced Audio Coding (AAC) data, an" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="purpose-of-latm-in-mpeg-4-audio-transport">Purpose of LATM in
+MPEG-4 Audio Transport</h1>
+<p>This article provides an overview of the Low-overhead Audio Transport
+Multiplex (LATM) layer defined in the MPEG-4 standard (ISO/IEC 14496-3).
+It explains LATM’s primary purpose, its operational role in transporting
+Advanced Audio Coding (AAC) data, and how it balances low protocol
+overhead with robust stream configuration and synchronization for
+broadcast and streaming environments.</p>
+<p>The primary purpose of the LATM layer in MPEG-4 is to provide a
+lightweight, efficient transport and multiplexing mechanism for
+streaming MPEG-4 audio payloads—primarily AAC (Advanced Audio
+Coding)—over bandwidth-constrained and packet-oriented networks. It
+bridges the gap between raw audio frames (Access Units) and the
+underlying delivery channel without imposing the heavy overhead
+typically associated with generic transport protocols.</p>
+<p>LATM accomplishes this through several key technical mechanisms:</p>
+<h3 id="1-minimizing-transmission-overhead">1. Minimizing Transmission
+Overhead</h3>
+<p>Unlike older encapsulation formats such as ADTS (Audio Data Transport
+Stream), which attach a complete header to every individual audio frame,
+LATM minimizes redundant metadata. It separates static stream parameters
+from dynamic frame data, allowing the multiplexer to send lightweight
+headers for routine audio frames while preserving critical network
+bandwidth.</p>
+<h3 id="2-flexible-configuration-transmission-streammuxconfig">2.
+Flexible Configuration Transmission (StreamMuxConfig)</h3>
+<p>LATM carries the <code>StreamMuxConfig</code> data structure, which
+informs the audio decoder about sample rates, channel configurations,
+and audio object types. LATM allows this configuration to be
+transmitted:</p>
+<ul>
+<li><strong>In-band:</strong> Sent periodically within the audio stream
+to allow decoders to join a live stream dynamically (random access) or
+handle mid-stream audio format changes.</li>
+<li><strong>Out-of-band:</strong> Transmitted via external signaling
+protocols (such as SDP in RTSP/SIP setups), entirely eliminating the
+need to resend configuration data in the audio stream.</li>
+</ul>
+<h3 id="3-synchronization-with-loas">3. Synchronization with LOAS</h3>
+<p>When used in transmission environments without inherent packet
+framing, LATM is commonly paired with LOAS (Low Overhead Audio Stream).
+LOAS encapsulates LATM by adding a synchronization word
+(<code>0x2B7</code>), enabling decoders to quickly detect frame
+boundaries and achieve lock in continuous bitstreams.</p>
+<h3 id="4-multiplexing-multiple-audio-programs-and-layers">4.
+Multiplexing Multiple Audio Programs and Layers</h3>
+<p>LATM can multiplex multiple audio sub-streams into a single
+bitstream. This enables the transport of scalable audio layers (such as
+base layers and enhancement layers for variable bitrates) or
+multilingual audio tracks within a unified transport structure.</p>
+<p>Through these functions, the LATM layer ensures that MPEG-4 audio can
+be efficiently deployed across modern digital broadcasting standards,
+including DVB, ISDB, and 3GPP mobile streaming environments.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

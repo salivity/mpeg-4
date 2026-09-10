@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPEG-4 Metadata Chapters and Subtitles Explained - mpeg-4</title>
+    <meta name="description" content="The MPEG-4 (MP4) file format, standardized under ISO/IEC 14496-14, is a digital multimedia container format widely used for storing video, audio, subtitles, and metadata. Rather than saving this information in a flat file, MP4 relies on a hierarchical st">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/mpeg-4-metadata-chapters-and-subtitles-explained">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MPEG-4 Metadata Chapters and Subtitles Explained - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/mpeg-4-metadata-chapters-and-subtitles-explained" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The MPEG-4 (MP4) file format, standardized under ISO/IEC 14496-14, is a digital multimedia container format widely used for storing video, audio, subtitles, and metadata. Rather than saving this information in a flat file, MP4 relies on a hierarchical st" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="mpeg-4-metadata-chapters-and-subtitles-explained">MPEG-4
+Metadata Chapters and Subtitles Explained</h1>
+<p>The MPEG-4 (MP4) file format, standardized under ISO/IEC 14496-14, is
+a digital multimedia container format widely used for storing video,
+audio, subtitles, and metadata. Rather than saving this information in a
+flat file, MP4 relies on a hierarchical structure of nested data blocks
+called "atoms" or "boxes." This article explains how the MP4 container
+organizes, stores, and synchronizes metadata, chapter markers, and
+subtitles within these specialized boxes.</p>
+<h3 id="the-foundation-the-atom-structure">The Foundation: The Atom
+Structure</h3>
+<p>To understand how MP4 stores auxiliary data, one must understand its
+foundational structure. An MP4 file is composed of "atoms" (or boxes),
+each containing a header (specifying size and a four-character type
+identifier, or "fourcc") and a payload. The primary atom for media
+layout is the Movie Atom (<code>moov</code>), which acts as an index for
+the entire file. While the actual raw audio and video data reside in the
+Media Data Atom (<code>mdat</code>), the metadata, chapters, and
+subtitle configurations are defined within the <code>moov</code> atom
+and its sub-boxes.</p>
+<h3 id="how-mp4-stores-metadata">How MP4 Stores Metadata</h3>
+<p>Metadata in an MP4 file—such as the title, artist, release date, and
+album artwork—is stored within the <code>moov</code> atom, specifically
+designed to hold structural and descriptive information. There are two
+primary ways metadata is integrated:</p>
+<ol type="1">
+<li><strong>The <code>udta</code> (User Data) and <code>meta</code>
+Boxes:</strong> Inside the <code>moov</code> atom, a User Data Box
+(<code>udta</code>) contains a Metadata Box (<code>meta</code>). This
+<code>meta</code> box contains a list of keys and values defining the
+file’s properties.</li>
+<li><strong>iTunes Metadata (<code>ilst</code> atom):</strong> The most
+common standard for MP4 metadata is the iTunes-style metadata format.
+Located inside the <code>meta</code> box, the Item List Box
+(<code>ilst</code>) acts as a registry. It uses specific fourcc codes to
+store tags (e.g., <code>©nam</code> for track name, <code>©ART</code>
+for artist, and <code>covr</code> for JPEG or PNG cover art).</li>
+</ol>
+<p>Because this metadata is stored in the header (<code>moov</code>
+atom), media players can quickly parse and display the file details
+instantly without needing to scan the entire video stream.</p>
+<h3 id="how-mp4-stores-chapter-markers">How MP4 Stores Chapter
+Markers</h3>
+<p>Chapter markers allow viewers to jump to specific points in a video.
+In the MP4 format, chapters are not stored as simple timestamps in a
+text file; instead, they are treated as a specialized, silent text
+track.</p>
+<ul>
+<li><strong>The Chapter Track:</strong> A dedicated track
+(<code>trak</code>) is created within the <code>moov</code> atom. The
+handler reference box (<code>hdlr</code>) inside this track identifies
+it as a text or chapter track.</li>
+<li><strong>The Text Samples:</strong> The text track contains a series
+of timed text samples. Each sample contains the text string for a
+chapter title (e.g., "Introduction" or "Scene 2").</li>
+<li><strong>Track Linkage (<code>tref</code>):</strong> To associate
+these text samples with the actual video timeline, the main video track
+contains a Track Reference Box (<code>tref</code>) with a reference type
+of <code>chap</code> (chapters). This <code>chap</code> box points
+directly to the track ID of the text chapter track.</li>
+</ul>
+<p>When a player loads the video, it reads the <code>tref</code> box,
+finds the associated chapter track, and maps the timed text samples to
+the player's seek bar.</p>
+<h3 id="how-mp4-stores-subtitles">How MP4 Stores Subtitles</h3>
+<p>Subtitles in MP4 files can be stored in several formats, categorized
+as either externalized timed text tracks or embedded bitstreams.</p>
+<ol type="1">
+<li><strong>MPEG-4 Timed Text (3GPP / <code>tx3g</code>):</strong> This
+is the native subtitle format for MP4. Subtitles are stored in a
+dedicated subtitle track (<code>trak</code> with a handler type of
+<code>sbtl</code>). The sample description box uses the
+<code>tx3g</code> format code. The subtitles are stored as raw text
+samples, and formatting data (such as font, color, size, and
+positioning) is stored in a separate style record block within the same
+track. This ensures high-quality, vector-based rendering that scales
+with the player's window.</li>
+<li><strong>Closed Captions (EIA-608 / EIA-708):</strong> Instead of
+utilizing a separate track, traditional closed captions are often
+embedded directly into the video stream itself. They are stored within
+the Supplemental Enhancement Information (SEI) NAL units of H.264 or
+H.265 video bitstreams. The player decodes these captions frame-by-frame
+alongside the video.</li>
+<li><strong>Advanced Sub Station Alpha (ASS/SSA) and SRT:</strong> While
+widely popular, formats like SRT and ASS are not natively defined in the
+original MP4 specification. When muxed into an MP4 container, they are
+typically converted into the native <code>tx3g</code> timed text format,
+or encapsulated into private streams within the container, depending on
+the software used to create the file.</li>
+</ol></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

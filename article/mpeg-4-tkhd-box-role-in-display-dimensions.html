@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPEG-4 tkhd Box Role in Display Dimensions - mpeg-4</title>
+    <meta name="description" content="The Track Header box (tkhd) within the MPEG-4 Part 14 (MP4) and ISO Base Media File Format (ISO/IEC 14496-12) establishes the foundational characteristics of an individual media track, including its spatial, temporal, and visual properties. Regarding dis">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/mpeg-4-tkhd-box-role-in-display-dimensions">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MPEG-4 tkhd Box Role in Display Dimensions - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/mpeg-4-tkhd-box-role-in-display-dimensions" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The Track Header box (tkhd) within the MPEG-4 Part 14 (MP4) and ISO Base Media File Format (ISO/IEC 14496-12) establishes the foundational characteristics of an individual media track, including its spatial, temporal, and visual properties. Regarding dis" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="mpeg-4-tkhd-box-role-in-display-dimensions">MPEG-4 tkhd Box Role
+in Display Dimensions</h1>
+<p>The Track Header box (<code>tkhd</code>) within the MPEG-4 Part 14
+(MP4) and ISO Base Media File Format (ISO/IEC 14496-12) establishes the
+foundational characteristics of an individual media track, including its
+spatial, temporal, and visual properties. Regarding display dimensions,
+the <code>tkhd</code> box defines the visual presentation geometry,
+specifying how the decoded video frames must be scaled, positioned, and
+oriented on the playback canvas. This article details the structural
+mechanisms used by the <code>tkhd</code> box to govern display
+dimensions, separate display geometry from raw encoded resolutions, and
+handle transformation operations.</p>
+<h3 id="explicit-width-and-height-fields">Explicit Width and Height
+Fields</h3>
+<p>The <code>tkhd</code> box contains dedicated <code>width</code> and
+<code>height</code> fields that declare the intended display dimensions
+of the visual track:</p>
+<ul>
+<li><strong>Data Format:</strong> Both values are stored as unsigned
+32-bit fixed-point numbers (16.16 format), consisting of a 16-bit
+integer part and a 16-bit fractional part.</li>
+<li><strong>Function:</strong> These fields define the visual width and
+height of the track in abstract coordinate units (typically pixels).
+They represent the target dimensions of the track <em>before</em>
+applying the transformation matrix.</li>
+</ul>
+<h3 id="separation-of-encoded-vs-display-dimensions">Separation of
+Encoded vs. Display Dimensions</h3>
+<p>A fundamental function of the <code>tkhd</code> box is decoupling the
+coded pixel resolution (the elementary stream data) from the rendered
+display aspect ratio (DAR):</p>
+<ul>
+<li><strong>Encoded Dimensions:</strong> The actual pixel grid size
+(e.g., <span class="math inline">\(1440 \times 1080\)</span>) is defined
+at the decoder level within the Sample Description box
+(<code>stsd</code>) and the underlying codec parameter sets (such as SPS
+in H.264/AVC or H.265/HEVC).</li>
+<li><strong>Display Dimensions:</strong> The <code>tkhd</code> box
+specifies the final output size (e.g., <span class="math inline">\(1920
+\times 1080\)</span> for a 16:9 presentation).</li>
+</ul>
+<p>This separation allows media players to display anamorphic video with
+non-square pixels correctly without needing to re-encode the underlying
+compressed video stream.</p>
+<h3 id="the-transformation-matrix">The Transformation Matrix</h3>
+<p>In addition to width and height, the <code>tkhd</code> box includes a
+36-byte transformation matrix (a <span class="math inline">\(3 \times
+3\)</span> affine matrix). This matrix interacts directly with the
+track's dimensions to determine final screen placement:</p>
+<ul>
+<li><strong>Scaling:</strong> Adjusts the track’s visual size
+dynamically relative to the overall presentation space defined by the
+Movie Header box (<code>mvhd</code>).</li>
+<li><strong>Rotation:</strong> Applies track-level rotations (commonly
+90, 180, or 270 degrees), frequently utilized by mobile devices to
+correct video orientation without altering the underlying pixel
+buffer.</li>
+<li><strong>Translation and Shearing:</strong> Positions the track
+within the unified movie coordinate system, enabling multi-track layouts
+(such as picture-in-picture).</li>
+</ul>
+<h3 id="playback-rendering-pipeline">Playback Rendering Pipeline</h3>
+<p>During playback, the media engine processes visual dimensions through
+the following structural workflow:</p>
+<ol type="1">
+<li><strong>Decoding:</strong> The decoder outputs raw frames according
+to the coded sample dimensions.</li>
+<li><strong>Dimension Mapping:</strong> The player references the
+<code>tkhd</code> <code>width</code> and <code>height</code> to
+establish the initial track coordinate rectangle.</li>
+<li><strong>Matrix Application:</strong> The player applies the
+<code>tkhd</code> transformation matrix to scale, rotate, or translate
+the rectangle onto the global presentation canvas defined by
+<code>mvhd</code>.</li>
+<li><strong>Final Presentation:</strong> The composited result is
+rendered to the user display at the proper aspect ratio and
+orientation.</li>
+</ol></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

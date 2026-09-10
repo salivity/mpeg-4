@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPEG-4 Core Profile Visual Object Limit - mpeg-4</title>
+    <meta name="description" content="This article provides a concise overview of the operational constraints governing visual object handling within the MPEG-4 Core Profile standard. It details the specific limits placed on simultaneous active visual objects, explains how profile levels aff">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/mpeg-4-core-profile-visual-object-limit">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MPEG-4 Core Profile Visual Object Limit - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/mpeg-4-core-profile-visual-object-limit" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article provides a concise overview of the operational constraints governing visual object handling within the MPEG-4 Core Profile standard. It details the specific limits placed on simultaneous active visual objects, explains how profile levels aff" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="mpeg-4-core-profile-visual-object-limit">MPEG-4 Core Profile
+Visual Object Limit</h1>
+<p>This article provides a concise overview of the operational
+constraints governing visual object handling within the MPEG-4 Core
+Profile standard. It details the specific limits placed on simultaneous
+active visual objects, explains how profile levels affect these
+thresholds, and outlines the technical reasons behind these restrictions
+in digital video decoding.</p>
+<p>In the MPEG-4 Visual standard (ISO/IEC 14496-2), the Core Profile
+allows for the decoding of arbitrarily shaped video objects alongside
+standard rectangular video frames. The operational limit on simultaneous
+active visual objects within an MPEG-4 Core Profile presentation is
+strictly dictated by the profile level:</p>
+<ul>
+<li><strong>Core Profile @ Level 1:</strong> Supports a maximum of
+<strong>2</strong> simultaneous active visual objects.</li>
+<li><strong>Core Profile @ Level 2:</strong> Supports a maximum of
+<strong>4</strong> simultaneous active visual objects.</li>
+</ul>
+<p>An active visual object refers to any distinct Visual Object (VO) or
+Video Object Plane (VOP) being decoded, tracked, and rendered into the
+scene composition buffer at any given frame interval. While the scene
+description format (BIFS) can define multiple nodes, the decoder's
+visual pipeline is hard-capped at these numbers to ensure computational
+feasibility.</p>
+<p>These limits exist to balance complexity, memory bandwidth, and
+processing power on target hardware. Arbitrary shape decoding requires
+alpha plane processing, motion compensation for non-rectangular regions,
+and scene compositing, which exponentially increases decoder workload
+compared to simple rectangular decoding. By capping the concurrent
+active objects at 2 (Level 1) or 4 (Level 2), the Core Profile ensures
+predictable performance across compliant decoders and playback
+systems.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

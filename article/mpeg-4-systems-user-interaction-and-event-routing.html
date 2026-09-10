@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPEG-4 Systems User Interaction and Event Routing - mpeg-4</title>
+    <meta name="description" content="The MPEG-4 Systems layer enables interactive multimedia experiences by decoupling media content from its spatial and temporal presentation through an object-based scene description. Interaction routing relies on a combination of hierarchical scene graph">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/mpeg-4-systems-user-interaction-and-event-routing">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MPEG-4 Systems User Interaction and Event Routing - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/mpeg-4-systems-user-interaction-and-event-routing" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The MPEG-4 Systems layer enables interactive multimedia experiences by decoupling media content from its spatial and temporal presentation through an object-based scene description. Interaction routing relies on a combination of hierarchical scene graph" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="mpeg-4-systems-user-interaction-and-event-routing">MPEG-4
+Systems User Interaction and Event Routing</h1>
+<p>The MPEG-4 Systems layer enables interactive multimedia experiences
+by decoupling media content from its spatial and temporal presentation
+through an object-based scene description. Interaction routing relies on
+a combination of hierarchical scene graph structures, dedicated Sensor
+nodes, and an event-driven <code>ROUTE</code> architecture defined in
+Binary Format for Scenes (BIFS). Through this framework, physical input
+events such as clicks, drags, and proximity are captured, converted into
+structured data, and routed directly to modify the properties or
+behaviors of specific visual scene elements.</p>
+<h3 id="the-scene-graph-and-bifs-architecture">The Scene Graph and BIFS
+Architecture</h3>
+<p>In MPEG-4 Systems (ISO/IEC 14496-1), visual presentations are
+structured as hierarchical scene graphs using BIFS, an extension of the
+VRML standard. Each visual component—such as a 2D shape, 3D mesh,
+synthetic avatar, or streaming video plane—exists as a node within this
+tree.</p>
+<p>Nodes possess internal properties, called fields, which define
+attributes like geometry, transformation matrices, material colors, and
+visibility. Because scene elements are discrete nodes rather than flat
+pixel layers, the MPEG-4 player engine can track, address, and
+manipulate individual visual objects independently in real time.</p>
+<h3 id="interaction-detection-via-sensor-nodes">Interaction Detection
+via Sensor Nodes</h3>
+<p>User input is not handled directly by raw visual nodes; instead, the
+architecture uses specialized <strong>Sensor nodes</strong> attached to
+geometry nodes within the scene graph. The primary sensor nodes
+include:</p>
+<ul>
+<li><strong>TouchSensor:</strong> Detects pointer actions (mouse clicks,
+touch events, hovering) intersecting with sibling or child geometric
+shapes.</li>
+<li><strong>PlaneSensor, CylinderSensor, SphereSensor:</strong>
+Translate dragging motions into 2D or 3D coordinate transformations
+(translation or rotation).</li>
+<li><strong>ProximitySensor:</strong> Tracks when an avatar or viewing
+position enters or exits a predefined spatial boundary.</li>
+<li><strong>KeySensor and StringSensor:</strong> Capture keyboard inputs
+and text entry within the interactive environment.</li>
+</ul>
+<p>When a user interacts with the rendering area, the MPEG-4
+presentation engine performs ray-casting or 2D hit-testing against the
+geometry associated with active sensors. If an intersection occurs, the
+corresponding Sensor node captures the raw device event and generates an
+outgoing event containing typed data (e.g., boolean states, 2D/3D
+vectors, or precise hit points).</p>
+<h3 id="the-route-mechanism">The ROUTE Mechanism</h3>
+<p>Event transmission between nodes is managed by
+<strong><code>ROUTE</code> statements</strong>. A <code>ROUTE</code> is
+a declarative, non-hierarchical connection that binds an output event
+field (<code>eventOut</code>) of a source node to an input event field
+(<code>eventIn</code>) of a target node.</p>
+<p>The basic flow of event routing operates as follows:</p>
+<ol type="1">
+<li><strong>Event Generation:</strong> The user clicks a visual element.
+The associated <code>TouchSensor</code> changes its
+<code>isActive</code> or <code>isOver</code> field and emits an
+<code>eventOut</code> carrying a value and timestamp.</li>
+<li><strong>Event Dispatch:</strong> The MPEG-4 event processing engine
+reads the defined <code>ROUTE</code> table to identify which target node
+fields are linked to that specific <code>eventOut</code>.</li>
+<li><strong>Event Consumption:</strong> The target visual node receives
+the data via its <code>eventIn</code> field and updates its internal
+state. For example, routing a <code>TouchSensor.touchTime</code> to an
+<code>AnimationStream.startTime</code> or a
+<code>Material.diffuseColor</code> immediately changes the target
+element's visual state.</li>
+</ol>
+<h3 id="dynamic-updates-via-script-nodes-and-bifs-commands">Dynamic
+Updates via Script Nodes and BIFS Commands</h3>
+<p>For complex interaction scenarios requiring conditional logic or data
+transformation, events can be routed through <strong>Script
+nodes</strong> containing ECMAScript (JavaScript). The script processes
+the input event, executes business logic, and outputs modified data
+along another <code>ROUTE</code> to the final visual node.</p>
+<p>Additionally, user interactions can trigger
+<strong>BIFS-Command</strong> or <strong>BIFS-Anim</strong> updates.
+This allows the presentation layer to dynamically insert, delete, or
+replace entire subtrees of the scene graph in response to interaction,
+providing a flexible framework for interactive menus, interactive video
+branching, and manipulable 3D environments.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

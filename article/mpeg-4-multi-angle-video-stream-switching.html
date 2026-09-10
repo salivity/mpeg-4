@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPEG-4 Multi-Angle Video Stream Switching - mpeg-4</title>
+    <meta name="description" content="This article explores how the MPEG-4 standard manages seamless stream switching in multi-angle video presentations. It covers the core mechanisms behind multi-angle playback, including synchronized elementary streams, Random Access Points (RAPs), Object">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/mpeg-4-multi-angle-video-stream-switching">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MPEG-4 Multi-Angle Video Stream Switching - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/mpeg-4-multi-angle-video-stream-switching" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explores how the MPEG-4 standard manages seamless stream switching in multi-angle video presentations. It covers the core mechanisms behind multi-angle playback, including synchronized elementary streams, Random Access Points (RAPs), Object" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="mpeg-4-multi-angle-video-stream-switching">MPEG-4 Multi-Angle
+Video Stream Switching</h1>
+<p>This article explores how the MPEG-4 standard manages seamless stream
+switching in multi-angle video presentations. It covers the core
+mechanisms behind multi-angle playback, including synchronized
+elementary streams, Random Access Points (RAPs), Object Descriptors
+(OD), and Binary Format for Scenes (BIFS). By understanding these
+components, developers and video engineers can understand how MPEG-4
+delivers continuous, synchronized playback when switching between
+multiple camera perspectives.</p>
+<h2 id="mpeg-4-architecture-for-multi-angle-video">MPEG-4 Architecture
+for Multi-Angle Video</h2>
+<p>MPEG-4 (specifically ISO/IEC 14496) handles multi-angle video by
+treating each angle as an independent elementary stream (ES) managed
+within an interactive scene structure. Rather than bundling all
+perspectives into a single monolithic video feed, MPEG-4 decouples the
+content into modular streams that can be dynamically switched on the
+client side.</p>
+<h3 id="1-synchronized-elementary-streams">1. Synchronized Elementary
+Streams</h3>
+<p>In an MPEG-4 multi-angle presentation, each camera angle is encoded
+as a separate video elementary stream. To make instantaneous switching
+possible, these streams must share a common timeline:</p>
+<ul>
+<li><strong>Time Base Synchronization:</strong> All video streams share
+a unified Object Clock Reference (OCR).</li>
+<li><strong>Decoding and Composition Timestamps (DTS/CTS):</strong> Each
+frame in every stream is tagged with identical presentation and decoding
+time values. This ensures that switching from Angle A to Angle B
+maintains precise temporal continuity without audio
+desynchronization.</li>
+</ul>
+<h3 id="2-random-access-points-raps-and-gop-alignment">2. Random Access
+Points (RAPs) and GOP Alignment</h3>
+<p>Seamless switching requires decoders to immediately decode the
+incoming stream without relying on previous frames from the outgoing
+stream. MPEG-4 accomplishes this through:</p>
+<ul>
+<li><strong>Aligned Group of Pictures (GOP):</strong> All concurrent
+video streams use identical GOP lengths and aligned Intra-coded frames
+(I-frames) or Random Access Points (RAPs).</li>
+<li><strong>Instantaneous Switching:</strong> When a user initiates an
+angle change, the player buffers the new stream and executes the cut at
+the next common RAP. This prevents visual artifacts, macroblocking, and
+decoding errors.</li>
+</ul>
+<h3 id="3-scene-management-via-bifs-and-object-descriptors">3. Scene
+Management via BIFS and Object Descriptors</h3>
+<p>MPEG-4 Systems uses Binary Format for Scenes (BIFS) and Object
+Descriptors (OD) to handle user interaction and stream mapping:</p>
+<ul>
+<li><strong>Object Descriptors (OD):</strong> An OD acts as an
+identifier that maps scene elements to specific elementary streams. When
+multiple angles are available, the OD contains references to each
+angle's Elementary Stream Descriptor (ESD).</li>
+<li><strong>BIFS Scene Graph:</strong> The visual presentation is
+described as a hierarchical scene graph. An interactive trigger (such as
+user input) modifies a node in the scene graph, directing the video
+renderer to switch its input source from one elementary stream ID to
+another.</li>
+<li><strong>Inline Scene Updates:</strong> BIFS commands allow the
+stream switch to happen dynamically within the scene description without
+re-initializing the entire media pipeline.</li>
+</ul>
+<h3 id="4-buffer-management-and-decoder-seamlessness">4. Buffer
+Management and Decoder Seamlessness</h3>
+<p>To avoid playback stutters during a stream transition, the MPEG-4
+standard defines strict buffer management models:</p>
+<ul>
+<li><strong>Elementary Stream Buffer (EB):</strong> The player allocates
+dedicated buffer space for incoming media data.</li>
+<li><strong>Pre-buffering and Splicing:</strong> In advanced multi-angle
+setups, the player can maintain shallow pre-buffering of secondary
+streams or switch the demuxer output directly to the primary decoder
+buffer at an aligned splice point, ensuring zero drop in frame
+rate.</li>
+</ul></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

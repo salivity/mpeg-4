@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ISO/IEC 14496 Backward Compatibility Explained - mpeg-4</title>
+    <meta name="description" content="This article explores how the ISO/IEC 14496 standard suite, commonly known as MPEG-4, achieves and preserves backward compatibility across its diverse, evolving parts. It outlines the foundational mechanisms enabling older hardware and software decoders">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/iso-iec-14496-backward-compatibility-explained">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="ISO/IEC 14496 Backward Compatibility Explained - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/iso-iec-14496-backward-compatibility-explained" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explores how the ISO/IEC 14496 standard suite, commonly known as MPEG-4, achieves and preserves backward compatibility across its diverse, evolving parts. It outlines the foundational mechanisms enabling older hardware and software decoders" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="isoiec-14496-backward-compatibility-explained">ISO/IEC 14496
+Backward Compatibility Explained</h1>
+<p>This article explores how the ISO/IEC 14496 standard suite, commonly
+known as MPEG-4, achieves and preserves backward compatibility across
+its diverse, evolving parts. It outlines the foundational mechanisms
+enabling older hardware and software decoders to process legacy data
+within modernized multimedia streams, focusing on modular architecture,
+profiles and levels, extensible container formats, and layered bitstream
+design.</p>
+<h3 id="modular-architecture-and-separation-of-concerns">Modular
+Architecture and Separation of Concerns</h3>
+<p>ISO/IEC 14496 avoids monolithic design by dividing functionality into
+distinct, self-contained parts (such as Part 2 for Visual, Part 3 for
+Audio, Part 10 for Advanced Video Coding, and Part 12 for the ISO Base
+Media File Format). Because each part operates independently at the
+specification level, updates to a specific codec do not inherently break
+the transport, storage, or systems-level parsing handled by other parts.
+This modular separation allows legacy demuxers and decoders to ignore
+unneeded or unrecognized parts while continuing to process the
+components they support.</p>
+<h3 id="profiles-and-levels-framework">Profiles and Levels
+Framework</h3>
+<p>To prevent fragmentation and guarantee interoperability, ISO/IEC
+14496 defines strict "Profiles" (subsets of algorithmic tools) and
+"Levels" (constraints on computational parameters like resolution,
+bitrate, and buffer sizes).</p>
+<ul>
+<li><strong>Hierarchical Profiles:</strong> Many parts structure
+profiles hierarchically. A decoder built to support an advanced profile
+is required to support the baseline tools of lower profiles.</li>
+<li><strong>Decoder Capability Signaling:</strong> Bitstreams explicitly
+signal their required profile and level in header data, allowing
+decoders to determine whether they can render the entire stream or
+fallback gracefully before attempting to decode unsupported
+features.</li>
+</ul>
+<h3 id="layered-and-scalable-bitstream-design">Layered and Scalable
+Bitstream Design</h3>
+<p>Parts such as ISO/IEC 14496-10 (AVC) implement extensions like
+Scalable Video Coding (SVC) and Multiview Video Coding (MVC) through
+layered bitstreams:</p>
+<ul>
+<li><strong>Base Layer:</strong> The foundational layer contains
+standard, non-scalable video data encoded strictly according to standard
+AVC specifications. Legacy decoders parse only this base layer and
+discard the rest.</li>
+<li><strong>Enhancement Layers:</strong> Additional data packets provide
+higher frame rates, increased resolutions, higher color depths, or
+stereoscopic views. Only newer, compatible decoders reconstruct these
+enhancement layers.</li>
+</ul>
+<h3 id="extensible-container-formats-isobmff">Extensible Container
+Formats (ISOBMFF)</h3>
+<p>ISO/IEC 14496-12 (ISO Base Media File Format) uses an
+object-oriented, box-based (atom-based) file structure. Each data block
+contains a standardized four-character code indicating its type and a
+32-bit or 64-bit size field.</p>
+<p>When a legacy parser encounters an unknown or newer box type (such as
+modern encryption metadata or advanced codec configuration records), it
+uses the length field to skip the unrecognized box without throwing
+errors or halting playback. This architecture ensures that older media
+players can continue to demux standard audio and video tracks from newer
+file variants.</p>
+<h3 id="syntax-extensions-and-non-vcl-data">Syntax Extensions and
+Non-VCL Data</h3>
+<p>Within video and audio streams, ISO/IEC 14496 reserves specific
+syntax fields, extension start codes, and Supplemental Enhancement
+Information (SEI) messages for future standardization. Legacy decoders
+are architecturally programmed to bypass non-Video Coding Layer
+(non-VCL) network abstraction units or unrecognized SEI payloads,
+ensuring that newer auxiliary data (such as HDR metadata or dynamic
+color mapping) does not disrupt standard decoding pipelines.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

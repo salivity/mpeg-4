@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CABAC State Engine in MPEG-4 Explained - mpeg-4</title>
+    <meta name="description" content="Context-Adaptive Binary Arithmetic Coding (CABAC) in MPEG-4 Part 10 (H.264/AVC) achieves superior video compression by dynamically adapting to symbol statistics and encoding binary decisions with minimal redundancy. This article details the operational s">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/cabac-state-engine-in-mpeg-4-explained">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="CABAC State Engine in MPEG-4 Explained - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/cabac-state-engine-in-mpeg-4-explained" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Context-Adaptive Binary Arithmetic Coding (CABAC) in MPEG-4 Part 10 (H.264/AVC) achieves superior video compression by dynamically adapting to symbol statistics and encoding binary decisions with minimal redundancy. This article details the operational s" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="cabac-state-engine-in-mpeg-4-explained">CABAC State Engine in
+MPEG-4 Explained</h1>
+<p>Context-Adaptive Binary Arithmetic Coding (CABAC) in MPEG-4 Part 10
+(H.264/AVC) achieves superior video compression by dynamically adapting
+to symbol statistics and encoding binary decisions with minimal
+redundancy. This article details the operational state engine behind
+CABAC’s binary arithmetic coder, breaking down its internal registers,
+finite-state probability modeling, lookup-table transitions, and
+renormalization process.</p>
+<h2 id="the-core-operational-state-registers">The Core Operational State
+Registers</h2>
+<p>The arithmetic coding engine in CABAC tracks the current coding
+interval using two primary 9-bit/10-bit internal registers:</p>
+<ul>
+<li><strong>Current Interval Range (<code>codIRange</code>):</strong>
+Represents the width of the current probability sub-interval,
+constrained to the range <span class="math inline">\([256, 511]\)</span>
+during standard operation.</li>
+<li><strong>Code Offset / Lower Bound (<code>codIOffset</code> /
+<code>codILow</code>):</strong> In the decoder, <code>codIOffset</code>
+represents the value read from the bitstream that points to a position
+within the current interval. In the encoder, <code>codILow</code>
+represents the lower boundary of the interval.</li>
+</ul>
+<h2 id="the-64-state-probability-transition-engine">The 64-State
+Probability Transition Engine</h2>
+<p>Instead of executing computationally expensive dynamic
+multiplications or divisions to estimate probabilities, CABAC uses a
+64-state Finite State Machine (FSM) for each context model. Each context
+state consists of two properties:</p>
+<ol type="1">
+<li><strong>Probability State Index (<code>pStateIdx</code>):</strong> A
+6-bit integer ranging from <code>0</code> to <code>63</code>,
+representing a quantized estimate of the Least Probable Symbol (LPS)
+probability (<span class="math inline">\(p_{\text{LPS}}\)</span>),
+spanning from approximately <span class="math inline">\(0.5\)</span>
+down to <span class="math inline">\(0.01875\)</span>.</li>
+<li><strong>Value of the Most Probable Symbol
+(<code>valMPS</code>):</strong> A 1-bit value (<code>0</code> or
+<code>1</code>) indicating which binary symbol is currently most
+likely.</li>
+</ol>
+<p>When a bin is processed, the state transitions deterministically
+using precalculated lookup tables:</p>
+<ul>
+<li><strong>MPS Transition (<code>transIdxMPS</code>):</strong> If the
+coded bin matches <code>valMPS</code>, the probability index increases
+toward higher confidence using the rule: <span
+class="math display">\[\text{pStateIdx}_{\text{new}} =
+\text{transIdxMPS}[\text{pStateIdx}]\]</span></li>
+<li><strong>LPS Transition (<code>transIdxLPS</code>):</strong> If the
+coded bin matches the LPS, the confidence drops: <span
+class="math display">\[\text{pStateIdx}_{\text{new}} =
+\text{transIdxLPS}[\text{pStateIdx}]\]</span> If <code>pStateIdx</code>
+is already <code>0</code> and an LPS occurs, the <code>valMPS</code> bit
+is inverted (<span class="math inline">\(1 - \text{valMPS}\)</span>),
+reflecting a flip in symbol dominance.</li>
+</ul>
+<h2 id="multiplication-free-interval-subdivision">Multiplication-Free
+Interval Subdivision</h2>
+<p>To split <code>codIRange</code> into sub-ranges for the MPS and LPS
+without runtime multiplication, the engine utilizes a 2D lookup table
+called <code>rangeTabLPS[64][4]</code>.</p>
+<ol type="1">
+<li>The current <code>codIRange</code> is quantized into one of 4
+discrete grid points by extracting its 2 most significant fractional
+bits: <span class="math display">\[\text{qCodIRangeIdx} =
+(\text{codIRange} \gg 6) \ \&amp; \ 3\]</span></li>
+<li>The sub-interval for the LPS (<code>rLPS</code>) is retrieved
+directly from the table: <span class="math display">\[\text{rLPS} =
+\text{rangeTabLPS}[\text{pStateIdx}][\text{qCodIRangeIdx}]\]</span></li>
+<li>The remaining sub-interval belongs to the MPS: <span
+class="math display">\[\text{rMPS} = \text{codIRange} -
+\text{rLPS}\]</span></li>
+</ol>
+<p>Based on whether the bin is an MPS or LPS, the engine updates
+<code>codIRange</code> and shifts the base interval offset
+accordingly.</p>
+<h2 id="renormalization-engine">Renormalization Engine</h2>
+<p>Whenever <code>codIRange</code> falls below <code>256</code> (<span
+class="math inline">\(2^8\)</span>), precision must be restored to
+prevent underflow. The renormalization engine executes an iterative
+bit-shift loop:</p>
+<ul>
+<li><code>codIRange</code> is left-shifted by 1 bit
+(<code>codIRange &lt;&lt;= 1</code>).</li>
+<li>In the encoder, output bits (and any accumulated outstanding bits)
+are pushed to the bitstream as the base interval expands.</li>
+<li>In the decoder, <code>codIOffset</code> is left-shifted by 1 bit and
+the next bit from the bitstream is appended to its least significant
+position.</li>
+<li>The loop continues until <code>codIRange</code> reaches or exceeds
+<code>256</code>.</li>
+</ul>
+<h2 id="specialized-operational-modes">Specialized Operational
+Modes</h2>
+<p>The CABAC engine also contains two streamlined operational paths
+alongside standard context-coded bins:</p>
+<ul>
+<li><strong>Bypass Mode:</strong> For uniformly distributed data (e.g.,
+sign bits, residual suffixes), context modeling is bypassed. The engine
+divides <code>codIRange</code> in half with a single right shift
+(<code>&gt;&gt; 1</code>), halving the cycle cost.</li>
+<li><strong>Terminate Mode:</strong> Used for end-of-slice signaling and
+macroblock termination flags, allocating a fixed narrow interval for the
+terminate symbol to trigger bitstream flushing.</li>
+</ul></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

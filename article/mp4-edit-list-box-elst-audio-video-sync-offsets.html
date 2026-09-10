@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MP4 Edit List Box (elst) Audio-Video Sync Offsets - mpeg-4</title>
+    <meta name="description" content="The Edit List box (elst), located within the Edit box (edts) of an MPEG-4 (ISOBMFF) container, handles initial audio-video synchronization by defining an explicit mapping between the media internal timeline and the presentation timeline. By instructing t">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/mp4-edit-list-box-elst-audio-video-sync-offsets">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MP4 Edit List Box (elst) Audio-Video Sync Offsets - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/mp4-edit-list-box-elst-audio-video-sync-offsets" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The Edit List box (elst), located within the Edit box (edts) of an MPEG-4 (ISOBMFF) container, handles initial audio-video synchronization by defining an explicit mapping between the media internal timeline and the presentation timeline. By instructing t" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="mp4-edit-list-box-elst-audio-video-sync-offsets">MP4 Edit List
+Box (elst) Audio-Video Sync Offsets</h1>
+<p>The Edit List box (<code>elst</code>), located within the Edit box
+(<code>edts</code>) of an MPEG-4 (ISOBMFF) container, handles initial
+audio-video synchronization by defining an explicit mapping between the
+media internal timeline and the presentation timeline. By instructing
+the media player to apply initial delays, skip pre-roll/priming samples,
+or start playback at a specific composition timestamp, the
+<code>elst</code> box ensures that audio and video streams with
+different starting offsets align perfectly at playback onset.</p>
+<h3 id="the-cause-of-initial-av-offsets">The Cause of Initial A/V
+Offsets</h3>
+<p>Audio and video encoders often produce streams with differing initial
+timing characteristics:</p>
+<ul>
+<li><strong>Audio Priming and Delay:</strong> Codecs like AAC introduce
+encoder delay (priming samples) at the beginning of an audio stream,
+causing valid audio to start slightly after timestamp zero.</li>
+<li><strong>Video B-Frame Reordering:</strong> Video streams using
+bidirectional prediction (B-frames) require decode timestamps (DTS) to
+precede composition timestamps (PTS). This composition delay shifts the
+first displayable frame forward.</li>
+<li><strong>Asynchronous Capture:</strong> Video and audio capture
+hardware often start recording at slightly different real-world
+times.</li>
+</ul>
+<p>Without container-level instructions, a media player might render the
+first decoded sample of every track simultaneously, leading to
+noticeable lip-sync errors.</p>
+<h3 id="structure-of-the-elst-box">Structure of the <code>elst</code>
+Box</h3>
+<p>The <code>elst</code> box contains an array of edit entries. Each
+entry consists of three main fields:</p>
+<ol type="1">
+<li><strong><code>segment_duration</code>:</strong> The duration of this
+edit segment in movie timescale units.</li>
+<li><strong><code>media_time</code>:</strong> The starting timestamp (in
+track timescale units) within the media stream to begin playback for
+this segment. A value of <code>-1</code> (or <code>0xFFFFFFFF</code>)
+denotes an "empty edit."</li>
+<li><strong><code>media_rate_integer</code> &amp;
+<code>media_rate_fraction</code>:</strong> The relative playback speed
+(typically 1.0 for normal playback).</li>
+</ol>
+<h3 id="how-elst-resolves-initial-sync-discrepancies">How
+<code>elst</code> Resolves Initial Sync Discrepancies</h3>
+<p>The Edit List manages initial offsets using two primary
+techniques:</p>
+<h4 id="1-empty-edits-inserting-initial-delays">1. Empty Edits
+(Inserting Initial Delays)</h4>
+<p>When a track needs to begin after another track has already started
+playing, the container inserts an empty edit:</p>
+<ul>
+<li>The <code>media_time</code> is set to <code>-1</code>.</li>
+<li>The <code>segment_duration</code> is set to the duration of the
+required delay.</li>
+</ul>
+<p>During this interval, the player renders no video (or silence for
+audio). A subsequent edit entry follows immediately, setting
+<code>media_time</code> to <code>0</code> to begin standard playback,
+perfectly synchronizing the delayed track with the rest of the
+presentation.</p>
+<h4 id="2-dwell-or-offset-mapping-skipping-pre-roll-and-priming">2.
+Dwell or Offset Mapping (Skipping Pre-roll and Priming)</h4>
+<p>When a track contains initial samples that must be decoded for
+reference but should not be displayed or heard:</p>
+<ul>
+<li>The <code>media_time</code> is set to the exact timestamp of the
+first valid presentation sample (e.g., skipping AAC priming samples or
+initial video decode offsets).</li>
+<li>The player feeds earlier samples through the decoder to initialize
+state or references, but discards their output until the stream reaches
+the specified <code>media_time</code>.</li>
+<li>The <code>segment_duration</code> matches the active, viewable
+duration of the track.</li>
+</ul>
+<h3 id="playback-timeline-resolution">Playback Timeline Resolution</h3>
+<p>By combining empty edits and positive start offsets across individual
+track edit lists, the MPEG-4 container maps the initial presentation
+times of both audio and video tracks to a common movie presentation time
+<code>T = 0</code>. As a result, media engines synchronize playback
+accurately from the first presented frame without requiring manual track
+trimming or stream re-encoding.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPEG-4 2D Mesh Coding for Facial Animation - mpeg-4</title>
+    <meta name="description" content="MPEG-4 incorporates 2D mesh-based video coding within its Synthetic-Natural Hybrid Coding (SNHC) framework to represent, animate, and compress facial video at extremely low bitrates. By overlaying a dynamic, planar triangular mesh onto a facial image, MP">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/mpeg-4-2d-mesh-coding-for-facial-animation">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MPEG-4 2D Mesh Coding for Facial Animation - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/mpeg-4-2d-mesh-coding-for-facial-animation" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="MPEG-4 incorporates 2D mesh-based video coding within its Synthetic-Natural Hybrid Coding (SNHC) framework to represent, animate, and compress facial video at extremely low bitrates. By overlaying a dynamic, planar triangular mesh onto a facial image, MP" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="mpeg-4-2d-mesh-coding-for-facial-animation">MPEG-4 2D Mesh
+Coding for Facial Animation</h1>
+<p>MPEG-4 incorporates 2D mesh-based video coding within its
+Synthetic-Natural Hybrid Coding (SNHC) framework to represent, animate,
+and compress facial video at extremely low bitrates. By overlaying a
+dynamic, planar triangular mesh onto a facial image, MPEG-4 tracks and
+transmits only the geometric deformations of the mesh vertices rather
+than full-frame pixel changes. The receiver then reconstructs the facial
+animation by applying piece-wise affine transformations and texture
+mapping to warp the source image onto the updated mesh geometry.</p>
+<h3 id="2d-dynamic-mesh-structure">2D Dynamic Mesh Structure</h3>
+<p>MPEG-4 defines 2D dynamic meshes as non-overlapping triangular
+patches covering a designated visual object, such as a human face.
+Meshes can be uniform or content-based (adaptive):</p>
+<ul>
+<li><strong>Uniform Meshes:</strong> Vertices are laid out in a regular
+grid, suited for general-purpose motion compensation.</li>
+<li><strong>Content-Based Meshes:</strong> Mesh vertices and edges are
+aligned with high-contrast facial contours (eyes, lips, jawline, and
+nose). This optimizes tracking accuracy where non-rigid facial
+deformations occur most intensely.</li>
+</ul>
+<h3 id="facial-feature-alignment-fdps-and-faps">Facial Feature Alignment
+(FDPs and FAPs)</h3>
+<p>To control and animate the facial mesh, MPEG-4 establishes two core
+sets of parameters:</p>
+<ul>
+<li><strong>Facial Definition Points (FDPs):</strong> Standardized
+spatial coordinates that locate key facial landmarks on the neutral
+face, anchoring the initial 2D mesh topology to the source image.</li>
+<li><strong>Facial Animation Parameters (FAPs):</strong> Normalized
+values representing specific facial actions (such as opening the mouth,
+raising an eyebrow, or blinking). FAPs drive the displacement of the
+mesh vertices over time.</li>
+</ul>
+<h3 id="motion-coding-and-vertex-tracking">Motion Coding and Vertex
+Tracking</h3>
+<p>Instead of standard block-based motion estimation, MPEG-4 uses
+vertex-based motion estimation:</p>
+<ol type="1">
+<li><strong>Initial Mesh Transmission:</strong> The encoder transmits
+the initial 2D mesh topology and reference facial texture
+(intra-frame).</li>
+<li><strong>Vertex Trajectory Encoding:</strong> In subsequent frames,
+the encoder computes the motion vectors solely for the mesh
+vertices.</li>
+<li><strong>Differential Coding:</strong> Motion vectors are
+differentially encoded relative to predicted temporal positions and
+neighboring vertices, drastically reducing the data required per
+frame.</li>
+</ol>
+<h3 id="texture-warping-and-reconstruction">Texture Warping and
+Reconstruction</h3>
+<p>At the decoder, the facial animation is synthesized frame by
+frame:</p>
+<ol type="1">
+<li>The decoder applies the received vertex motion vectors to update the
+positions of the 2D mesh triangles.</li>
+<li>The system executes a <strong>piece-wise affine
+transformation</strong> for every triangular patch, mapping the initial
+reference texture onto the deformed target triangle.</li>
+<li>Spatial interpolation smooths the boundaries between adjacent
+triangles, preventing visual artifacts and producing seamless, realistic
+facial motion.</li>
+</ol>
+<p>By decoupling the high-resolution facial texture from the
+low-overhead geometric motion data, MPEG-4 2D mesh-based coding enables
+smooth, continuous facial animation over constrained networks.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

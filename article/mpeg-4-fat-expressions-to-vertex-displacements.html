@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPEG-4 FAT: Expressions to Vertex Displacements - mpeg-4</title>
+    <meta name="description" content="This article provides an overview of how MPEG-4 Facial Animation Tables (FAT) translate abstract facial control signals into 3D geometry changes. It details the step-by-step mechanism of taking high-level Facial Animation Parameters (FAPs), normalizing t">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/mpeg-4-fat-expressions-to-vertex-displacements">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MPEG-4 FAT: Expressions to Vertex Displacements - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/mpeg-4-fat-expressions-to-vertex-displacements" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article provides an overview of how MPEG-4 Facial Animation Tables (FAT) translate abstract facial control signals into 3D geometry changes. It details the step-by-step mechanism of taking high-level Facial Animation Parameters (FAPs), normalizing t" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="mpeg-4-fat-expressions-to-vertex-displacements">MPEG-4 FAT:
+Expressions to Vertex Displacements</h1>
+<p>This article provides an overview of how MPEG-4 Facial Animation
+Tables (FAT) translate abstract facial control signals into 3D geometry
+changes. It details the step-by-step mechanism of taking high-level
+Facial Animation Parameters (FAPs), normalizing them using
+model-specific metrics, and applying table-driven interpolation
+functions to compute exact 3D vertex displacements on a facial mesh.</p>
+<hr />
+<h3 id="the-mpeg-4-facial-animation-framework">The MPEG-4 Facial
+Animation Framework</h3>
+<p>The MPEG-4 standard defines a compact, model-independent system for
+animating human faces using two core concepts:</p>
+<ol type="1">
+<li><strong>Facial Animation Parameters (FAPs):</strong> A set of 68
+parameters representing high-level facial actions (such as opening the
+jaw, raising an eyebrow, or stretching the lips).</li>
+<li><strong>Facial Definition Parameters (FDPs):</strong> The geometric
+definition of the 3D face model, including feature point locations and
+mesh topology.</li>
+</ol>
+<p>Because different 3D face models have varying vertex densities and
+proportions, high-level FAP commands cannot directly specify raw 3D
+coordinates. Instead, the <strong>Facial Animation Table (FAT)</strong>
+serves as the decoder and mapping interface tailored to a specific 3D
+mesh.</p>
+<hr />
+<h3
+id="normalization-via-facial-animation-parameter-units-fapus">Normalization
+via Facial Animation Parameter Units (FAPUs)</h3>
+<p>Before accessing the FAT, incoming FAP values are normalized using
+<strong>Facial Animation Parameter Units (FAPUs)</strong>. FAPUs are
+fractional distances based on standard facial landmarks defined on the
+neutral face, such as:</p>
+<ul>
+<li><strong>IRISD0:</strong> Iris diameter.</li>
+<li><strong>ES0:</strong> Distance between the eye centers (eye
+separation).</li>
+<li><strong>ENS0:</strong> Distance between the nose base and the line
+connecting the eye centers.</li>
+<li><strong>MW0:</strong> Lip corner-to-corner mouth width.</li>
+<li><strong>MNS0:</strong> Distance between the nose base and the mouth
+center.</li>
+</ul>
+<p>When a high-level command specifies a FAP value (e.g., jaw drop by
+<span class="math inline">\(X\)</span> units), the engine scales this
+value by the corresponding FAPU to ensure proportional deformation
+regardless of face size.</p>
+<hr />
+<h3 id="internal-structure-of-facial-animation-tables">Internal
+Structure of Facial Animation Tables</h3>
+<p>A Facial Animation Table is defined per model and contains an entry
+for every supported FAP. Each entry maps an incoming parameter intensity
+to explicit mesh alterations through the following data structure:</p>
+<ul>
+<li><strong>Target Vertices:</strong> A list of mesh vertex indices
+affected by the specific FAP.</li>
+<li><strong>Intervals and Keyframes:</strong> A series of input control
+values (breakpoints) that span the valid range of the FAP.</li>
+<li><strong>Displacement Vectors:</strong> 3D displacement offsets <span
+class="math inline">\((\Delta x, \Delta y, \Delta z)\)</span> assigned
+to each target vertex at each breakpoint.</li>
+</ul>
+<hr />
+<h3 id="the-mapping-and-interpolation-process">The Mapping and
+Interpolation Process</h3>
+<p>When a high-level FAP command is received, the MPEG-4 decoder
+executes the following sequence:</p>
+<ol type="1">
+<li><strong>Parameter Normalization:</strong> The incoming FAP value is
+multiplied by its respective FAPU to obtain an absolute scalar distance
+<span class="math inline">\(s\)</span>.</li>
+<li><strong>Interval Matching:</strong> The engine checks the FAT entry
+to locate which defined interval contains the scalar value <span
+class="math inline">\(s\)</span> (between two keyframes <span
+class="math inline">\(k_1\)</span> and <span
+class="math inline">\(k_2\)</span>).</li>
+<li><strong>Piecewise Interpolation:</strong> For each vertex indexed in
+that FAT entry, the engine computes an interpolated displacement vector
+<span class="math inline">\(\vec{D}\)</span> using piecewise linear or
+polynomial functions: <span class="math display">\[\vec{D}_i(s) =
+\vec{D}_{i, k_1} + \frac{s - k_1}{k_2 - k_1} \left( \vec{D}_{i, k_2} -
+\vec{D}_{i, k_1} \right)\]</span> Where <span
+class="math inline">\(\vec{D}_i(s)\)</span> represents the calculated
+displacement for vertex <span class="math inline">\(i\)</span>.</li>
+</ol>
+<hr />
+<h3 id="superposition-and-final-mesh-reconstruction">Superposition and
+Final Mesh Reconstruction</h3>
+<p>A single facial expression typically activates multiple FAPs
+simultaneously (e.g., smiling while raising eyebrows). When multiple
+FAPs influence the same vertex:</p>
+<ol type="1">
+<li>Displacements from all active FAPs affecting vertex <span
+class="math inline">\(i\)</span> are computed independently via their
+respective FAT entries.</li>
+<li>The displacement vectors are summed linearly: <span
+class="math display">\[\vec{V}_{i, \text{deformed}} = \vec{V}_{i,
+\text{neutral}} + \sum_{m \in \text{Active FAPs}} \vec{D}_{i,
+m}\]</span></li>
+<li>The resulting offset is added to the vertex's neutral position <span
+class="math inline">\(\vec{V}_{i, \text{neutral}}\)</span>, producing
+the final deformed 3D coordinate.</li>
+</ol>
+<p>This architecture enables low-bandwidth transmission of expression
+data while maintaining the freedom to render complex, high-fidelity
+deformations on diverse 3D models.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

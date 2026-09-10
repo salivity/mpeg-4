@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How MP4 Distinguishes Subtitles and Captions - mpeg-4</title>
+    <meta name="description" content="The MPEG-4 (MP4) container format differentiates between timed text subtitles and closed caption bitstreams through a combination of box-level metadata, track handler types, sample descriptions (FourCC codes), and stream delivery methods. While timed tex">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/how-mp4-distinguishes-subtitles-and-captions">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How MP4 Distinguishes Subtitles and Captions - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/how-mp4-distinguishes-subtitles-and-captions" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The MPEG-4 (MP4) container format differentiates between timed text subtitles and closed caption bitstreams through a combination of box-level metadata, track handler types, sample descriptions (FourCC codes), and stream delivery methods. While timed tex" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="how-mp4-distinguishes-subtitles-and-captions">How MP4
+Distinguishes Subtitles and Captions</h1>
+<p>The MPEG-4 (MP4) container format differentiates between timed text
+subtitles and closed caption bitstreams through a combination of
+box-level metadata, track handler types, sample descriptions (FourCC
+codes), and stream delivery methods. While timed text subtitles are
+generally stored in independent subtitle tracks, closed captions can
+exist either as discrete tracks or multiplexed directly within the video
+stream's bitstream. Demuxers and media players parse these specific
+structural elements in the ISO Base Media File Format (ISOBMFF) to
+identify, decode, and render each format appropriately.</p>
+<h3 id="1-handler-types-in-the-hdlr-box">1. Handler Types in the
+<code>hdlr</code> Box</h3>
+<p>Every track (<code>trak</code>) in an MP4 container includes a
+Handler Reference Box (<code>hdlr</code>) that specifies the nature of
+the media data:</p>
+<ul>
+<li><strong>Timed Text Subtitles:</strong> Typically use the handler
+type <code>sbtl</code> (subtitle) or <code>text</code> (general
+text).</li>
+<li><strong>Closed Captions:</strong> Standalone closed caption tracks
+typically use the handler type <code>clcp</code> (closed captions) or
+<code>sbtl</code> paired with caption-specific sample descriptions.</li>
+<li><strong>Embedded Captions:</strong> When captions are carried
+directly inside the video stream, the handler type remains
+<code>vide</code>, and the captions are discovered at the codec layer
+rather than the container handler level.</li>
+</ul>
+<h3 id="2-sample-description-entries-stsd-box">2. Sample Description
+Entries (<code>stsd</code> Box)</h3>
+<p>Inside the Sample Table Box (<code>stbl</code>), the Sample
+Description Box (<code>stsd</code>) uses distinct FourCC (Four-Character
+Code) identifiers to declare the exact coding format of the track
+samples:</p>
+<ul>
+<li><strong>Timed Text Formats:</strong>
+<ul>
+<li><code>tx3g</code>: 3GPP Timed Text (MPEG-4 Part 17), the standard
+timed text format for MP4.</li>
+<li><code>wvtt</code>: WebVTT encapsulated in MP4 samples.</li>
+<li><code>stpp</code>: XML-based timed text (such as TTML or
+IMSC1).</li>
+</ul></li>
+<li><strong>Closed Caption Formats:</strong>
+<ul>
+<li><code>c608</code>: CEA-608 (Line 21) closed caption bitstreams.</li>
+<li><code>c708</code>: CEA-708 digital closed caption bitstreams.</li>
+</ul></li>
+</ul>
+<h3 id="3-track-references-tref-box">3. Track References
+(<code>tref</code> Box)</h3>
+<p>To distinguish accessibility closed captions from regular subtitle
+tracks, the container can define explicit relationships using the Track
+Reference Box (<code>tref</code>):</p>
+<ul>
+<li>Closed caption tracks often contain a track reference of type
+<code>cdsc</code> (content describes). This establishes a formal link
+pointing to the primary video track that the captions describe.</li>
+<li>General timed text subtitle tracks may omit this reference or use
+alternative references (such as <code>subt</code>) depending on the
+authoring standard.</li>
+</ul>
+<h3 id="4-discrete-track-vs-in-band-bitstream-storage">4. Discrete Track
+vs. In-Band Bitstream Storage</h3>
+<p>The MP4 specification handles the transport architecture of these two
+data types differently:</p>
+<ul>
+<li><strong>Discrete Tracks (Out-of-Band):</strong> Timed text subtitles
+and discrete caption tracks (<code>tx3g</code>, <code>c608</code>,
+<code>c708</code>) have their own dedicated track IDs, time-to-sample
+boxes (<code>stts</code>), and chunk offset tables
+(<code>stco</code>/<code>co64</code>).</li>
+<li><strong>In-Band Video Embeddings:</strong> Closed captions
+(CEA-608/708) are frequently embedded directly within the video track's
+Elementary Stream as Supplemental Enhancement Information (SEI) NAL
+units (in AVC/H.264 or HEVC/H.265). In this scenario, the MP4 container
+treats the stream strictly as video, and the video decoder parses the
+SEI user data payload to extract the closed caption packets.</li>
+</ul></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

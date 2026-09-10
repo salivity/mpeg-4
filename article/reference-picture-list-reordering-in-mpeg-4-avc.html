@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reference Picture List Reordering in MPEG-4 AVC - mpeg-4</title>
+    <meta name="description" content="This article provides an overview of how MPEG-4 AVC (H.264) manages reference picture list reordering (RPLR) to support complex B-frame configurations. By allowing custom modifications to the default reference picture lists (List 0 and List 1), MPEG-4 AV">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/reference-picture-list-reordering-in-mpeg-4-avc">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Reference Picture List Reordering in MPEG-4 AVC - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/reference-picture-list-reordering-in-mpeg-4-avc" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article provides an overview of how MPEG-4 AVC (H.264) manages reference picture list reordering (RPLR) to support complex B-frame configurations. By allowing custom modifications to the default reference picture lists (List 0 and List 1), MPEG-4 AV" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="reference-picture-list-reordering-in-mpeg-4-avc">Reference
+Picture List Reordering in MPEG-4 AVC</h1>
+<p>This article provides an overview of how MPEG-4 AVC (H.264) manages
+reference picture list reordering (RPLR) to support complex B-frame
+configurations. By allowing custom modifications to the default
+reference picture lists (List 0 and List 1), MPEG-4 AVC enables encoders
+to assign the lowest reference indices to the most statistically
+correlated frames. This mechanism minimizes bitstream overhead, supports
+flexible GOP (Group of Pictures) designs such as hierarchical B-frames,
+and ensures robust decoding across arbitrary prediction structures.</p>
+<h3 id="default-reference-picture-list-construction">Default Reference
+Picture List Construction</h3>
+<p>In MPEG-4 AVC, B-slices use two reference picture lists: List 0 (L0)
+and List 1 (L1). When a slice header is decoded, the decoder initializes
+these lists from the Decoded Picture Buffer (DPB) based on predefined
+rules:</p>
+<ol type="1">
+<li><strong>Short-term Pictures in List 0:</strong> Ordered first by
+descending Picture Order Count (POC) for pictures displayed before the
+current frame, followed by ascending POC for pictures displayed after
+the current frame.</li>
+<li><strong>Short-term Pictures in List 1:</strong> Ordered first by
+ascending POC for pictures displayed after the current frame, followed
+by descending POC for pictures displayed before the current frame.</li>
+<li><strong>Long-term Pictures:</strong> Appended to the end of both
+lists in ascending order of their <code>LongTermPicNum</code>
+values.</li>
+</ol>
+<p>While this default sorting works well for simple alternating temporal
+structures, it is inefficient for non-sequential, complex prediction
+structures.</p>
+<h3 id="the-role-of-rplr-in-complex-b-frame-structures">The Role of RPLR
+in Complex B-Frame Structures</h3>
+<p>Complex structures—such as hierarchical B-frame pyramids—often break
+conventional forward/backward temporal prediction. In a hierarchical
+structure, a B-frame might use another B-frame far away in display order
+as its primary reference.</p>
+<p>Because entropy coding schemes (CAVLC and CABAC) assign shorter
+codewords to lower reference indices (e.g., index 0 uses fewer bits than
+index 3), default list construction can lead to coding inefficiency. If
+the most frequently used reference frame ends up at index 2 or 3 by
+default, signaling that reference for multiple macroblocks wastes bit
+budget.</p>
+<p>Reference Picture List Reordering solves this by transmitting
+explicit reordering instructions inside the slice header, remapping
+optimal reference frames to index 0 and index 1.</p>
+<h3 id="the-rplr-syntax-and-execution-mechanism">The RPLR Syntax and
+Execution Mechanism</h3>
+<p>The slice header contains the <code>ref_pic_list_reordering()</code>
+syntax structure, which issues a sequence of commands via the syntax
+element <code>reordering_of_pic_nums_idc</code>. The reordering operates
+as an iterative displacement process:</p>
+<ul>
+<li><strong><code>reordering_of_pic_nums_idc = 0</code>:</strong>
+Subtracts an offset from the current reference picture number
+(<code>PicNum</code>) to identify a short-term picture and places it at
+the current target index.</li>
+<li><strong><code>reordering_of_pic_nums_idc = 1</code>:</strong> Adds
+an offset to the current <code>PicNum</code> to identify a short-term
+picture and places it at the current target index.</li>
+<li><strong><code>reordering_of_pic_nums_idc = 2</code>:</strong>
+Specifies a <code>LongTermPicNum</code> to place a long-term picture at
+the current target index.</li>
+<li><strong><code>reordering_of_pic_nums_idc = 3</code>:</strong>
+Terminates the reordering loop for the active list.</li>
+</ul>
+<p>When a picture is placed at a specific index, all other pictures in
+the list shift down to subsequent positions, and duplicate entries are
+removed to maintain list integrity.</p>
+<h3 id="impact-on-advanced-inter-prediction">Impact on Advanced
+Inter-Prediction</h3>
+<p>Managing list reordering directly enhances multiple inter-prediction
+tools within MPEG-4 AVC:</p>
+<ul>
+<li><strong>Bi-Predictive Weighting:</strong> When using weighted
+prediction, reordered lists allow precise mapping of linear combinations
+to specific list pairs.</li>
+<li><strong>Direct Mode Prediction:</strong> Temporal Direct Mode
+derives motion vectors using the collocated block in the first picture
+of List 1 (<code>List 1[0]</code>). Custom reordering guarantees that
+the desired temporal anchor serves as the basis for motion vector
+scaling.</li>
+<li><strong>Non-Reference B-Frames vs. Reference B-Frames:</strong>
+Encoders can treat certain B-frames as key references while keeping
+others as disposable leaves in the prediction tree, structuring lists
+strictly by correlation rather than temporal proximity.</li>
+</ul></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

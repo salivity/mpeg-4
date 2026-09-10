@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How MPEG-4 Handles Anamorphic Aspect Ratios - mpeg-4</title>
+    <meta name="description" content="MPEG-4 ensures accurate display aspect ratio conversion on anamorphic widescreen displays by embedding specific pixel geometry metadata directly into the compressed video bitstream. Instead of altering the stored pixel grid, the codec signals playback de">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/how-mpeg-4-handles-anamorphic-aspect-ratios">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How MPEG-4 Handles Anamorphic Aspect Ratios - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/how-mpeg-4-handles-anamorphic-aspect-ratios" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="MPEG-4 ensures accurate display aspect ratio conversion on anamorphic widescreen displays by embedding specific pixel geometry metadata directly into the compressed video bitstream. Instead of altering the stored pixel grid, the codec signals playback de" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="how-mpeg-4-handles-anamorphic-aspect-ratios">How MPEG-4 Handles
+Anamorphic Aspect Ratios</h1>
+<p>MPEG-4 ensures accurate display aspect ratio conversion on anamorphic
+widescreen displays by embedding specific pixel geometry metadata
+directly into the compressed video bitstream. Instead of altering the
+stored pixel grid, the codec signals playback devices to mathematically
+scale rectangular pixels into their intended geometric proportions at
+runtime. This process relies on defined relationships between the
+Storage Aspect Ratio (SAR), Pixel Aspect Ratio (PAR), and Display Aspect
+Ratio (DAR) to deliver full-resolution 16:9 imagery across
+standard-definition frames without geometric distortion.</p>
+<h3 id="the-mathematics-of-anamorphic-conversion">The Mathematics of
+Anamorphic Conversion</h3>
+<p>Anamorphic video relies on non-square pixels to squeeze a widescreen
+image into a standard storage frame, such as capturing a 16:9 image
+within a 720×480 or 720×576 grid. MPEG-4 manages this using a
+fundamental formula:</p>
+<p><span class="math display">\[\text{Display Aspect Ratio (DAR)} =
+\text{Storage Aspect Ratio (SAR)} \times \text{Pixel Aspect Ratio
+(PAR)}\]</span></p>
+<ul>
+<li><strong>Storage Aspect Ratio (SAR):</strong> The physical count of
+horizontal and vertical pixels (e.g., 720:480 reduces to 3:2).</li>
+<li><strong>Pixel Aspect Ratio (PAR):</strong> The geometric shape of an
+individual pixel (width relative to height).</li>
+<li><strong>Display Aspect Ratio (DAR):</strong> The final physical
+viewing ratio on the screen (e.g., 16:9 or 4:3).</li>
+</ul>
+<p>When square pixels are used, PAR is 1:1. For anamorphic content,
+MPEG-4 assigns a PAR greater than 1:1, signaling that the pixels must be
+horizontally expanded upon playback.</p>
+<h3 id="bitstream-signaling-and-metadata">Bitstream Signaling and
+Metadata</h3>
+<p>MPEG-4 defines pixel dimensions through dedicated syntactic elements
+inside the video bitstream headers. The exact mechanism depends on the
+MPEG-4 profile:</p>
+<ol type="1">
+<li><strong>MPEG-4 Part 2 (Visual):</strong> Metadata is declared in the
+Video Object Layer (VOL) header. It defines the
+<code>aspect_ratio_info</code> field, which contains predefined aspect
+ratio codes or custom horizontal and vertical pixel size ratios
+(<code>par_width</code> and <code>par_height</code>).</li>
+<li><strong>MPEG-4 Part 10 (AVC / H.264):</strong> Signaling is embedded
+within the Sequence Parameter Set (SPS) inside the Video Usability
+Information (VUI) parameters. The <code>aspect_ratio_idc</code> syntax
+element transmits standardized PAR values or custom Sample Aspect
+Ratios.</li>
+</ol>
+<p>By isolating geometry instructions within these headers, the video
+payload itself does not need to be re-encoded or resized to fit
+different screens.</p>
+<h3 id="decoder-and-display-processing">Decoder and Display
+Processing</h3>
+<p>When an MPEG-4 stream is decoded, the playback pipeline performs the
+following steps:</p>
+<ol type="1">
+<li><strong>Header Parsing:</strong> The decoder extracts the pixel
+dimensions and the PAR/SAR flag from the bitstream.</li>
+<li><strong>Scaling Calculation:</strong> The display rendering engine
+calculates the target output width by multiplying the horizontal pixel
+count by the PAR value.</li>
+<li><strong>Hardware Interpolation:</strong> The GPU or display scaler
+applies bilinear or bicubic filtering to horizontally stretch the frame
+to fill the target 16:9 display canvas natively.</li>
+</ol>
+<p>This decoupled architecture allows MPEG-4 to preserve vertical
+resolution, optimize compression efficiency by eliminating hardcoded
+black letterbox bars, and ensure proper geometric rendering across
+diverse widescreen hardware.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

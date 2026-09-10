@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPEG-4 Tools to Detect and Remove 3:2 Pulldown - mpeg-4</title>
+    <meta name="description" content="Telecine 3:2 pulldown is a telecine conversion process that transfers 24-frame-per-second film material to 29.97-frame-per-second (60 Hz) interlaced video formats by duplicating alternating fields. MPEG-4 standards address this issue through a combinatio">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/mpeg-4-tools-to-detect-and-remove-3-2-pulldown">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MPEG-4 Tools to Detect and Remove 3:2 Pulldown - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/mpeg-4-tools-to-detect-and-remove-3-2-pulldown" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Telecine 3:2 pulldown is a telecine conversion process that transfers 24-frame-per-second film material to 29.97-frame-per-second (60 Hz) interlaced video formats by duplicating alternating fields. MPEG-4 standards address this issue through a combinatio" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="mpeg-4-tools-to-detect-and-remove-32-pulldown">MPEG-4 Tools to
+Detect and Remove 3:2 Pulldown</h1>
+<p>Telecine 3:2 pulldown is a telecine conversion process that transfers
+24-frame-per-second film material to 29.97-frame-per-second (60 Hz)
+interlaced video formats by duplicating alternating fields. MPEG-4
+standards address this issue through a combination of syntax-level
+metadata flags, picture-level coding structures, and encoder
+pre-processing algorithms. By utilizing syntax elements such as repeat
+field flags, Supplemental Enhancement Information (SEI) messages, and
+adaptive frame/field coding, MPEG-4 enables decoders to reconstruct pure
+progressive frames without encoding redundant interlaced fields or
+producing comb artifacts.</p>
+<h3
+id="picture-level-header-flags-repeat_first_field-and-top_field_first">Picture-Level
+Header Flags: <code>repeat_first_field</code> and
+<code>top_field_first</code></h3>
+<p>In MPEG-4 Part 2 (Visual) and Part 10 (AVC/H.264), the primary
+mechanism for eliminating 3:2 pulldown artifacts is progressive frame
+coding paired with display signaling flags. Rather than encoding
+duplicate fields, the encoder encodes the source as native 24p
+progressive frames and sets two specific syntax elements in the picture
+header:</p>
+<ul>
+<li><strong><code>repeat_first_field</code> (RFF):</strong> Instructs
+the decoder to repeat the first displayed field for an additional field
+duration, turning a two-field frame into a three-field sequence at
+display time.</li>
+<li><strong><code>top_field_first</code> (TFF):</strong> Dictates
+whether the top or bottom field is scanned first to maintain field
+parity.</li>
+</ul>
+<p>By alternating these flags across consecutive frames, the video
+stream preserves standard 3:2 cadence on interlaced displays without
+wasting compression bitrate on duplicate data or baking interlacing
+artifacts into the compressed stream.</p>
+<h3 id="picture-timing-sei-messages-and-pic_struct-mpeg-4-avc">Picture
+Timing SEI Messages and <code>pic_struct</code> (MPEG-4 AVC)</h3>
+<p>MPEG-4 Part 10 (AVC/H.264) introduces advanced Supplemental
+Enhancement Information (SEI) messages to handle pulldown elimination
+and display cadence. The Picture Timing SEI message contains the
+<code>pic_struct</code> syntax element, which defines the precise
+temporal layout of a frame. Standard values include:</p>
+<ul>
+<li><code>pic_struct = 5</code>: Frame displayed as Top, Bottom, then
+Top field repeated.</li>
+<li><code>pic_struct = 6</code>: Frame displayed as Bottom, Top, then
+Bottom field repeated.</li>
+<li><code>pic_struct = 7</code> and <code>8</code>: Frame doubling and
+frame tripling for progressive displays.</li>
+</ul>
+<p>This explicit structure allows decoders to recognize telecined film
+content immediately and render it progressively via Inverse Telecine
+(IVTC) without requiring real-time heuristic field matching.</p>
+<h3
+id="macroblock-adaptive-framefield-mbaff-and-paff-coding">Macroblock-Adaptive
+Frame/Field (MBAFF) and PAFF Coding</h3>
+<p>When dealing with video that contains mixed progressive and
+hard-telecined interlaced material, MPEG-4 uses Picture-Adaptive
+Field/Frame (PAFF) and Macroblock-Adaptive Frame/Field (MBAFF)
+coding:</p>
+<ul>
+<li><strong>PAFF:</strong> Allows the encoder to toggle between
+frame-based and field-based encoding at the picture level, isolating
+telecined sequences from pure progressive sequences.</li>
+<li><strong>MBAFF:</strong> Operates at the <span
+class="math inline">\(16 \times 16\)</span> macroblock level, allowing
+macroblock pairs in moving, telecined regions to be encoded as
+individual fields while non-moving regions remain progressive frames.
+This prevents cross-field comb distortion from being permanently blended
+into motion-compensated reference blocks.</li>
+</ul>
+<h3
+id="pre-processing-cadence-detection-and-inverse-telecine-ivtc">Pre-Processing
+Cadence Detection and Inverse Telecine (IVTC)</h3>
+<p>Before syntax encoding, MPEG-4 compliant encoders use integrated IVTC
+modules to detect the 3:2 pattern:</p>
+<ul>
+<li><strong>Sum of Absolute Differences (SAD) Field Matching:</strong>
+The encoder compares adjacent fields by calculating pixel difference
+metrics across consecutive fields. A 3:2 pulldown cadence exhibits a
+repeating pattern of identical or near-identical fields every five field
+intervals.</li>
+<li><strong>Comb Artifact Filtering:</strong> Vertical difference
+filtering identifies inter-field combing caused by motion in telecined
+frames.</li>
+<li><strong>Cadence Lock and Broken Cadence Recovery:</strong> The
+encoder locks onto the regular 3:2 sequence. If an edit point disrupts
+the cadence (a "bad edit"), the cadence tracker drops back to
+field-based processing or resets the sequence to avoid frame blending
+errors. Once matched, redundant fields are dropped, and the stream is
+compressed as a clean 23.976p sequence.</li>
+</ul></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

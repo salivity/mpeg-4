@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPEG-4 Extended Profile Error-Resilient Slicing - mpeg-4</title>
+    <meta name="description" content="The MPEG-4 Extended Profile improves video streaming over unreliable networks by employing advanced error-resilient slicing tools designed to minimize data loss and prevent visual degradation. By dividing video frames into independent, robustly structure">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/mpeg-4-extended-profile-error-resilient-slicing">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MPEG-4 Extended Profile Error-Resilient Slicing - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/mpeg-4-extended-profile-error-resilient-slicing" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The MPEG-4 Extended Profile improves video streaming over unreliable networks by employing advanced error-resilient slicing tools designed to minimize data loss and prevent visual degradation. By dividing video frames into independent, robustly structure" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="mpeg-4-extended-profile-error-resilient-slicing">MPEG-4 Extended
+Profile Error-Resilient Slicing</h1>
+<p>The MPEG-4 Extended Profile improves video streaming over unreliable
+networks by employing advanced error-resilient slicing tools designed to
+minimize data loss and prevent visual degradation. By dividing video
+frames into independent, robustly structured slices, isolating critical
+header information, and enabling flexible packet ordering, this profile
+allows decoders to recover gracefully from packet loss without
+interrupting the continuous video stream.</p>
+<h3 id="autonomous-slice-structure-and-independent-parsing">Autonomous
+Slice Structure and Independent Parsing</h3>
+<p>In standard video encoding, macroblocks within a frame depend heavily
+on spatial predictions from neighboring blocks. If a packet containing
+macroblock data is lost, subsequent macroblocks in the same frame become
+corrupted.</p>
+<p>The Extended Profile mitigates this through independent slicing. Each
+slice functions as an autonomous unit containing its own
+resynchronization markers and slice header. When a transmission error
+occurs, the decoder discards only the affected slice rather than the
+entire frame. Decoding can instantly resume at the start of the next
+slice boundary, significantly limiting spatial error propagation.</p>
+<h3 id="data-partitioning">Data Partitioning</h3>
+<p>Error-resilient slicing in the Extended Profile frequently leverages
+data partitioning, which separates the slice payload into distinct
+streams based on importance:</p>
+<ol type="1">
+<li><strong>Partition A (Header and Motion Vectors):</strong> Contains
+critical control data and motion parameters. If this partition arrives
+safely, the decoder can perform basic motion compensation even if
+texture data is lost.</li>
+<li><strong>Partition B (Intra-frame Texture Information):</strong>
+Contains transform coefficients for intra-coded macroblocks to prevent
+intra-drift.</li>
+<li><strong>Partition C (Inter-frame Texture Information):</strong>
+Contains residual transform coefficients for inter-coded
+macroblocks.</li>
+</ol>
+<p>By transmitting higher-priority partitions (like Partition A) over
+more reliable transport channels or prioritizing them in
+Quality-of-Service (QoS) queues, the streaming system ensures the core
+structure of the video arrives intact.</p>
+<h3
+id="flexible-macroblock-ordering-fmo-and-arbitrary-slice-ordering-aso">Flexible
+Macroblock Ordering (FMO) and Arbitrary Slice Ordering (ASO)</h3>
+<p>The Extended Profile utilizes Flexible Macroblock Ordering (FMO) to
+break the traditional raster-scan ordering of macroblocks. Instead of
+grouping contiguous rows of macroblocks into a single slice, FMO
+distributes adjacent macroblocks across different slices (such as in a
+checkerboard pattern).</p>
+<p>If a slice is lost in transit, the missing macroblocks are surrounded
+by successfully decoded neighbors from other slices. This spatial
+arrangement allows decoder-side error concealment algorithms to
+accurately interpolate and conceal the missing blocks. Arbitrary Slice
+Ordering (ASO) further enhances this resilience by allowing slices to be
+decoded in any sequence, eliminating delays caused by out-of-order
+network packet delivery.</p>
+<h3 id="redundant-slices-and-spsi-frames">Redundant Slices and SP/SI
+Frames</h3>
+<p>To combat severe packet loss in mobile and wireless streaming
+environments, the Extended Profile supports redundant slices. Encoders
+can generate secondary, lower-bitrate representations of crucial slices.
+If the primary slice is lost or corrupted, the decoder seamlessly falls
+back to the redundant slice to maintain playback continuity.</p>
+<p>Additionally, Switching P (SP) and Switching I (SI) slices allow
+dynamic stream switching across different bitrates without requiring
+keyframe insertion, ensuring smooth adaptation to changing network
+bandwidth while preserving error resilience.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

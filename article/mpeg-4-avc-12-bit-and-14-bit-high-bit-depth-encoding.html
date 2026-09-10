@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPEG-4 AVC 12-Bit and 14-Bit High Bit-Depth Encoding - mpeg-4</title>
+    <meta name="description" content="MPEG-4 AVC (H.264) manages 12-bit and 14-bit video through specialized extensions that expand the standard’s mathematical pipeline, transform precision, and quantization scaling. Originally designed for standard 8-bit consumer video, the standard intro">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/mpeg-4-avc-12-bit-and-14-bit-high-bit-depth-encoding">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MPEG-4 AVC 12-Bit and 14-Bit High Bit-Depth Encoding - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/mpeg-4-avc-12-bit-and-14-bit-high-bit-depth-encoding" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="MPEG-4 AVC (H.264) manages 12-bit and 14-bit video through specialized extensions that expand the standard’s mathematical pipeline, transform precision, and quantization scaling. Originally designed for standard 8-bit consumer video, the standard intro" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="mpeg-4-avc-12-bit-and-14-bit-high-bit-depth-encoding">MPEG-4 AVC
+12-Bit and 14-Bit High Bit-Depth Encoding</h1>
+<p>MPEG-4 AVC (H.264) manages 12-bit and 14-bit video through
+specialized extensions that expand the standard’s mathematical pipeline,
+transform precision, and quantization scaling. Originally designed for
+standard 8-bit consumer video, the standard introduced advanced profiles
+through the Fidelity Range Extensions (FRExt) and subsequent amendments.
+These profiles increase pixel dynamic range, prevent quantization
+artifacts, and enable studio-grade fidelity for specialized applications
+such as medical imaging, professional video editing, and digital
+archiving.</p>
+<h3 id="specialty-profiles-for-high-bit-depth">Specialty Profiles for
+High Bit-Depth</h3>
+<p>Standard AVC profiles (Baseline, Main, and High) are capped at 8-bit
+precision. To accommodate 12-bit and 14-bit source material, AVC relies
+on distinct advanced profiles:</p>
+<ul>
+<li><strong>High 4:4:4 Predictive Profile:</strong> The primary profile
+supporting inter-frame and intra-frame compression up to 14-bit sample
+depth, along with full 4:4:4 chroma sampling and RGB/YUV color
+spaces.</li>
+<li><strong>High 10 Intra, High 4:2:2 Intra, and High 4:4:4 Intra
+Profiles:</strong> Professional intra-only profiles designed for video
+production, camera acquisition, and broadcast contribution, supporting
+up to 14-bit sample precision.</li>
+<li><strong>CAVLC 4:4:4 Intra Profile:</strong> An intra-only profile
+designed for hardware with limited processing power, utilizing CAVLC
+(Context-Adaptive Variable-Length Coding) instead of CABAC while
+maintaining up to 14-bit depth.</li>
+</ul>
+<h3 id="quantization-scaling-and-qp_bd_offset">Quantization Scaling and
+<span class="math inline">\(QP_{BD\_OFFSET}\)</span></h3>
+<p>As bit depth increases, the numerical dynamic range of the video
+samples expands exponentially: 8-bit permits 256 discrete levels, 12-bit
+provides 4,096 levels, and 14-bit yields 16,384 levels.</p>
+<p>To maintain uniform quantization step sizes across varying bit
+depths, AVC implements an offset parameter:</p>
+<p><span class="math display">\[\text{QP\_BD\_OFFSET} = 6 \times
+(\text{BitDepth} - 8)\]</span></p>
+<p>For 12-bit video, this offset is 24; for 14-bit video, it is 36. The
+encoder shifts the effective Quantization Parameter range upward (e.g.,
+from the traditional 0–51 range up to 0–87 for 14-bit depth). This
+scaling ensures that fine tonal gradations are preserved without
+quantizing subtle shadow and highlight details into visible banding.</p>
+<h3 id="transform-precision-and-dynamic-range-management">Transform
+Precision and Dynamic Range Management</h3>
+<p>AVC uses integer discrete cosine transforms (typically 4x4 and 8x8
+blocks). In higher bit-depth modes:</p>
+<ol type="1">
+<li><strong>Extended Intermediate Arithmetic:</strong> The internal
+registers and mathematical operations expand to 16-bit or 32-bit
+arithmetic to prevent bit-overflow during forward and inverse transform
+calculations.</li>
+<li><strong>Adaptive Transform Selection:</strong> The 8x8 integer
+transform becomes standard to preserve high-frequency details across
+smooth gradients over larger spatial areas.</li>
+<li><strong>Dynamic Residual Precision:</strong> Prediction residuals
+(the difference between predicted pixels and original pixels) scale to
+accommodate the wider sample ranges, preserving precision across motion
+compensation and spatial intra prediction.</li>
+</ol>
+<h3 id="separate-color-plane-and-lossless-coding">Separate Color Plane
+and Lossless Coding</h3>
+<p>High bit-depth profiles in AVC introduce architectural options to
+handle high-fidelity color:</p>
+<ul>
+<li><strong>Separate Color Plane Coding:</strong> Instead of
+interleaving luma and chroma components into a single macroblock, 12-bit
+and 14-bit profiles allow each color plane (such as R, G, and B, or Y,
+Cb, and Cr) to be encoded independently as separate monochrome slices.
+This eliminates cross-channel compression artifacts.</li>
+<li><strong>Transform Bypass Lossless Mode:</strong> Specialty profiles
+support mathematically lossless compression. In this mode, the transform
+and quantization stages are bypassed entirely, encoding the raw residual
+samples directly via entropy coding.</li>
+</ul>
+<h3 id="key-use-cases">Key Use Cases</h3>
+<ul>
+<li><strong>Medical Imaging (DICOM):</strong> Dynamic range requirements
+for X-rays, MRIs, and CT scans demand 12-bit or 14-bit grayscale
+precision to ensure diagnostic accuracy.</li>
+<li><strong>Digital Cinema Mastering:</strong> Post-production workflows
+utilize 12-bit 4:4:4 color spaces to preserve broad color gamuts and
+dynamic range prior to final distribution.</li>
+<li><strong>Scientific and Satellite Imaging:</strong> High-resolution
+sensor feeds require unclipped dynamic range to capture extreme contrast
+in aerial and astronomical data.</li>
+</ul></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

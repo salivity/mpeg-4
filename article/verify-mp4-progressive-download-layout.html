@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify MP4 Progressive Download Layout - mpeg-4</title>
+    <meta name="description" content="To enable progressive download (often called "Fast Start" or web optimization), an MPEG-4 file must have its metadata container—the moov atom—positioned before the raw media data (mdat atom). This layout allows web browsers and media players to read">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/verify-mp4-progressive-download-layout">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Verify MP4 Progressive Download Layout - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/verify-mp4-progressive-download-layout" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="To enable progressive download (often called "Fast Start" or web optimization), an MPEG-4 file must have its metadata container—the moov atom—positioned before the raw media data (mdat atom). This layout allows web browsers and media players to read" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="verify-mp4-progressive-download-layout">Verify MP4 Progressive
+Download Layout</h1>
+<p>To enable progressive download (often called "Fast Start" or web
+optimization), an MPEG-4 file must have its metadata container—the
+<code>moov</code> atom—positioned before the raw media data
+(<code>mdat</code> atom). This layout allows web browsers and media
+players to read the file's index immediately and begin playback before
+downloading the entire file. This article details the most reliable
+tools and methods to verify that an MP4 file is properly structured for
+progressive download, along with quick steps to fix it if it is not.</p>
+<hr />
+<h3 id="1-verification-using-ffprobe-ffmpeg">1. Verification Using
+FFprobe (FFmpeg)</h3>
+<p>FFprobe allows you to trace the exact order of atoms inside the MP4
+container from the command line.</p>
+<p>Run the following command:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">ffprobe</span> <span class="at">-v</span> trace input.mp4 <span class="dv">2</span><span class="op">&gt;&amp;</span><span class="dv">1</span> <span class="kw">|</span> <span class="fu">grep</span> <span class="at">-E</span> <span class="st">&quot;type:&#39;moov&#39;|type:&#39;mdat&#39;&quot;</span></span></code></pre></div>
+<p><strong>Interpreting the Output:</strong></p>
+<ul>
+<li><strong>Correct (Progressive Download Ready):</strong> The
+<code>type:'moov'</code> entry appears <strong>before</strong> the
+<code>type:'mdat'</code> entry in the terminal output.</li>
+<li><strong>Incorrect:</strong> The <code>type:'mdat'</code> entry
+appears before <code>type:'moov'</code>.</li>
+</ul>
+<hr />
+<h3 id="2-verification-using-mediainfo">2. Verification Using
+MediaInfo</h3>
+<p>MediaInfo is a lightweight GUI and CLI utility that explicitly
+reports container metadata.</p>
+<ul>
+<li><p><strong>CLI Command:</strong></p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">mediainfo</span> <span class="at">--Inform</span><span class="op">=</span><span class="st">&quot;General;%IsStreamable%&quot;</span> input.mp4</span></code></pre></div>
+<ul>
+<li>If it returns <strong><code>Yes</code></strong>, the file is
+configured for progressive download.</li>
+<li>If it returns <strong><code>No</code></strong> or blank, the
+<code>moov</code> atom is at the end of the file.</li>
+</ul></li>
+<li><p><strong>GUI Method:</strong> Open the file in MediaInfo, switch
+to the <strong>Tree</strong> or <strong>Text</strong> view, and inspect
+the <code>General</code> section for the property
+<strong><code>IsStreamable : Yes</code></strong> or
+<strong><code>Format settings : Web optimized</code></strong>.</p></li>
+</ul>
+<hr />
+<h3 id="3-verification-using-mp4box-gpac">3. Verification Using MP4Box
+(GPAC)</h3>
+<p>MP4Box can analyze the file's layout and hint structures.</p>
+<p>Run the following command:</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">MP4Box</span> <span class="at">-info</span> input.mp4</span></code></pre></div>
+<p>Look for lines indicating file structure. If the file is properly
+optimized, MP4Box will report that the file is interleaved or that
+metadata is located at the beginning of the file.</p>
+<hr />
+<h3 id="4-verification-using-a-web-browser">4. Verification Using a Web
+Browser</h3>
+<p>You can test the real-world behavior of the file directly in a modern
+web browser:</p>
+<ol type="1">
+<li>Open Google Chrome, Firefox, or Microsoft Edge.</li>
+<li>Open <strong>Developer Tools</strong> (<code>F12</code>) and
+navigate to the <strong>Network</strong> tab.</li>
+<li>Enable network throttling (e.g., set to "Fast 3G" or "Slow
+3G").</li>
+<li>Drag and drop the MP4 file into the browser window or load it via a
+local web server using an HTML5 <code>&lt;video&gt;</code> tag.</li>
+<li><strong>Result:</strong> If playback starts within a few seconds
+while the download progress bar is still filling, progressive download
+is functioning properly. If playback waits until 100% of the file is
+loaded, the layout is incorrect.</li>
+</ol>
+<hr />
+<h3 id="how-to-fix-an-incorrect-layout">How to Fix an Incorrect
+Layout</h3>
+<p>If verification reveals that the <code>moov</code> atom is at the end
+of the file, you can relocate it to the front without re-encoding the
+video using FFmpeg:</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">ffmpeg</span> <span class="at">-i</span> input.mp4 <span class="at">-c</span> copy <span class="at">-movflags</span> +faststart output.mp4</span></code></pre></div>
+<p>This operation processes in seconds, shifts the <code>moov</code>
+atom to the beginning of <code>output.mp4</code>, and preserves the
+original audio and video quality.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

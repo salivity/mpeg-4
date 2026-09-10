@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPEG-4 AVC Intra 4x4 Luma Mode Selection Process - mpeg-4</title>
+    <meta name="description" content="MPEG-4 AVC (H.264) determines the best directional intra-prediction mode for 4x4 luma blocks through a mathematical decision process known as Rate-Distortion Optimization (RDO). The encoder evaluates nine possible prediction modes by projecting edge samp">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/mpeg-4-avc-intra-4x4-luma-mode-selection-process">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MPEG-4 AVC Intra 4x4 Luma Mode Selection Process - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/mpeg-4-avc-intra-4x4-luma-mode-selection-process" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="MPEG-4 AVC (H.264) determines the best directional intra-prediction mode for 4x4 luma blocks through a mathematical decision process known as Rate-Distortion Optimization (RDO). The encoder evaluates nine possible prediction modes by projecting edge samp" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="mpeg-4-avc-intra-4x4-luma-mode-selection-process">MPEG-4 AVC
+Intra 4x4 Luma Mode Selection Process</h1>
+<p>MPEG-4 AVC (H.264) determines the best directional intra-prediction
+mode for 4x4 luma blocks through a mathematical decision process known
+as Rate-Distortion Optimization (RDO). The encoder evaluates nine
+possible prediction modes by projecting edge samples from previously
+decoded adjacent blocks, calculating the resulting residual error, and
+factoring in the bit cost required to signal the selected mode. The mode
+that minimizes the combined cost of visual distortion and bit
+consumption is chosen for the final encoding.</p>
+<h3 id="the-4x4-luma-intra-prediction-modes">The 4x4 Luma
+Intra-Prediction Modes</h3>
+<p>For a 4x4 luma block, the encoder utilizes up to 13 neighboring
+reconstructed samples (labeled A through M) located directly above,
+above-right, and to the left of the target block. Using these samples,
+AVC defines nine distinct modes:</p>
+<ul>
+<li><strong>Mode 0 (Vertical):</strong> Extrapolates upper samples
+vertically downward.</li>
+<li><strong>Mode 1 (Horizontal):</strong> Extrapolates left-hand samples
+horizontally to the right.</li>
+<li><strong>Mode 2 (DC):</strong> Fills the block with the arithmetic
+mean of the available upper and left samples.</li>
+<li><strong>Mode 3 (Diagonal Down-Left):</strong> Extrapolates samples
+along a 45-degree angle pointing down and to the left.</li>
+<li><strong>Mode 4 (Diagonal Down-Right):</strong> Extrapolates samples
+along a 45-degree angle pointing down and to the right.</li>
+<li><strong>Mode 5 (Vertical-Right):</strong> Extrapolates samples
+diagonally downward and to the right at roughly 26.6 degrees off the
+vertical.</li>
+<li><strong>Mode 6 (Horizontal-Down):</strong> Extrapolates samples
+diagonally downward and to the right at roughly 26.6 degrees off the
+horizontal.</li>
+<li><strong>Mode 7 (Vertical-Left):</strong> Extrapolates samples
+diagonally downward and to the left at roughly 26.6 degrees off the
+vertical.</li>
+<li><strong>Mode 8 (Horizontal-Up):</strong> Extrapolates samples
+diagonally upward and to the right at roughly 26.6 degrees off the
+horizontal.</li>
+</ul>
+<h3 id="the-decision-workflow">The Decision Workflow</h3>
+<p>The encoder selects among these nine modes using the following
+sequence:</p>
+<h4 id="1-availability-check">1. Availability Check</h4>
+<p>The encoder determines which neighboring samples (A–M) are physically
+available within the current slice boundary. If a block borders a frame
+or slice boundary, modes requiring unavailable neighboring pixels are
+eliminated from consideration. If no neighbors are available, only DC
+prediction with a nominal value (such as 128 for 8-bit depth) is
+permitted.</p>
+<h4 id="2-predictor-generation">2. Predictor Generation</h4>
+<p>For every valid mode, the encoder builds a 4x4 predictive block using
+the designated linear interpolation formulas specified by the H.264
+standard.</p>
+<h4 id="3-residual-and-distortion-calculation">3. Residual and
+Distortion Calculation</h4>
+<p>The encoder computes the difference between the original 4x4 source
+block and the generated predictor block to produce a residual block.
+Distortion (<span class="math inline">\(D\)</span>) is quantified using
+one of several metrics depending on the encoder's complexity
+settings:</p>
+<ul>
+<li><strong>Sum of Absolute Differences (SAD):</strong> A low-complexity
+comparison of pixel differences.</li>
+<li><strong>Sum of Absolute Transformed Differences (SATD):</strong>
+Measures difference after applying a low-complexity transform (like the
+Hadamard transform) to approximate frequency-domain distortion.</li>
+<li><strong>Sum of Squared Errors (SSE):</strong> Full reconstruction
+error measured after transform, quantization, and inverse
+operations.</li>
+</ul>
+<h4 id="4-mode-signaling-cost-estimation-rate">4. Mode Signaling Cost
+Estimation (Rate)</h4>
+<p>The encoder estimates the number of bits (<span
+class="math inline">\(R\)</span>) needed to signal the mode in the
+bitstream. AVC uses context from the left and top adjacent blocks to
+determine a Most Probable Mode (MPM). If the candidate mode matches the
+MPM, it can be signaled with a single bit. If it does not, a 3-bit code
+is required to specify one of the remaining non-probable modes.</p>
+<h4 id="5-lagrangian-cost-evaluation-and-selection">5. Lagrangian Cost
+Evaluation and Selection</h4>
+<p>The encoder calculates the final Rate-Distortion Cost (<span
+class="math inline">\(J\)</span>) for each candidate mode using the
+Lagrangian equation:</p>
+<p><span class="math display">\[J = D + \lambda \cdot R\]</span></p>
+<p>Where:</p>
+<ul>
+<li><span class="math inline">\(D\)</span> is the measured
+distortion.</li>
+<li><span class="math inline">\(R\)</span> is the estimated bit rate
+required to encode the prediction mode and residual.</li>
+<li><span class="math inline">\(\lambda\)</span> (lambda) is the
+Lagrange multiplier derived from the Quantization Parameter (QP).</li>
+</ul>
+<p>The encoder compares the calculated <span
+class="math inline">\(J\)</span> values across all valid candidate
+modes. The mode yielding the lowest total cost <span
+class="math inline">\(J\)</span> is selected as the optimal
+intra-prediction mode for the 4x4 luma block.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

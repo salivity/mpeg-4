@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Role of the stss Box in MP4 Keyframe Seeking - mpeg-4</title>
+    <meta name="description" content="The Sync Sample box, identified by the four-character code 'stss', is a fundamental metadata table within an MPEG-4 (MP4) container that catalogs the exact locations of keyframes. This article explains what the stss box is, why keyframes are essential fo">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/role-of-the-stss-box-in-mp4-keyframe-seeking">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Role of the stss Box in MP4 Keyframe Seeking - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/role-of-the-stss-box-in-mp4-keyframe-seeking" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The Sync Sample box, identified by the four-character code 'stss', is a fundamental metadata table within an MPEG-4 (MP4) container that catalogs the exact locations of keyframes. This article explains what the stss box is, why keyframes are essential fo" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="role-of-the-stss-box-in-mp4-keyframe-seeking">Role of the stss
+Box in MP4 Keyframe Seeking</h1>
+<p>The Sync Sample box, identified by the four-character code
+<code>'stss'</code>, is a fundamental metadata table within an MPEG-4
+(MP4) container that catalogs the exact locations of keyframes. This
+article explains what the <code>stss</code> box is, why keyframes are
+essential for video playback navigation, how media players use the
+<code>stss</code> table to jump instantly to specific timestamps, and
+what happens when this table is missing from a media file.</p>
+<h3 id="what-is-the-stss-box">What is the <code>stss</code> Box?</h3>
+<p>In the ISO Base Media File Format (ISOBMFF) and standard MP4 files,
+media metadata is organized in a hierarchical tree of "boxes" or
+"atoms." The <code>stss</code> box resides inside the Sample Table box
+(<code>moov -&gt; trak -&gt; mdia -&gt; minf -&gt; stbl -&gt; stss</code>).</p>
+<p>The <code>stss</code> box contains a compact array of numbers
+representing sample indices (frames) that are "sync samples." A sync
+sample is a self-contained video frame (typically an I-frame or IDR
+frame in codecs like H.264/AVC or H.265/HEVC) that can be decoded
+completely on its own without referencing any past or future frames.</p>
+<h3 id="why-keyframes-are-required-for-seeking">Why Keyframes Are
+Required for Seeking</h3>
+<p>Modern video compression relies heavily on inter-frame
+prediction:</p>
+<ul>
+<li><strong>I-Frames (Intra/Sync Frames):</strong> Fully self-contained
+images.</li>
+<li><strong>P-Frames and B-Frames (Predicted Frames):</strong> Contain
+only the visual differences from neighboring frames.</li>
+</ul>
+<p>If a video player attempts to jump directly to a random P-frame or
+B-frame during playback, it will encounter missing reference data,
+resulting in severe visual artifacting, macroblocking, or playback
+freezes. To seek cleanly to any point in a video, the decoder must start
+processing from an independent keyframe located at or before the
+requested timestamp.</p>
+<h3 id="how-the-player-uses-stss-during-a-seek-operation">How the Player
+Uses <code>stss</code> During a Seek Operation</h3>
+<p>When a user drags the seek bar to jump to a specific time in an MP4
+video, the media engine follows a structured lookup pipeline involving
+the <code>stss</code> box:</p>
+<ol type="1">
+<li><strong>Time to Sample Mapping (<code>stts</code>):</strong> The
+player consults the Time-to-Sample table (<code>stts</code>) to convert
+the desired playback timestamp (e.g., 00:04:15) into an approximate
+target sample number.</li>
+<li><strong>Keyframe Lookup (<code>stss</code>):</strong> The player
+queries the <code>stss</code> box to find the closest sync sample number
+that occurs at or immediately before the target sample number.</li>
+<li><strong>Byte Offset Resolution (<code>stsc</code> and
+<code>stco</code>/<code>co64</code>):</strong> Once the correct sync
+sample index is identified, the player uses the Sample-to-Chunk
+(<code>stsc</code>) and Chunk Offset (<code>stco</code> or
+<code>co64</code>) tables to resolve the exact byte offset of that frame
+in the file.</li>
+<li><strong>Data Fetch and Decode:</strong> The player immediately
+fetches bytes from that file offset, initializes the video decoder on
+the sync sample, and begins playback smoothly.</li>
+</ol>
+<p>By using the <code>stss</code> index, the player avoids parsing the
+entire binary video stream to find a decode point, enabling
+near-instantaneous seeking over local disks or network streams (such as
+HTTP range requests).</p>
+<h3 id="behavior-when-the-stss-box-is-absent">Behavior When the
+<code>stss</code> Box is Absent</h3>
+<p>According to the MP4 specification, the <code>stss</code> box is
+optional. If a video track does not contain an <code>stss</code> box,
+the media player assumes that <strong>every single sample in the track
+is a sync sample</strong>.</p>
+<p>This scenario is common in intra-frame-only codecs (such as Apple
+ProRes, Motion JPEG, or raw video), where every frame is independently
+decodable. However, if an <code>stss</code> box is missing from a video
+encoded with inter-frame codecs like H.264 or HEVC, the player cannot
+reliably seek without sequentially downloading and parsing the bitstream
+headers manually.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

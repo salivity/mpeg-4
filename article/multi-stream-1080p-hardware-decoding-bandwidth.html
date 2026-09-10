@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-Stream 1080p Hardware Decoding Bandwidth - mpeg-4</title>
+    <meta name="description" content="This article provides an overview of the memory bandwidth requirements for multi-stream 1080p MPEG-4 hardware decoding. It breaks down the mathematical calculation for a single 1080p stream at standard color formats, analyzes memory access patterns inclu">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/multi-stream-1080p-hardware-decoding-bandwidth">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Multi-Stream 1080p Hardware Decoding Bandwidth - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/multi-stream-1080p-hardware-decoding-bandwidth" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article provides an overview of the memory bandwidth requirements for multi-stream 1080p MPEG-4 hardware decoding. It breaks down the mathematical calculation for a single 1080p stream at standard color formats, analyzes memory access patterns inclu" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="multi-stream-1080p-hardware-decoding-bandwidth">Multi-Stream
+1080p Hardware Decoding Bandwidth</h1>
+<p>This article provides an overview of the memory bandwidth
+requirements for multi-stream 1080p MPEG-4 hardware decoding. It breaks
+down the mathematical calculation for a single 1080p stream at standard
+color formats, analyzes memory access patterns including reference frame
+reads and reconstructed frame writes, and provides total throughput
+estimates for scaling across multiple concurrent streams in embedded and
+server architectures.</p>
+<h2 id="per-stream-bandwidth-fundamentals">Per-Stream Bandwidth
+Fundamentals</h2>
+<p>Hardware video decoding requires continuous data transfers across the
+system memory bus. A standard 1080p video stream has a resolution of
+<span class="math inline">\(1920 \times 1080\)</span> pixels. Most
+MPEG-4 video (including MPEG-4 Part 2 and MPEG-4 Part 10 / H.264) is
+decoded into the standard YUV 4:2:0 chroma subsampling format.</p>
+<p>In YUV 4:2:0:</p>
+<ul>
+<li>The luma (Y) plane uses 1 byte per pixel: <span
+class="math inline">\(1920 \times 1080 = 2,073,600\text{
+bytes}\)</span></li>
+<li>The chroma (U and V) planes use 0.5 bytes per pixel combined: <span
+class="math inline">\(1,036,800\text{ bytes}\)</span></li>
+<li><strong>Total size per uncompressed frame:</strong> <span
+class="math inline">\(\approx 3.11\text{ MB}\)</span> (<span
+class="math inline">\(24.88\text{ Mbits}\)</span>)</li>
+</ul>
+<p>At 30 frames per second (fps), the uncompressed pixel throughput is:
+<span class="math display">\[\text{Pixel Rate} = 3.11\text{ MB} \times
+30\text{ fps} \approx 93.3\text{ MB/s}\]</span></p>
+<p>At 60 frames per second (fps), the uncompressed pixel throughput is:
+<span class="math display">\[\text{Pixel Rate} = 3.11\text{ MB} \times
+60\text{ fps} \approx 186.6\text{ MB/s}\]</span></p>
+<h2 id="memory-access-operations-in-hardware-decoders">Memory Access
+Operations in Hardware Decoders</h2>
+<p>Hardware decoders perform multiple memory read and write transactions
+per frame:</p>
+<ol type="1">
+<li><strong>Compressed Bitstream Read:</strong> The decoder fetches the
+compressed stream from system RAM. At typical 1080p bitrates (5 to 20
+Mbps), this requires only <strong>0.6 MB/s to 2.5 MB/s</strong>, which
+is negligible compared to pixel traffic.</li>
+<li><strong>Reconstructed Frame Write:</strong> The decoder writes the
+newly reconstructed frame back into RAM (the Decoded Picture Buffer, or
+DPB). This requires <strong><span
+class="math inline">\(1.0\times\)</span> the uncompressed frame
+rate</strong> (<span class="math inline">\(\sim 93.3\text{
+MB/s}\)</span> at 30 fps).</li>
+<li><strong>Reference Frame Read (Motion Compensation):</strong> To
+decode P-frames and B-frames, the hardware must read reference frames
+from RAM. Due to sub-pixel interpolation, motion vector fetches, and
+block boundary overlaps, this step typically requires <strong><span
+class="math inline">\(1.5\times\)</span> to <span
+class="math inline">\(2.5\times\)</span> the uncompressed frame
+rate</strong>, depending on decoder cache size and internal tiling
+efficiency (<span class="math inline">\(\sim 140\text{ MB/s to }
+233\text{ MB/s}\)</span> at 30 fps).</li>
+<li><strong>Display Output Read:</strong> If the decoded stream is
+simultaneously read by a display controller or video compositor, it
+requires an additional <strong><span
+class="math inline">\(1.0\times\)</span> uncompressed frame
+rate</strong> (<span class="math inline">\(\sim 93.3\text{
+MB/s}\)</span> at 30 fps).</li>
+</ol>
+<h3 id="baseline-total-per-stream-30-fps">Baseline Total Per Stream (30
+fps)</h3>
+<ul>
+<li><strong>Core Decode Only (No Display):</strong> <span
+class="math inline">\(235\text{ MB/s to } 330\text{ MB/s}\)</span></li>
+<li><strong>Core Decode + Display Output:</strong> <span
+class="math inline">\(330\text{ MB/s to } 425\text{ MB/s}\)</span></li>
+</ul>
+<hr />
+<h2 id="multi-stream-bandwidth-scaling">Multi-Stream Bandwidth
+Scaling</h2>
+<p>When processing multiple streams concurrently, total memory bandwidth
+scales almost linearly. However, multi-stream workloads reduce internal
+cache hit rates and cause memory controller page-open/page-close
+thrashing, introducing a 10% to 20% arbitration efficiency penalty.</p>
+<p>The table below outlines real-world bandwidth requirements (assuming
+30 fps, YUV 4:2:0, moderate cache efficiency, and decode-only
+operation):</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Concurrent 1080p Streams</th>
+<th style="text-align: left;">Raw Decode Bandwidth</th>
+<th style="text-align: left;">Estimated Total with Overhead (15%)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>1 Stream</strong></td>
+<td style="text-align: left;"><span class="math inline">\(\sim 280\text{
+MB/s}\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(\sim 322\text{
+MB/s}\)</span></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>4 Streams</strong></td>
+<td style="text-align: left;"><span class="math inline">\(\sim
+1.12\text{ GB/s}\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(\sim
+1.29\text{ GB/s}\)</span></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>8 Streams</strong></td>
+<td style="text-align: left;"><span class="math inline">\(\sim
+2.24\text{ GB/s}\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(\sim
+2.58\text{ GB/s}\)</span></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>16 Streams</strong></td>
+<td style="text-align: left;"><span class="math inline">\(\sim
+4.48\text{ GB/s}\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(\sim
+5.15\text{ GB/s}\)</span></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>32 Streams</strong></td>
+<td style="text-align: left;"><span class="math inline">\(\sim
+8.96\text{ GB/s}\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(\sim
+10.30\text{ GB/s}\)</span></td>
+</tr>
+</tbody>
+</table>
+<p><em>(Note: For 60 fps streams, double the throughput
+requirements).</em></p>
+<h2 id="hardware-architecture-requirements">Hardware Architecture
+Requirements</h2>
+<p>To support multi-stream decoding reliably:</p>
+<ul>
+<li><strong>Memory Bus Utilization:</strong> Video decoding memory
+traffic consists of large bursts of 2D memory access patterns. Memory
+buses should not be operated above 70–80% of their theoretical peak
+bandwidth to avoid latency spikes and frame drops.</li>
+<li><strong>DDR Generation Sizing:</strong> A dual-channel LPDDR4-3200
+bus provides a theoretical maximum of approximately <span
+class="math inline">\(25.6\text{ GB/s}\)</span> (effective <span
+class="math inline">\(\sim 18\text{ to } 20\text{ GB/s}\)</span>), which
+can comfortably handle up to 32 to 40 concurrent 1080p30 decode streams
+alongside standard OS tasks. A single-channel DDR3-1600 interface (<span
+class="math inline">\(\sim 12.8\text{ GB/s}\)</span> theoretical) is
+limited to roughly 8 to 12 concurrent streams.</li>
+</ul></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

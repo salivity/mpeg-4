@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPEG 4 AVC Data Partitioning Explained - mpeg-4</title>
+    <meta name="description" content="MPEG-4 AVC (H.264) utilizes Data Partitioning as an error-resilience tool that separates slice data into three distinct streams based on the importance of each syntax element. By categorizing critical structural data, intra-coded textures, and inter-code">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/mpeg-4-avc-data-partitioning-explained">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MPEG 4 AVC Data Partitioning Explained - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/mpeg-4-avc-data-partitioning-explained" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="MPEG-4 AVC (H.264) utilizes Data Partitioning as an error-resilience tool that separates slice data into three distinct streams based on the importance of each syntax element. By categorizing critical structural data, intra-coded textures, and inter-code" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="mpeg-4-avc-data-partitioning-explained">MPEG 4 AVC Data
+Partitioning Explained</h1>
+<p>MPEG-4 AVC (H.264) utilizes Data Partitioning as an error-resilience
+tool that separates slice data into three distinct streams based on the
+importance of each syntax element. By categorizing critical structural
+data, intra-coded textures, and inter-coded residual information into
+separate Network Abstraction Layer (NAL) units, decoders can salvage
+usable visual information even when portions of the bitstream are
+corrupted or dropped during transmission.</p>
+<h3 id="the-purpose-of-data-partitioning">The Purpose of Data
+Partitioning</h3>
+<p>In a standard MPEG-4 AVC stream without data partitioning, all syntax
+elements of a slice—including headers, motion vectors, and transform
+coefficients—are packaged sequentially into a single NAL unit. If packet
+loss occurs mid-stream, the entire remaining portion of the slice
+becomes unparseable. Data Partitioning addresses this vulnerability by
+categorizing syntax elements by their functional dependency and
+transmitting them in separate partitions with differing priorities.</p>
+<h3 id="the-three-partitions">The Three Partitions</h3>
+<p>Data Partitioning divides the slice payload into three distinct
+types, designated as Partition A, Partition B, and Partition C:</p>
+<h4 id="1-partition-a-header-and-motion-information">1. Partition A:
+Header and Motion Information</h4>
+<p>Partition A is the most critical segment of the slice. It is assigned
+NAL unit type 2 and contains:</p>
+<ul>
+<li>Slice headers</li>
+<li>Macroblock types and modes</li>
+<li>Motion vectors (MVs)</li>
+<li>Reference frame indices</li>
+<li>Quantization parameters</li>
+</ul>
+<p>Because it defines the structure and motion trajectory of every
+macroblock within the slice, no other partition can be decoded without
+Partition A. If Partition A is lost, Partitions B and C are rendered
+unusable, and the decoder must rely on error concealment techniques.</p>
+<h4 id="2-partition-b-intra-frame-texture-data">2. Partition B:
+Intra-Frame Texture Data</h4>
+<p>Partition B is assigned NAL unit type 3 and carries the residual data
+for intra-coded macroblocks. Its contents include:</p>
+<ul>
+<li>Intra-macroblock Coded Block Patterns (CBP)</li>
+<li>Intra transform coefficients</li>
+</ul>
+<p>Partition B allows the decoder to reconstruct intra-coded blocks that
+do not rely on temporal prediction. It requires Partition A to map the
+coefficients to the correct spatial locations, but it operates
+independently of Partition C. Receiving Partition B prevents the spatial
+propagation of errors within the frame.</p>
+<h4 id="3-partition-c-inter-frame-texture-data">3. Partition C:
+Inter-Frame Texture Data</h4>
+<p>Partition C is assigned NAL unit type 4 and carries the residual data
+for inter-coded macroblocks. Its contents include:</p>
+<ul>
+<li>Inter-macroblock Coded Block Patterns (CBP)</li>
+<li>Inter transform coefficients (residual prediction errors)</li>
+</ul>
+<p>Partition C represents the fine texture details of moving elements.
+While it requires Partition A to function, it is the least critical
+partition. If Partition C is lost, the decoder can still use the motion
+vectors from Partition A to reconstruct the frame, resulting in only
+minor visual artifacts rather than complete frame corruption.</p>
+<h3 id="integration-with-unequal-error-protection-uep">Integration with
+Unequal Error Protection (UEP)</h3>
+<p>The separation of syntax elements enables Unequal Error Protection
+across communication channels:</p>
+<ul>
+<li><strong>High Priority / Strong Protection:</strong> Partition A
+packets receive the highest quality of service (QoS) or strongest
+forward error correction (FEC).</li>
+<li><strong>Medium Priority:</strong> Partition B packets receive
+moderate protection to preserve intra-refresh regions.</li>
+<li><strong>Low Priority:</strong> Partition C packets receive standard
+protection, as their loss introduces minimal degradation.</li>
+</ul>
+<p>Through this modular division, MPEG-4 AVC maintains video playback
+continuity and mitigates severe visual corruption across lossy
+networks.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

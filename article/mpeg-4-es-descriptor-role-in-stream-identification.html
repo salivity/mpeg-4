@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPEG-4 ES_Descriptor Role in Stream Identification - mpeg-4</title>
+    <meta name="description" content="The MPEG-4 Elementary Stream Descriptor (ESDescriptor) is a fundamental data structure within the MPEG-4 Systems standard (ISO/IEC 14496-1) that identifies, characterizes, and configures individual elementary streams. It acts as the primary metadata cont">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/mpeg-4-es-descriptor-role-in-stream-identification">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MPEG-4 ES_Descriptor Role in Stream Identification - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/mpeg-4-es-descriptor-role-in-stream-identification" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The MPEG-4 Elementary Stream Descriptor (ESDescriptor) is a fundamental data structure within the MPEG-4 Systems standard (ISO/IEC 14496-1) that identifies, characterizes, and configures individual elementary streams. It acts as the primary metadata cont" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="mpeg-4-es_descriptor-role-in-stream-identification">MPEG-4
+ES_Descriptor Role in Stream Identification</h1>
+<p>The MPEG-4 Elementary Stream Descriptor (<code>ES_Descriptor</code>)
+is a fundamental data structure within the MPEG-4 Systems standard
+(ISO/IEC 14496-1) that identifies, characterizes, and configures
+individual elementary streams. It acts as the primary metadata container
+that links raw media streams—such as audio, video, scene descriptions,
+and synthetic graphics—to the MPEG-4 terminal's demultiplexing and
+decoding architecture. By encapsulating unique stream identifiers,
+decoder requirements, synchronization parameters, and stream
+dependencies, the <code>ES_Descriptor</code> enables the playback system
+to correctly associate incoming bitstreams with their corresponding
+media objects.</p>
+<h3 id="unique-stream-identification-via-es_id">Unique Stream
+Identification via ES_ID</h3>
+<p>At the core of stream identification, the <code>ES_Descriptor</code>
+assigns a unique 16-bit identifier known as the <code>ES_ID</code>
+(Elementary Stream ID) to each elementary stream. In a complex MPEG-4
+scene containing multiple interactive and multiplexed components, the
+<code>ES_ID</code> provides a definitive reference that differentiates
+one stream from another. Demultiplexers use this identifier to route
+incoming packets from the transport or file layer to the appropriate
+processing pipeline.</p>
+<h3 id="association-with-media-objects">Association with Media
+Objects</h3>
+<p>MPEG-4 uses an Object Descriptor (OD) framework to manage multimedia
+scenes. An Object Descriptor contains one or more
+<code>ES_Descriptor</code> structures, binding them to a specific node
+or object in the scene graph (such as a BIFS scene or a 3D avatar). When
+the terminal parses an Object Descriptor, the embedded
+<code>ES_Descriptor</code> identifies which specific elementary streams
+contain the audio, video, or data components required to render that
+specific object.</p>
+<h3 id="decoder-and-codec-configuration">Decoder and Codec
+Configuration</h3>
+<p>The <code>ES_Descriptor</code> includes the
+<code>DecoderConfigDescriptor</code>, which identifies the stream type
+and the specific decoding profile required to interpret the data. It
+specifies:</p>
+<ul>
+<li><strong>Stream Type:</strong> Identifies whether the stream is
+visual, audio, scene description (BIFS), Object Descriptor (OD), or IPMP
+(Intellectual Property Management and Protection).</li>
+<li><strong>Object Type Indication:</strong> Specifies the exact codec
+format (e.g., Advanced Audio Coding, MPEG-4 Visual, AVC/H.264).</li>
+<li><strong>Buffer and Bitrate Parameters:</strong> Defines the upstream
+buffer requirements (<code>bufferSizeDB</code>) and average/maximum
+bitrates, allowing the demuxer and decoder to allocate memory
+appropriately.</li>
+</ul>
+<h3 id="synchronization-layer-mapping">Synchronization Layer
+Mapping</h3>
+<p>Stream identification requires temporal alignment with other streams.
+The <code>ES_Descriptor</code> contains the
+<code>SLConfigDescriptor</code> (Synchronization Layer Configuration
+Descriptor), which defines how elementary stream data is partitioned
+into SL packets. This configuration identifies how time stamps
+(Composition Time Stamps and Decoding Time Stamps), sequence numbers,
+and random access indicators are formatted, ensuring accurate clock
+recovery and lip-sync across different media streams.</p>
+<h3 id="stream-dependency-and-hierarchy-management">Stream Dependency
+and Hierarchy Management</h3>
+<p>In advanced delivery scenarios, such as scalable video coding or
+multi-language audio, elementary streams depend on other streams. The
+<code>ES_Descriptor</code> contains fields such as
+<code>dependsOn_ES_ID</code>, which explicitly declares if a stream
+relies on a base-layer stream to be decoded. This identification
+mechanism allows decoders to discard non-essential enhancement streams
+during network congestion without breaking the playback of the base
+stream.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

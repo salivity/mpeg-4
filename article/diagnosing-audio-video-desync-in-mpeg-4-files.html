@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagnosing Audio Video Desync in MPEG-4 Files - mpeg-4</title>
+    <meta name="description" content="Audio-video (AV) desynchronization in MPEG-4 (MP4) containers occurs when audio and video elementary streams lose temporal alignment due to mismatched timestamps, sample rate drift, variable frame rates, or improper muxing. Diagnosing these synchronizati">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/diagnosing-audio-video-desync-in-mpeg-4-files">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Diagnosing Audio Video Desync in MPEG-4 Files - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/diagnosing-audio-video-desync-in-mpeg-4-files" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Audio-video (AV) desynchronization in MPEG-4 (MP4) containers occurs when audio and video elementary streams lose temporal alignment due to mismatched timestamps, sample rate drift, variable frame rates, or improper muxing. Diagnosing these synchronizati" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="diagnosing-audio-video-desync-in-mpeg-4-files">Diagnosing Audio
+Video Desync in MPEG-4 Files</h1>
+<p>Audio-video (AV) desynchronization in MPEG-4 (MP4) containers occurs
+when audio and video elementary streams lose temporal alignment due to
+mismatched timestamps, sample rate drift, variable frame rates, or
+improper muxing. Diagnosing these synchronization discrepancies requires
+inspecting container-level metadata, analyzing individual packet
+timestamps, measuring track duration deltas, and evaluating physical
+reference cues. The following diagnostic methods detail how to
+systematically identify and measure AV sync errors inside an MP4
+container.</p>
+<h2 id="1-timestamp-and-box-structure-inspection">1. Timestamp and Box
+Structure Inspection</h2>
+<p>MPEG-4 files rely on the ISO Base Media File Format (ISO/IEC
+14496-12), organizing metadata into nested structures called "atoms" or
+"boxes" within the <code>moov</code> box. Examining these boxes directly
+reveals structural timing mismatches.</p>
+<ul>
+<li><strong>Edit List Box (<code>elst</code>):</strong> Located inside
+the <code>moov -&gt; trak -&gt; edts</code> path, edit lists define the
+starting offset and playback timeline for individual tracks. Inspecting
+the <code>elst</code> box with tools like MP4Box, ISOViewer, or FFprobe
+shows whether an artificial delay or offset was applied to the audio or
+video track during muxing.</li>
+<li><strong>Time-to-Sample (<code>stts</code>) and Composition Offset
+(<code>ctts</code>) Boxes:</strong> The <code>stts</code> box maps
+sample counts to durations, while the <code>ctts</code> box handles
+presentation time offsets for B-frames. Corrupted or missing
+<code>ctts</code> values cause video frames to display out of order
+relative to audio.</li>
+</ul>
+<h2 id="2-packet-level-timestamp-analysis-ptsdts-deltas">2. Packet-Level
+Timestamp Analysis (PTS/DTS Deltas)</h2>
+<p>Examining the Presentation Timestamps (PTS) and Decoding Timestamps
+(DTS) of individual packets provides an exact mathematical assessment of
+synchronization.</p>
+<ul>
+<li><strong>FFprobe Stream Dumping:</strong> Using <code>ffprobe</code>
+to dump packet details reveals the initial PTS values for both streams:
+<code>ffprobe -show_packets -select_streams v:0 -show_entries packet=pts_time,dts_time input.mp4</code>
+<code>ffprobe -show_packets -select_streams a:0 -show_entries packet=pts_time,dts_time input.mp4</code></li>
+<li><strong>Delta Calculation:</strong> Compare the first PTS of the
+video stream against the first PTS of the audio stream. If Video PTS
+starts at <code>0.000000</code> and Audio PTS starts at
+<code>0.150000</code>, the file possesses a native 150ms audio
+delay.</li>
+<li><strong>Timeline Progression:</strong> Plotting PTS values across
+the entire file reveals whether the gap between audio and video stays
+constant (fixed delay) or widens over time (progressive drift).</li>
+</ul>
+<h2 id="3-elementary-track-duration-comparison">3. Elementary Track
+Duration Comparison</h2>
+<p>A simple yet effective diagnostic method involves demuxing the MP4
+container and comparing the absolute durations of the raw video and
+audio tracks.</p>
+<ul>
+<li><strong>Container vs. Stream Duration:</strong> Run
+<code>mediainfo</code> or <code>ffprobe</code> to read the specific
+container duration versus stream duration. If the video stream is
+01:00:00.00 and the audio stream is 00:59:58.50, an audio lead of 1.5
+seconds will develop progressively by the end of playback.</li>
+<li><strong>Sample Rate and Frame Rate Consistency:</strong> Checking
+for Variable Frame Rate (VFR) video tags helps diagnose progressive sync
+issues. Audio usually plays at a fixed sampling clock (e.g., 48 kHz),
+but VFR video can drift if the playback engine mishandles frame
+intervals.</li>
+</ul>
+<h2 id="4-visual-waveform-and-reference-pattern-analysis">4. Visual
+Waveform and Reference Pattern Analysis</h2>
+<p>When timestamps report alignment but desynchronization remains
+audible/visible, reference signal analysis pinpoints the offset.</p>
+<ul>
+<li><strong>Flash/Beep Synchronization Tests:</strong> Content
+containing standardized test signals (such as 2-pop tones aligned to a
+single white flash frame) allows automated or manual verification.
+Measuring the distance in milliseconds between the flash frame and the
+audio spike reveals the exact latency.</li>
+<li><strong>Oscilloscope and Waveform Tools:</strong> Importing the file
+into a digital audio workstation (DAW) or non-linear editor (NLE) allows
+visual inspection of audio transient peaks against corresponding visual
+impact points (such as clapperboards, door slams, or lip plosives).</li>
+</ul>
+<h2 id="5-automated-file-based-quality-control-qc">5. Automated
+File-Based Quality Control (QC)</h2>
+<p>Enterprise media environments utilize automated file-based QC
+software (such as Telestream Vidchecker, Interra Vega, or open-source AV
+alignment scripts) to detect desynchronization.</p>
+<ul>
+<li><strong>Deep Stream Parsing:</strong> Tools parse codec headers
+(H.264/H.265 and AAC) to ensure compliance with container
+boundaries.</li>
+<li><strong>Audio-to-Video Fingerprinting:</strong> Advanced QC
+algorithms evaluate facial movements (lip sync algorithms) and audio
+speech patterns to estimate sync drift without requiring dedicated test
+patterns.</li>
+</ul></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

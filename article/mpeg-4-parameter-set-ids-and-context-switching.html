@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPEG-4 Parameter Set IDs and Context Switching - mpeg-4</title>
+    <meta name="description" content="MPEG-4 decoders, particularly those implementing MPEG-4 Part 10 (AVC/H.264), dynamically switch decoding contexts by decoupling global configuration parameters from the video slice data. The decoder stores multiple Sequence Parameter Sets (SPS) and Pictu">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/mpeg-4-parameter-set-ids-and-context-switching">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MPEG-4 Parameter Set IDs and Context Switching - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/mpeg-4-parameter-set-ids-and-context-switching" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="MPEG-4 decoders, particularly those implementing MPEG-4 Part 10 (AVC/H.264), dynamically switch decoding contexts by decoupling global configuration parameters from the video slice data. The decoder stores multiple Sequence Parameter Sets (SPS) and Pictu" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="mpeg-4-parameter-set-ids-and-context-switching">MPEG-4 Parameter
+Set IDs and Context Switching</h1>
+<p>MPEG-4 decoders, particularly those implementing MPEG-4 Part 10
+(AVC/H.264), dynamically switch decoding contexts by decoupling global
+configuration parameters from the video slice data. The decoder stores
+multiple Sequence Parameter Sets (SPS) and Picture Parameter Sets (PPS)
+in memory, each identified by a unique numerical ID. When incoming slice
+headers reference a specific Picture Parameter Set ID, the decoder
+immediately recalls the associated configuration parameters—such as
+resolution, entropy coding modes, and reference picture lists—and
+updates its operational state without interrupting the decode
+pipeline.</p>
+<h3 id="the-role-of-sps-and-pps-identifiers">The Role of SPS and PPS
+Identifiers</h3>
+<p>Parameter sets carry essential configuration data out-of-band or
+inline within the Network Abstraction Layer (NAL) units:</p>
+<ul>
+<li><strong>Sequence Parameter Sets (SPS):</strong> Assigned a
+<code>seq_parameter_set_id</code> (0 to 31), an SPS holds sequence-level
+parameters that rarely change, including picture dimensions, profile,
+level, chroma format, bit depth, and maximum reference frame
+counts.</li>
+<li><strong>Picture Parameter Sets (PPS):</strong> Assigned a
+<code>pic_parameter_set_id</code> (0 to 255), a PPS contains
+picture-level configurations such as the entropy coding mode (CAVLC vs.
+CABAC), default quantization parameters, slice group definitions, and
+deblocking filter controls. Each PPS also references a target
+<code>seq_parameter_set_id</code>.</li>
+</ul>
+<h3 id="the-activation-and-context-switching-mechanism">The Activation
+and Context-Switching Mechanism</h3>
+<p>Dynamic context switching follows a hierarchical referencing chain
+triggered by individual video slices:</p>
+<ol type="1">
+<li><strong>Storage and Indexing:</strong> As the decoder encounters
+parameter set NAL units in the bitstream, it parses them and stores them
+in internal lookup tables indexed by their respective
+<code>seq_parameter_set_id</code> and
+<code>pic_parameter_set_id</code>.</li>
+<li><strong>Slice-Level Referencing:</strong> When processing a slice
+NAL unit, the decoder reads the <code>pic_parameter_set_id</code>
+specified in the slice header.</li>
+<li><strong>Context Activation:</strong> The decoder retrieves the
+designated PPS, which in turn points to the active SPS. If the newly
+referenced PPS or SPS differs from the ones used by the previous slice
+or frame, the decoder activates the new set.</li>
+<li><strong>State Machine Reconfiguration:</strong> The decoder
+dynamically updates its parsing and reconstruction engines based on the
+active set. For example, it can toggle between CABAC and CAVLC parsing,
+adjust scaling matrices, reconfigure active reference picture lists, or
+modify slice group mappings.</li>
+</ol>
+<h3 id="operational-advantages">Operational Advantages</h3>
+<p>By utilizing ID-driven parameter switching, the decoder can change
+picture-level parameters on a per-frame or per-slice basis with minimal
+signaling overhead, since slice headers only need to transmit an integer
+ID rather than the complete parameter block. Furthermore, if a new SPS
+is activated with an Instantaneous Decoder Refresh (IDR) frame, the
+decoder can adapt to on-the-fly resolution or aspect ratio changes
+seamlessly during adaptive streaming sessions.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

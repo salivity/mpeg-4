@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPEG-4 Facial Animation Parameters Explained - mpeg-4</title>
+    <meta name="description" content="The Facial Animation Parameter (FAP) set is a core component of the MPEG-4 synthetic visual coding standard, designed to enable realistic and efficient animation of synthetic human faces. Within the MPEG-4 framework, FAPs serve as a standardized, highly">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/mpeg-4-facial-animation-parameters-explained">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MPEG-4 Facial Animation Parameters Explained - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/mpeg-4-facial-animation-parameters-explained" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The Facial Animation Parameter (FAP) set is a core component of the MPEG-4 synthetic visual coding standard, designed to enable realistic and efficient animation of synthetic human faces. Within the MPEG-4 framework, FAPs serve as a standardized, highly" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="mpeg-4-facial-animation-parameters-explained">MPEG-4 Facial
+Animation Parameters Explained</h1>
+<p>The Facial Animation Parameter (FAP) set is a core component of the
+MPEG-4 synthetic visual coding standard, designed to enable realistic
+and efficient animation of synthetic human faces. Within the MPEG-4
+framework, FAPs serve as a standardized, highly compressed set of
+instructions that drive facial movements on 3D meshes or 2D models. By
+transmitting only lightweight motion parameters rather than full video
+frames, FAPs drastically minimize bandwidth consumption while allowing
+diverse graphics engines to render consistent facial expressions,
+speech, and non-verbal cues.</p>
+<h3 id="the-mechanism-of-faps-in-mpeg-4">The Mechanism of FAPs in
+MPEG-4</h3>
+<p>MPEG-4 achieves synthetic visual coding by separating the face's
+static structure from its dynamic movements. The static geometry is
+defined using Facial Definition Parameters (FDPs), which establish
+standard anatomical feature points on a neutral face model. Once this
+baseline model exists on the receiver's end, the system uses FAPs to
+manipulate these points over time.</p>
+<p>The complete FAP set contains 68 distinct parameters categorized into
+two tiers:</p>
+<ul>
+<li><strong>High-Level FAPs:</strong> These include parameters
+representing core emotions (such as joy, sadness, anger, fear, disgust,
+and surprise) and visemes (the visual equivalents of spoken phonemes
+used for accurate lip synchronization).</li>
+<li><strong>Low-Level FAPs:</strong> The remaining parameters control
+localized movements of individual facial features, including the
+eyelids, eyebrows, lips, jaw, cheeks, and nose.</li>
+</ul>
+<h3 id="model-independence-through-normalization">Model Independence
+Through Normalization</h3>
+<p>A critical function of the FAP set is achieving model independence.
+Because human and avatar faces vary widely in size and proportion,
+absolute coordinate translations would distort different models. MPEG-4
+solves this by scaling low-level FAPs using Facial Animation Parameter
+Units (FAPUs).</p>
+<p>FAPUs are computed from fundamental facial distances on a neutral
+model, such as the distance between the eyes or the mouth width. When a
+FAP value is transmitted, the receiving decoder scales the movement
+relative to its specific model's FAPUs. This normalization ensures that
+a single animation stream can drive radically different face models—from
+realistic human avatars to stylized cartoon characters—without altering
+the intended expression.</p>
+<h3 id="bandwidth-optimization-in-synthetic-coding">Bandwidth
+Optimization in Synthetic Coding</h3>
+<p>In traditional video coding, every pixel or motion vector across
+video frames must be compressed and transmitted. In synthetic visual
+coding powered by FAPs, the visual rendering is offloaded entirely to
+the client terminal.</p>
+<p>The bitstream only carries numerical FAP values representing
+displacement vectors and emotional states over time. Because these
+parameters require only a fraction of the data needed for pixel-based
+video streams, facial animation can be transmitted at bitrates as low as
+a few kilobits per second. This extreme compression makes FAPs ideal for
+low-bandwidth video conferencing, virtual telepresence, automated
+customer service agents, and interactive gaming.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

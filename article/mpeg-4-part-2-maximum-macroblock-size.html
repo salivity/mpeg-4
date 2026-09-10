@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPEG-4 Part 2 Maximum Macroblock Size - mpeg-4</title>
+    <meta name="description" content="This article provides an overview of the macroblock architecture defined in baseline MPEG-4 Part 2 video compression. It specifically examines the maximum supported macroblock dimensions, explains how these processing blocks are structured across luma an">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/mpeg-4-part-2-maximum-macroblock-size">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MPEG-4 Part 2 Maximum Macroblock Size - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/mpeg-4-part-2-maximum-macroblock-size" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article provides an overview of the macroblock architecture defined in baseline MPEG-4 Part 2 video compression. It specifically examines the maximum supported macroblock dimensions, explains how these processing blocks are structured across luma an" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="mpeg-4-part-2-maximum-macroblock-size">MPEG-4 Part 2 Maximum
+Macroblock Size</h1>
+<p>This article provides an overview of the macroblock architecture
+defined in baseline MPEG-4 Part 2 video compression. It specifically
+examines the maximum supported macroblock dimensions, explains how these
+processing blocks are structured across luma and chroma components, and
+details why this fixed block size is central to the standard's motion
+compensation and transform coding.</p>
+<p>In baseline MPEG-4 Part 2 (ISO/IEC 14496-2) video compression, the
+maximum macroblock size is strictly <strong>16x16 pixels</strong>.</p>
+<p>Unlike modern video codecs such as HEVC (H.265) or AV1, which allow
+variable block sizes up to 64x64 or 128x128 pixels, MPEG-4 Part 2 relies
+on a fixed macroblock framework inherited from earlier standards like
+MPEG-1, MPEG-2, and H.263.</p>
+<h3 id="macroblock-structure-and-composition">Macroblock Structure and
+Composition</h3>
+<p>A standard 16x16 macroblock in MPEG-4 Part 2 represents a square
+region of 16x16 luma (brightness) samples. In the standard YCbCr 4:2:0
+chroma subsampling format, this block consists of:</p>
+<ul>
+<li><strong>Four 8x8 Luminance (Y) Blocks:</strong> Covering the full
+16x16 pixel area.</li>
+<li><strong>One 8x8 Chrominance Blue (Cb) Block:</strong> Subsampled
+spatially by half in both horizontal and vertical directions.</li>
+<li><strong>One 8x8 Chrominance Red (Cr) Block:</strong> Subsampled
+spatially by half in both horizontal and vertical directions.</li>
+</ul>
+<p>Together, these six 8x8 sub-blocks make up the complete 16x16
+macroblock.</p>
+<h3 id="partitioning-and-transform-sizes">Partitioning and Transform
+Sizes</h3>
+<p>While 16x16 is the maximum macroblock size, MPEG-4 Part 2 allows
+specific sub-partitions for motion estimation and compensation:</p>
+<ul>
+<li><strong>16x16 Motion Compensation:</strong> A single motion vector
+applies to the entire 16x16 luma area.</li>
+<li><strong>8x8 Motion Compensation:</strong> Advanced Prediction modes
+allow the macroblock to be split into four independent 8x8 blocks, each
+having its own motion vector.</li>
+</ul>
+<p>Regardless of whether 16x16 or 8x8 motion vectors are utilized, the
+Discrete Cosine Transform (DCT) and quantization processes always
+operate on fundamental 8x8 sample blocks. The macroblock container
+itself never exceeds 16x16 pixels.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

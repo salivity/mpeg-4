@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPEG-4 Atom Nesting Rules and Structure - mpeg-4</title>
+    <meta name="description" content="The MPEG-4 (MP4) file format relies on the ISO Base Media File Format (ISOBMFF), which organizes all media and metadata into hierarchical building blocks called atoms (or boxes). This article outlines the fundamental structural rules that govern how chil">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/mpeg-4-atom-nesting-rules-and-structure">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MPEG-4 Atom Nesting Rules and Structure - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/mpeg-4-atom-nesting-rules-and-structure" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The MPEG-4 (MP4) file format relies on the ISO Base Media File Format (ISOBMFF), which organizes all media and metadata into hierarchical building blocks called atoms (or boxes). This article outlines the fundamental structural rules that govern how chil" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="mpeg-4-atom-nesting-rules-and-structure">MPEG-4 Atom Nesting
+Rules and Structure</h1>
+<p>The MPEG-4 (MP4) file format relies on the ISO Base Media File Format
+(ISOBMFF), which organizes all media and metadata into hierarchical
+building blocks called atoms (or boxes). This article outlines the
+fundamental structural rules that govern how child atoms are nested
+within parent container atoms, including header specifications, size
+calculations, boundary constraints, and hierarchical ordering.</p>
+<h3 id="the-atom-header-and-payload-layout">The Atom Header and Payload
+Layout</h3>
+<p>Every atom consists of a header followed by a payload. The standard
+header is 8 bytes long:</p>
+<ul>
+<li><strong>Size (4 bytes):</strong> An unsigned 32-bit integer
+indicating the total size of the atom in bytes, including the
+header.</li>
+<li><strong>Type (4 bytes):</strong> A Four-Character Code (FourCC)
+identifying the atom (e.g., <code>moov</code>, <code>trak</code>,
+<code>mdat</code>).</li>
+</ul>
+<p>If the 32-bit size is set to <code>1</code>, an optional 8-byte
+extended size field (<code>largesize</code>) immediately follows the
+type, enabling 64-bit addressing for atoms larger than 4 GB.</p>
+<h3 id="container-atoms-vs-leaf-atoms">Container Atoms vs. Leaf
+Atoms</h3>
+<p>Atoms are structurally classified into two main categories:</p>
+<ol type="1">
+<li><strong>Leaf Atoms:</strong> These contain actual payload data, such
+as media chunks, codec configurations, or metadata properties (e.g.,
+<code>mvhd</code>, <code>hdlr</code>, <code>stsz</code>). They cannot
+contain child atoms.</li>
+<li><strong>Container (Parent) Atoms:</strong> These hold no raw data
+payload of their own. Instead, their entire payload area consists solely
+of a contiguous sequence of child atoms (e.g., <code>moov</code>,
+<code>trak</code>, <code>mdia</code>, <code>minf</code>,
+<code>stbl</code>). Some hybrid atoms (often called "full boxes")
+include header flags or versioning bytes before the sequence of child
+atoms begins.</li>
+</ol>
+<h3 id="boundary-and-size-consistency-rules">Boundary and Size
+Consistency Rules</h3>
+<p>When nesting child atoms within a parent container, strict size
+arithmetic applies:</p>
+<ul>
+<li><strong>Total Size Match:</strong> The <code>size</code> declared in
+a parent atom's header must equal the size of the parent's own header
+plus the sum of the total sizes of all nested child atoms.</li>
+<li><strong>Boundary Enforcement:</strong> A child atom must start at an
+offset within the parent's payload and cannot extend past the end of the
+parent atom. The formula
+<code>Child_Offset + Child_Size &lt;= Parent_Offset + Parent_Size</code>
+must hold true for every nested atom.</li>
+<li><strong>Zero Size Exception:</strong> A size value of <code>0</code>
+in an atom header signifies that the atom extends to the end of the
+file. This rule is only valid for top-level atoms (such as
+<code>mdat</code>) and is illegal for nested child atoms, as a nested
+atom with size <code>0</code> would prevent parsers from determining
+where the parent atom ends.</li>
+</ul>
+<h3 id="hierarchical-tree-structure-and-ordering">Hierarchical Tree
+Structure and Ordering</h3>
+<p>Nesting must strictly follow the tree hierarchy defined by ISO/IEC
+14496-12. Key rules include:</p>
+<ul>
+<li><strong>Strict Lineage:</strong> Certain atoms can only exist within
+specific parents. For example, a Sample Table atom (<code>stbl</code>)
+must be a child of Media Information (<code>minf</code>), which must
+reside inside Media (<code>mdia</code>), which belongs inside Track
+(<code>trak</code>), which belongs inside Movie
+(<code>moov</code>).</li>
+<li><strong>Sequential Precedence:</strong> Inside certain containers,
+specific child atoms must appear before others. For instance, the Movie
+Header atom (<code>mvhd</code>) must be the first child inside
+<code>moov</code>, and the Track Header atom (<code>tkhd</code>) must be
+the first child inside <code>trak</code>.</li>
+<li><strong>Contiguity:</strong> Child atoms inside a parent container
+must be laid out contiguously without unindexed padding or raw gaps
+between them.</li>
+</ul>
+<h3 id="parser-traversal-and-unknown-atom-handling">Parser Traversal and
+Unknown Atom Handling</h3>
+<p>A parser navigates container atoms by reading each child's size and
+FourCC type sequentially until the parent's defined byte boundary is
+reached. If an unrecognized atom type is encountered inside a container,
+standard-compliant parsers use the atom's size header to skip its
+payload entirely, moving directly to the start of the next sibling atom
+without invalidating the rest of the parent's structure.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

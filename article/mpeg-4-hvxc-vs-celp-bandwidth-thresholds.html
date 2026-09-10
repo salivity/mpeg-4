@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPEG-4 HVXC vs CELP: Bandwidth Thresholds - mpeg-4</title>
+    <meta name="description" content="This article examines the operational bandwidth thresholds that make MPEG-4 Harmonic Vector Excitation Coding (HVXC) preferable over standard MPEG-4 Code Excited Linear Prediction (CELP). It outlines the exact bitrate boundaries, underlying acoustic codi">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/mpeg-4-hvxc-vs-celp-bandwidth-thresholds">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MPEG-4 HVXC vs CELP: Bandwidth Thresholds - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/mpeg-4-hvxc-vs-celp-bandwidth-thresholds" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article examines the operational bandwidth thresholds that make MPEG-4 Harmonic Vector Excitation Coding (HVXC) preferable over standard MPEG-4 Code Excited Linear Prediction (CELP). It outlines the exact bitrate boundaries, underlying acoustic codi" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="mpeg-4-hvxc-vs-celp-bandwidth-thresholds">MPEG-4 HVXC vs CELP:
+Bandwidth Thresholds</h1>
+<p>This article examines the operational bandwidth thresholds that make
+MPEG-4 Harmonic Vector Excitation Coding (HVXC) preferable over standard
+MPEG-4 Code Excited Linear Prediction (CELP). It outlines the exact
+bitrate boundaries, underlying acoustic coding mechanisms, and practical
+network scenarios where each speech codec delivers optimal
+performance.</p>
+<h3 id="the-primary-bandwidth-threshold-40-kbps">The Primary Bandwidth
+Threshold: 4.0 kbps</h3>
+<p>The critical threshold that determines whether to use MPEG-4 HVXC
+instead of MPEG-4 CELP is <strong>4.0 kbps</strong>.</p>
+<ul>
+<li><strong>Below 4.0 kbps (1.2 kbps to 3.85 kbps):</strong> MPEG-4 HVXC
+is preferable.</li>
+<li><strong>At or above 4.0 kbps (4.0 kbps to 24.0 kbps):</strong>
+MPEG-4 CELP provides superior performance and natural voice
+quality.</li>
+</ul>
+<h3 id="why-hvxc-excels-below-40-kbps">Why HVXC Excels Below 4.0
+kbps</h3>
+<p>MPEG-4 HVXC is a parametric speech coder designed specifically for
+very low bitrate applications. It decomposes speech into harmonic
+components for voiced sounds and stochastic noise models for unvoiced
+sounds.</p>
+<p>HVXC operates primarily in two standard modes:</p>
+<ul>
+<li><strong>2.0 kbps (Fixed/Variable Rate):</strong> Can scale down to
+approximately 1.2 to 1.4 kbps during speech pauses or via variable
+bitrate modes.</li>
+<li><strong>4.0 kbps (Fixed Rate):</strong> Enhances the spectral
+envelope and residual components for improved clarity.</li>
+</ul>
+<p>At these ultra-low rates, waveform coders like CELP suffer severe
+distortion because they lack sufficient bits to quantize the excitation
+residual. In contrast, HVXC synthesizes speech parametrically,
+maintaining consistent intelligibility, pitch accuracy, and speaker
+identity even at bitrates as low as 2.0 kbps.</p>
+<h3 id="why-celp-dominates-above-40-kbps">Why CELP Dominates Above 4.0
+kbps</h3>
+<p>MPEG-4 CELP is a waveform-matching hybrid coder that typically
+operates between 3.85 kbps and 24 kbps. It relies on codebooks to
+accurately match the original speech waveform residual after linear
+predictive filtering.</p>
+<ul>
+<li><strong>Between 4.0 kbps and 6.0 kbps:</strong> CELP begins to
+outperform HVXC in naturalness, though both codecs represent a
+compromise in this transition zone.</li>
+<li><strong>Above 6.0 kbps:</strong> CELP significantly outperforms
+HVXC, capturing subtle vocal nuances, emotional inflection, and
+non-speech background signals that HVXC’s parametric model
+discards.</li>
+</ul>
+<h3 id="summary-of-deployment-guidelines">Summary of Deployment
+Guidelines</h3>
+<ol type="1">
+<li><strong>Ultra-Low Bandwidth (&lt; 4.0 kbps):</strong> Deploy MPEG-4
+HVXC for satellite voice links, tactical military communications, and
+extremely constrained IoT or digital radio networks where
+intelligibility under strict data limits is the primary
+requirement.</li>
+<li><strong>Standard Communications (≥ 4.0 kbps):</strong> Deploy MPEG-4
+CELP for general voice over IP (VoIP), cellular telephony, and
+interactive voice applications where higher bit budget is available to
+preserve natural speech quality.</li>
+</ol></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

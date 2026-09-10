@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPEG-4 Part 2 ASP Gradient Processing Limits - mpeg-4</title>
+    <meta name="description" content="MPEG-4 Part 2 Advanced Simple Profile (ASP)—a legacy video standard popularized by codecs like DivX and Xvid—frequently exhibits severe visual artifacts when encoding complex gradients such as sunsets, fog, or dark shadow transitions. These artifacts">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/mpeg-4-part-2-asp-gradient-processing-limits">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MPEG-4 Part 2 ASP Gradient Processing Limits - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/mpeg-4-part-2-asp-gradient-processing-limits" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="MPEG-4 Part 2 Advanced Simple Profile (ASP)—a legacy video standard popularized by codecs like DivX and Xvid—frequently exhibits severe visual artifacts when encoding complex gradients such as sunsets, fog, or dark shadow transitions. These artifacts" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="mpeg-4-part-2-asp-gradient-processing-limits">MPEG-4 Part 2 ASP
+Gradient Processing Limits</h1>
+<p>MPEG-4 Part 2 Advanced Simple Profile (ASP)—a legacy video standard
+popularized by codecs like DivX and Xvid—frequently exhibits severe
+visual artifacts when encoding complex gradients such as sunsets, fog,
+or dark shadow transitions. These artifacts, primarily color banding and
+macroblocking, stem from foundational architectural limitations within
+the profile, including fixed 8x8 Discrete Cosine Transforms (DCT), the
+absence of an in-loop deblocking filter, strictly 8-bit color precision,
+and primitive intra-prediction mechanisms.</p>
+<h2 id="fixed-8x8-discrete-cosine-transform">Fixed 8x8 Discrete Cosine
+Transform</h2>
+<p>MPEG-4 ASP divides video frames into rigid 8x8 pixel blocks for
+frequency transformation. When rendering a smooth, continuous
+gradient:</p>
+<ul>
+<li><strong>Frequency Truncation:</strong> Gradients consist of subtle,
+low-frequency color variations. The 8x8 DCT struggles to represent these
+gradual changes accurately across multiple adjacent blocks.</li>
+<li><strong>Stepping Effects:</strong> Instead of a continuous
+transition, each 8x8 block is assigned a uniform or slightly stepped
+value, transforming smooth shifts into visible, sharp-edged tiles.</li>
+</ul>
+<h2 id="absence-of-an-in-loop-deblocking-filter">Absence of an In-Loop
+Deblocking Filter</h2>
+<p>Unlike newer standards such as H.264 (AVC) or H.265 (HEVC), MPEG-4
+ASP does not feature a normative in-loop deblocking filter.</p>
+<ul>
+<li><strong>Exposed Block Boundaries:</strong> Without an integrated
+filter applied during the encoding loop, block boundaries in smooth
+gradient areas remain unsoftened in the reference frames.</li>
+<li><strong>Error Propagation:</strong> Subsequent motion-compensated
+frames (P-frames and B-frames) use these blocky reference frames,
+causing the artifacts to persist and compound across scenes.</li>
+<li><strong>Post-Processing Dependence:</strong> Smooth playback relies
+entirely on optional, non-standardized decoder post-processing, which
+often blurs details or fails to remove severe boundary lines.</li>
+</ul>
+<h2 id="8-bit-precision-and-quantization-coarseness">8-Bit Precision and
+Quantization Coarseness</h2>
+<p>The Advanced Simple Profile is strictly limited to an 8-bit color
+depth (4:2:0 chroma subsampling). This constraint, paired with the
+profile's quantization design, directly impairs gradient fidelity:</p>
+<ul>
+<li><strong>Color Banding (Posterization):</strong> With only 256
+possible discrete levels per color channel, subtle shade differences are
+rounded off during quantization, resulting in wide bands of identical
+color rather than smooth fades.</li>
+<li><strong>Chroma Subsampling (4:2:0):</strong> Color resolution is
+halved both horizontally and vertically, meaning chroma gradients
+degrade at four times the rate of luma gradients, producing noticeable
+color bleeding and stair-stepping in vibrant color transitions.</li>
+<li><strong>Coarse Dead-Zone Quantization:</strong> High-compression
+quantization matrices discard fine spectral coefficients that define
+smooth transitions, retaining only the dominant DC component per
+block.</li>
+</ul>
+<h2 id="lack-of-directional-intra-prediction">Lack of Directional
+Intra-Prediction</h2>
+<p>MPEG-4 ASP possesses very limited spatial prediction tools compared
+to modern codecs:</p>
+<ul>
+<li><strong>Primitive DC/AC Prediction:</strong> The codec can only
+predict the DC (average brightness/color) and certain AC (frequency)
+coefficients from directly adjacent upper and left blocks.</li>
+<li><strong>Inability to Trace Angles:</strong> It lacks multi-angle
+directional spatial prediction, making it impossible to extrapolate
+diagonal, radial, or sweeping gradients smoothly across a frame without
+allocating disproportionately high bitrates.</li>
+</ul></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

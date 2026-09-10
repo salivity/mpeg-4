@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How stts Boxes Define Variable Frame Rates in MP4 - mpeg-4</title>
+    <meta name="description" content="The Time-to-Sample (stts) box within an MPEG-4 (MP4) container is the primary metadata structure responsible for mapping individual media samples (video frames) to their respective display durations. By utilizing a compact, run-length encoded table of sa">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/how-stts-boxes-define-variable-frame-rates-in-mp4">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How stts Boxes Define Variable Frame Rates in MP4 - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/how-stts-boxes-define-variable-frame-rates-in-mp4" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The Time-to-Sample (stts) box within an MPEG-4 (MP4) container is the primary metadata structure responsible for mapping individual media samples (video frames) to their respective display durations. By utilizing a compact, run-length encoded table of sa" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="how-stts-boxes-define-variable-frame-rates-in-mp4">How stts
+Boxes Define Variable Frame Rates in MP4</h1>
+<p>The Time-to-Sample (<code>stts</code>) box within an MPEG-4 (MP4)
+container is the primary metadata structure responsible for mapping
+individual media samples (video frames) to their respective display
+durations. By utilizing a compact, run-length encoded table of sample
+counts and time deltas, the <code>stts</code> box enables precise
+implementation of Variable Frame Rates (VFR). This mechanism allows an
+MP4 container to dynamically allocate varying display times to
+individual frames or groups of frames without altering the underlying
+raw video stream.</p>
+<hr />
+<h3 id="the-role-and-hierarchy-of-the-stts-box">The Role and Hierarchy
+of the <code>stts</code> Box</h3>
+<p>In the ISO Base Media File Format (ISO/IEC 14496-12), which defines
+the architecture for MP4 files, timing and indexing information is
+organized hierarchically inside the movie header
+(<code>moov</code>).</p>
+<p>The <code>stts</code> box resides within the Sample Table box
+(<code>stbl</code>):</p>
+<p><code>moov</code> ➔ <code>trak</code> ➔ <code>mdia</code> ➔
+<code>minf</code> ➔ <code>stbl</code> ➔ <code>stts</code></p>
+<p>While other boxes define sample offsets
+(<code>stco</code>/<code>co64</code>), sizes (<code>stsz</code>), and
+synchronization points (<code>stss</code>), the <code>stts</code> box
+provides the foundational timeline for decoding and presenting
+frames.</p>
+<hr />
+<h3 id="internal-structure-of-the-stts-table">Internal Structure of the
+<code>stts</code> Table</h3>
+<p>The <code>stts</code> box achieves compact storage through run-length
+encoding. Rather than listing every individual frame's duration
+independently, it groups consecutive frames that share the exact same
+duration into single entries.</p>
+<p>The structure of the <code>stts</code> payload consists of:</p>
+<ol type="1">
+<li><strong>Version &amp; Flags (4 bytes):</strong> Standard container
+metadata.</li>
+<li><strong>Entry Count (32-bit unsigned integer):</strong> The total
+number of records in the time-to-sample table.</li>
+<li><strong>Table Entries:</strong> A sequential array of records, where
+each record contains:
+<ul>
+<li><strong><code>sample_count</code> (32-bit integer):</strong> The
+number of consecutive samples that share the specified duration.</li>
+<li><strong><code>sample_delta</code> (32-bit integer):</strong> The
+duration of each individual sample in the group, expressed in units of
+the media track's <code>timescale</code> (defined in the
+<code>mdhd</code> box).</li>
+</ul></li>
+</ol>
+<pre><code>+------------------------------------+
+| Version (1 byte) | Flags (3 bytes) |
++------------------------------------+
+| Number of Entries (4 bytes)       |
++------------------------------------+
+| sample_count 1   | sample_delta 1  |
+| sample_count 2   | sample_delta 2  |
+| ...              | ...             |
++------------------------------------+</code></pre>
+<hr />
+<h3
+id="defining-constant-frame-rate-cfr-vs-variable-frame-rate-vfr">Defining
+Constant Frame Rate (CFR) vs. Variable Frame Rate (VFR)</h3>
+<p>The design of the <code>stts</code> table makes the distinction
+between CFR and VFR straightforward:</p>
+<h4 id="constant-frame-rate-cfr">Constant Frame Rate (CFR)</h4>
+<p>In a CFR video, every frame has the exact same duration. As a result,
+the <code>stts</code> box contains only <strong>one entry</strong> for
+the entire video stream:</p>
+<ul>
+<li><strong>Timescale:</strong> <code>90000</code> (common for
+video)</li>
+<li><strong>Entry Count:</strong> <code>1</code></li>
+<li><strong>Entry 1:</strong> <code>sample_count = 1800</code>,
+<code>sample_delta = 3000</code></li>
+<li><em>Result:</em> 1,800 frames, each lasting <span
+class="math inline">\(3000 / 90000 = 1/30\text{s}\)</span> (a constant
+30 fps for 60 seconds).</li>
+</ul>
+<h4 id="variable-frame-rate-vfr">Variable Frame Rate (VFR)</h4>
+<p>In a VFR video, frames can have varying durations depending on
+content, scene complexity, screen recording pauses, or dropped frames
+during capture. The <code>stts</code> table handles this by defining
+<strong>multiple entries</strong> with different
+<code>sample_delta</code> values:</p>
+<ul>
+<li><strong>Timescale:</strong> <code>90000</code></li>
+<li><strong>Entry Count:</strong> <code>3</code></li>
+<li><strong>Entry 1:</strong> <code>sample_count = 600</code>,
+<code>sample_delta = 3000</code> (30 fps for the first 20 seconds)</li>
+<li><strong>Entry 2:</strong> <code>sample_count = 1200</code>,
+<code>sample_delta = 1500</code> (60 fps for the next 20 seconds)</li>
+<li><strong>Entry 3:</strong> <code>sample_count = 240</code>,
+<code>sample_delta = 7500</code> (12 fps for the final 20 seconds)</li>
+</ul>
+<p>By switching the <code>sample_delta</code> across segments or even
+for single isolated frames, the container accurately represents
+fluctuating frame rates.</p>
+<hr />
+<h3 id="timestamp-calculation-dts-and-pts">Timestamp Calculation: DTS
+and PTS</h3>
+<p>The <code>stts</code> box directly calculates the <strong>Decode Time
+(DTS)</strong> for every frame sequentially:</p>
+<p><span class="math display">\[\text{DTS}(n) = \text{DTS}(n-1) +
+\text{sample\_delta}(n-1)\]</span></p>
+<p>The first frame always begins at <span
+class="math inline">\(\text{DTS}(0) = 0\)</span>. Subsequent decode
+timestamps are derived by cumulatively summing the
+<code>sample_delta</code> values.</p>
+<p>When a stream uses B-frames (bi-directional predictive frames), the
+order in which frames are decoded differs from the order in which they
+are displayed. In this scenario, the <code>stts</code> box works in
+tandem with the Composition Time-to-Sample (<code>ctts</code>) box:</p>
+<p><span class="math display">\[\text{PTS}(n) = \text{DTS}(n) +
+\text{ctts\_offset}(n)\]</span></p>
+<ul>
+<li><strong><code>stts</code></strong> sets the base decode
+timeline.</li>
+<li><strong><code>ctts</code></strong> applies sample-specific
+composition offsets to determine the actual Presentation Time
+(PTS).</li>
+</ul>
+<hr />
+<h3 id="benefits-of-stts-based-vfr-management">Benefits of
+<code>stts</code>-Based VFR Management</h3>
+<ul>
+<li><strong>Storage Efficiency:</strong> Run-length encoding ensures
+that sequences of steady frame rates consume minimal metadata space,
+expanding only when frame durations actively change.</li>
+<li><strong>Format Agnostic:</strong> The variable frame rate logic is
+maintained entirely within the MP4 container structure. The underlying
+compressed bitstream (such as H.264 or H.265 NAL units) does not need to
+embed proprietary container timing markers.</li>
+<li><strong>A/V Synchronization:</strong> Audio tracks generally run at
+fixed sample rates. The precise, timescale-based duration units of the
+<code>stts</code> box ensure that variable-rate video tracks remain
+strictly synchronized with continuous audio tracks throughout
+playback.</li>
+</ul></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

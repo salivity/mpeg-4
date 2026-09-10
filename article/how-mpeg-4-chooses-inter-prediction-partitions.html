@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How MPEG-4 Chooses Inter-Prediction Partitions - mpeg-4</title>
+    <meta name="description" content="This article explains how an MPEG-4 encoder (specifically MPEG-4 Part 10 / H.264 AVC) decides between 16x16, 8x8, and 4x4 partition sizes during inter-frame prediction. The selection is driven by a trade-off between motion accuracy and bitrate overhead,">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/how-mpeg-4-chooses-inter-prediction-partitions">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How MPEG-4 Chooses Inter-Prediction Partitions - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/how-mpeg-4-chooses-inter-prediction-partitions" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explains how an MPEG-4 encoder (specifically MPEG-4 Part 10 / H.264 AVC) decides between 16x16, 8x8, and 4x4 partition sizes during inter-frame prediction. The selection is driven by a trade-off between motion accuracy and bitrate overhead," />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="how-mpeg-4-chooses-inter-prediction-partitions">How MPEG-4
+Chooses Inter-Prediction Partitions</h1>
+<p>This article explains how an MPEG-4 encoder (specifically MPEG-4 Part
+10 / H.264 AVC) decides between 16x16, 8x8, and 4x4 partition sizes
+during inter-frame prediction. The selection is driven by a trade-off
+between motion accuracy and bitrate overhead, systematically resolved
+using Motion Estimation and Rate-Distortion Optimization (RDO).</p>
+<h3 id="the-purpose-of-variable-block-size-partitions">The Purpose of
+Variable Block Size Partitions</h3>
+<p>Inter-prediction reduces temporal redundancy between successive video
+frames by tracking movement via motion vectors (MVs). Different regions
+of a frame require different levels of detail:</p>
+<ul>
+<li><strong>16x16 Partitions:</strong> Ideal for large, uniform areas
+with consistent motion, such as flat backgrounds or panning scenes. They
+require fewer bits to signal motion vectors.</li>
+<li><strong>8x8 and 4x4 Partitions:</strong> Necessary for complex
+motion, fine textures, and moving object edges. Smaller partitions
+reduce prediction error (residual energy) at the cost of requiring more
+bits to transmit multiple motion vectors.</li>
+</ul>
+<h3 id="step-by-step-decision-process">Step-by-Step Decision
+Process</h3>
+<h4 id="1-hierarchical-motion-estimation">1. Hierarchical Motion
+Estimation</h4>
+<p>The encoder performs motion estimation across various block
+configurations in a hierarchical tree structure:</p>
+<ul>
+<li><strong>Macroblock Level:</strong> The encoder tests partitions such
+as 16x16, 16x8, 8x16, and 8x8.</li>
+<li><strong>Sub-Macroblock Level:</strong> If an 8x8 partition is
+considered, each 8x8 block can be further subdivided into 8x8, 8x4, 4x8,
+or 4x4 sub-partitions.</li>
+</ul>
+<p>For each tested partition, the encoder searches reference frames to
+find the best motion vector that minimizes prediction error.</p>
+<h4 id="2-cost-function-calculation">2. Cost Function Calculation</h4>
+<p>To determine which partition size is most efficient, the encoder
+calculates a cost metric for each configuration. Fast encoders often use
+the Sum of Absolute Differences (SAD) or Sum of Absolute Transformed
+Differences (SATD), while high-efficiency encoders use full
+Rate-Distortion Optimization (RDO).</p>
+<p>The standard RDO cost formula is:</p>
+<p><span class="math display">\[J = D + \lambda \cdot R\]</span></p>
+<ul>
+<li><strong><span class="math inline">\(J\)</span> (Cost):</strong> The
+Lagrangian cost to be minimized.</li>
+<li><strong><span class="math inline">\(D\)</span>
+(Distortion):</strong> The difference between the original block and the
+reconstructed block, typically measured using Sum of Squared Errors
+(SSE).</li>
+<li><strong><span class="math inline">\(R\)</span> (Rate):</strong> The
+exact number of bits required to encode the mode decision, motion
+vectors, and residual transform coefficients.</li>
+<li><strong><span class="math inline">\(\lambda\)</span> (Lagrange
+Multiplier):</strong> A weighting factor derived from the quantization
+parameter (QP) that balances image fidelity against bit budget.</li>
+</ul>
+<h4 id="3-bottom-up-and-top-down-comparison">3. Bottom-Up and Top-Down
+Comparison</h4>
+<p>In full RDO mode, the encoder computes the cost for the smallest
+sub-blocks first:</p>
+<ol type="1">
+<li><strong>Sub-Macroblock Evaluation:</strong> For each 8x8 block, the
+encoder calculates the cost <span class="math inline">\(J\)</span> for
+combinations of 8x8, 8x4, 4x8, and 4x4. The configuration with the
+lowest cost is chosen to represent that 8x8 block.</li>
+<li><strong>Macroblock Evaluation:</strong> The encoder sums the costs
+of the four best 8x8 sub-partitions and compares that total against the
+costs of the larger partition modes (16x16, 16x8, and 8x16), as well as
+Intra-prediction modes.</li>
+</ol>
+<h4 id="4-final-selection">4. Final Selection</h4>
+<p>The encoder selects the partitioning structure that yields the
+minimum total cost <span class="math inline">\(J\)</span>. If the bit
+savings of a single 16x16 motion vector outweigh the distortion penalty,
+the 16x16 partition is chosen. Conversely, if complex motion causes a
+large residual error that requires fine-grained prediction, the encoder
+commits to 8x8 or 4x4 partitions.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

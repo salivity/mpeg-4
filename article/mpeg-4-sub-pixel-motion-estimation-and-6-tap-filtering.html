@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPEG-4 Sub-Pixel Motion Estimation and 6-Tap Filtering - mpeg-4</title>
+    <meta name="description" content="Sub-pixel motion estimation is a critical component in modern video compression standards, such as MPEG-4 Part 10 (AVC/H.264), designed to enhance inter-frame prediction beyond integer-pixel accuracy. To capture fractional movement smoothly without intro">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/mpeg-4-sub-pixel-motion-estimation-and-6-tap-filtering">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MPEG-4 Sub-Pixel Motion Estimation and 6-Tap Filtering - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/mpeg-4-sub-pixel-motion-estimation-and-6-tap-filtering" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Sub-pixel motion estimation is a critical component in modern video compression standards, such as MPEG-4 Part 10 (AVC/H.264), designed to enhance inter-frame prediction beyond integer-pixel accuracy. To capture fractional movement smoothly without intro" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="mpeg-4-sub-pixel-motion-estimation-and-6-tap-filtering">MPEG-4
+Sub-Pixel Motion Estimation and 6-Tap Filtering</h1>
+<p>Sub-pixel motion estimation is a critical component in modern video
+compression standards, such as MPEG-4 Part 10 (AVC/H.264), designed to
+enhance inter-frame prediction beyond integer-pixel accuracy. To capture
+fractional movement smoothly without introducing significant blur or
+aliasing, the codec utilizes a 6-tap Finite Impulse Response (FIR)
+Wiener filter to interpolate half-pixel sample values from surrounding
+integer pixels. This article explains how the 6-tap filter functions
+within the sub-pixel motion estimation pipeline, detail its mathematical
+application across horizontal, vertical, and diagonal planes, and
+outlines how it enables quarter-pixel precision to minimize prediction
+error.</p>
+<h2 id="the-role-of-sub-pixel-accuracy">The Role of Sub-Pixel
+Accuracy</h2>
+<p>In real-world video capture, moving objects and camera motions rarely
+align perfectly with the discrete boundaries of the pixel grid.
+Restricting motion vectors to full-integer positions leads to higher
+residual energy—the difference between the predicted block and the
+actual block—which requires more bits to encode. Sub-pixel motion
+estimation allows motion vectors to point to fractional locations
+(half-pel and quarter-pel positions), significantly lowering prediction
+error and improving overall compression efficiency.</p>
+<h2 id="the-6-tap-wiener-interpolation-filter">The 6-Tap Wiener
+Interpolation Filter</h2>
+<p>Standard linear interpolation (such as bilinear filtering) often
+introduces low-pass filtering artifacts, causing noticeable blurring in
+reconstructed video frames. To preserve high-frequency details and edge
+sharpness, MPEG-4 employs a symmetric 6-tap FIR filter based on Wiener
+filter design principles.</p>
+<p>The filter uses the specific weight vector:</p>
+<p><span class="math display">\[\frac{1}{32} \times [1, -5, 20, 20, -5,
+1]\]</span></p>
+<p>This configuration acts as an approximation of an ideal sinc
+interpolation filter, optimized to minimize mean squared error (MSE)
+while maintaining low computational complexity via shifts and additions
+(division by 32 equates to a 5-bit right shift).</p>
+<h2 id="step-by-step-interpolation-process">Step-by-Step Interpolation
+Process</h2>
+<p>The sub-pixel motion estimation workflow using the 6-tap filter is
+carried out in sequential stages:</p>
+<h3 id="1-half-pixel-interpolation-horizontal-and-vertical">1.
+Half-Pixel Interpolation (Horizontal and Vertical)</h3>
+<p>To compute a half-pixel sample situated between two integer
+samples:</p>
+<ul>
+<li><strong>Horizontal Half-Pixels:</strong> The 6-tap filter is applied
+across six contiguous horizontal integer pixels (<span
+class="math inline">\(E, F, G, H, I, J\)</span>). The half-pixel sample
+<span class="math inline">\(b\)</span> between <span
+class="math inline">\(G\)</span> and <span
+class="math inline">\(H\)</span> is calculated as: <span
+class="math display">\[b = \text{Clip}((E - 5F + 20G + 20H - 5I + J +
+16) \gg 5)\]</span></li>
+<li><strong>Vertical Half-Pixels:</strong> The identical 6-tap operation
+is applied vertically along six contiguous integer pixels in a column to
+determine the vertical half-pixel values.</li>
+</ul>
+<h3 id="2-diagonal-half-pixel-interpolation">2. Diagonal Half-Pixel
+Interpolation</h3>
+<p>To determine the center half-pixel sample (surrounded diagonally by
+four integer samples):</p>
+<ul>
+<li>The 6-tap filter is applied vertically to six previously calculated,
+unclipped horizontal half-pixel intermediate values (or horizontally to
+six vertical half-pixel intermediates).</li>
+<li>The resulting value is normalized by dividing by 1024 (a 10-bit
+right shift) and clipping the outcome to the valid pixel range (e.g.,
+0–255 for 8-bit video).</li>
+</ul>
+<h3 id="3-quarter-pixel-interpolation">3. Quarter-Pixel
+Interpolation</h3>
+<p>Once all half-pixel positions are computed, quarter-pixel samples are
+derived through simple bilinear interpolation:</p>
+<ul>
+<li>Each quarter-pixel position is calculated by averaging the two
+nearest full-pixel or half-pixel neighbors using a 2-tap average filter:
+<span class="math display">\[\text{Quarter-Pixel} = (P_1 + P_2 + 1) \gg
+1\]</span></li>
+<li>This two-tier approach keeps the computational overhead manageable
+by limiting the higher-order 6-tap calculation to the half-pixel
+grid.</li>
+</ul>
+<h2 id="impact-on-video-coding-efficiency">Impact on Video Coding
+Efficiency</h2>
+<p>By applying the 6-tap Wiener filter, the encoder accurately
+reconstructs the underlying continuous signal of the video stream. This
+filtering prevents aliasing during frame transitions, reduces the energy
+of the residual signal sent to the transform stage, and ensures that
+sub-pixel motion compensation preserves sharp textures and fine spatial
+details across successive frames.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

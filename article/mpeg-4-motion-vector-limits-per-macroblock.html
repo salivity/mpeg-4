@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPEG-4 Motion Vector Limits Per Macroblock - mpeg-4</title>
+    <meta name="description" content="This article details the exact limits on motion vectors (MVs) per macroblock across MPEG-4 profiles and levels. In MPEG-4 standards—including MPEG-4 Part 2 (Visual) and MPEG-4 Part 10 (AVC/H.264)—motion vector constraints are defined in two ways: the">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/mpeg-4-motion-vector-limits-per-macroblock">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MPEG-4 Motion Vector Limits Per Macroblock - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/mpeg-4-motion-vector-limits-per-macroblock" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article details the exact limits on motion vectors (MVs) per macroblock across MPEG-4 profiles and levels. In MPEG-4 standards—including MPEG-4 Part 2 (Visual) and MPEG-4 Part 10 (AVC/H.264)—motion vector constraints are defined in two ways: the" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="mpeg-4-motion-vector-limits-per-macroblock">MPEG-4 Motion Vector
+Limits Per Macroblock</h1>
+<p>This article details the exact limits on motion vectors (MVs) per
+macroblock across MPEG-4 profiles and levels. In MPEG-4
+standards—including MPEG-4 Part 2 (Visual) and MPEG-4 Part 10
+(AVC/H.264)—motion vector constraints are defined in two ways: the
+structural count of motion vectors allowed per macroblock (determined
+primarily by profile partition capabilities) and the vertical/horizontal
+displacement ranges (strictly bounded by level specifications).</p>
+<hr />
+<h2 id="mpeg-4-part-2-visual">MPEG-4 Part 2 (Visual)</h2>
+<p>MPEG-4 Part 2 macroblocks are <span class="math inline">\(16 \times
+16\)</span> pixels. The maximum number of motion vectors per macroblock
+depends on whether the profile allows 4MV (Advanced Prediction) and
+B-VOP (bidirectional) modes.</p>
+<h3 id="1-motion-vector-count-by-profile">1. Motion Vector Count by
+Profile</h3>
+<ul>
+<li><strong>Simple Profile (SP) (Levels 0–6):</strong>
+<ul>
+<li><strong>P-VOPs:</strong> Maximum <strong>1 MV per
+macroblock</strong> (<span class="math inline">\(16 \times
+16\)</span>).</li>
+<li><strong>B-VOPs:</strong> Not supported.</li>
+</ul></li>
+<li><strong>Advanced Simple Profile (ASP) (Levels 0–5):</strong>
+<ul>
+<li><strong>P-VOPs (1MV mode):</strong> 1 MV per macroblock (<span
+class="math inline">\(16 \times 16\)</span>).</li>
+<li><strong>P-VOPs (4MV mode):</strong> Up to <strong>4 MVs per
+macroblock</strong> (one for each <span class="math inline">\(8 \times
+8\)</span> sub-block).</li>
+<li><strong>B-VOPs:</strong> Up to <strong>4 forward and 4 backward MVs
+(8 total MVs per macroblock)</strong> in <span class="math inline">\(8
+\times 8\)</span> bidirectional mode.</li>
+</ul></li>
+</ul>
+<hr />
+<h3 id="2-motion-vector-displacement-limits-across-levels-part-2">2.
+Motion Vector Displacement Limits Across Levels (Part 2)</h3>
+<p>Motion vector search range in MPEG-4 Part 2 is governed by the
+level-dependent <code>f_code</code> value (motion range parameter).</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Level</th>
+<th style="text-align: left;">Max Horizontal / Vertical Range (Half-Pel
+Units)</th>
+<th style="text-align: left;">Max Displacement (Pixels)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Level 0</strong></td>
+<td style="text-align: left;"><code>f_code</code> = 1</td>
+<td style="text-align: left;"><span class="math inline">\(\pm
+32\)</span></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Level 1</strong></td>
+<td style="text-align: left;"><code>f_code</code> = 1</td>
+<td style="text-align: left;"><span class="math inline">\(\pm
+32\)</span></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Level 2</strong></td>
+<td style="text-align: left;"><code>f_code</code> = 2</td>
+<td style="text-align: left;"><span class="math inline">\(\pm
+64\)</span></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Level 3</strong></td>
+<td style="text-align: left;"><code>f_code</code> = 3</td>
+<td style="text-align: left;"><span class="math inline">\(\pm
+128\)</span></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Level 4</strong></td>
+<td style="text-align: left;"><code>f_code</code> = 4</td>
+<td style="text-align: left;"><span class="math inline">\(\pm
+256\)</span></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Level 5</strong></td>
+<td style="text-align: left;"><code>f_code</code> = 5</td>
+<td style="text-align: left;"><span class="math inline">\(\pm
+512\)</span></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="mpeg-4-part-10--avc-h264">MPEG-4 Part 10 / AVC (H.264)</h2>
+<p>In MPEG-4 AVC, macroblocks can be partitioned down to <span
+class="math inline">\(4 \times 4\)</span> sub-blocks.</p>
+<h3 id="1-motion-vector-count-per-macroblock">1. Motion Vector Count per
+Macroblock</h3>
+<p>The standard allows up to 16 partitions (<span
+class="math inline">\(4 \times 4\)</span>) per <span
+class="math inline">\(16 \times 16\)</span> macroblock:</p>
+<ul>
+<li><strong>P-Slices (Inter):</strong> Up to <strong>16 MVs per
+macroblock</strong> (1 per <span class="math inline">\(4 \times
+4\)</span> sub-partition, list 0).</li>
+<li><strong>B-Slices (Bi-predictive):</strong> Up to <strong>32 MVs per
+macroblock</strong> (1 forward from list 0 and 1 backward from list 1
+per <span class="math inline">\(4 \times 4\)</span> sub-partition).</li>
+</ul>
+<p><em>Note: There is no level that explicitly caps the partition count
+below 16/32; all compliant AVC decoders supporting inter-prediction must
+handle up to 32 motion vectors per macroblock.</em></p>
+<hr />
+<h3
+id="2-maximum-vertical-vector-component-limits-across-levels-maxvmvr">2.
+Maximum Vertical Vector Component Limits Across Levels
+(<code>MaxVmvR</code>)</h3>
+<p>While horizontal vector limits are constrained by frame boundaries,
+MPEG-4 Part 10 explicitly restricts the maximum vertical motion vector
+displacement (<code>MaxVmvR</code>) per level in units of quarter-luma
+samples.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">AVC / MPEG-4 Part 10 Level</th>
+<th style="text-align: left;"><code>MaxVmvR</code> (Quarter-Pel
+Units)</th>
+<th style="text-align: left;">Vertical Range (Luma Samples)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Level 1</strong></td>
+<td style="text-align: left;"><span class="math inline">\([-64,
+63.75]\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(\pm
+16.0\)</span> pixels</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Level 1b</strong></td>
+<td style="text-align: left;"><span class="math inline">\([-64,
+63.75]\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(\pm
+16.0\)</span> pixels</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Level 1.1</strong></td>
+<td style="text-align: left;"><span class="math inline">\([-128,
+127.75]\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(\pm
+32.0\)</span> pixels</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Level 1.2</strong></td>
+<td style="text-align: left;"><span class="math inline">\([-128,
+127.75]\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(\pm
+32.0\)</span> pixels</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Level 1.3</strong></td>
+<td style="text-align: left;"><span class="math inline">\([-128,
+127.75]\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(\pm
+32.0\)</span> pixels</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Level 2.0</strong></td>
+<td style="text-align: left;"><span class="math inline">\([-128,
+127.75]\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(\pm
+32.0\)</span> pixels</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Level 2.1</strong></td>
+<td style="text-align: left;"><span class="math inline">\([-256,
+255.75]\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(\pm
+64.0\)</span> pixels</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Level 2.2</strong></td>
+<td style="text-align: left;"><span class="math inline">\([-256,
+255.75]\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(\pm
+64.0\)</span> pixels</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Level 3.0</strong></td>
+<td style="text-align: left;"><span class="math inline">\([-256,
+255.75]\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(\pm
+64.0\)</span> pixels</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Level 3.1</strong></td>
+<td style="text-align: left;"><span class="math inline">\([-512,
+511.75]\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(\pm
+128.0\)</span> pixels</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Level 3.2</strong></td>
+<td style="text-align: left;"><span class="math inline">\([-512,
+511.75]\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(\pm
+128.0\)</span> pixels</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Level 4.0</strong></td>
+<td style="text-align: left;"><span class="math inline">\([-512,
+511.75]\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(\pm
+128.0\)</span> pixels</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Level 4.1</strong></td>
+<td style="text-align: left;"><span class="math inline">\([-512,
+511.75]\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(\pm
+128.0\)</span> pixels</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Level 4.2</strong></td>
+<td style="text-align: left;"><span class="math inline">\([-512,
+511.75]\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(\pm
+128.0\)</span> pixels</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Level 5.0 – 6.2</strong></td>
+<td style="text-align: left;"><span class="math inline">\([-2048,
+2047.75]\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(\pm
+512.0\)</span> pixels</td>
+</tr>
+</tbody>
+</table></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

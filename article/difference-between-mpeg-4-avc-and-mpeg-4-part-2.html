@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Difference Between MPEG-4 AVC and MPEG-4 Part 2 - mpeg-4</title>
+    <meta name="description" content="This article compares MPEG-4 Advanced Video Coding (AVC), also known as H.264 or MPEG-4 Part 10, with the older MPEG-4 Part 2 standard. It outlines the core differences between these two video compression formats, focusing on their compression efficiency">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/difference-between-mpeg-4-avc-and-mpeg-4-part-2">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Difference Between MPEG-4 AVC and MPEG-4 Part 2 - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/difference-between-mpeg-4-avc-and-mpeg-4-part-2" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article compares MPEG-4 Advanced Video Coding (AVC), also known as H.264 or MPEG-4 Part 10, with the older MPEG-4 Part 2 standard. It outlines the core differences between these two video compression formats, focusing on their compression efficiency" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="difference-between-mpeg-4-avc-and-mpeg-4-part-2">Difference
+Between MPEG-4 AVC and MPEG-4 Part 2</h1>
+<p>This article compares MPEG-4 Advanced Video Coding (AVC), also known
+as H.264 or MPEG-4 Part 10, with the older MPEG-4 Part 2 standard. It
+outlines the core differences between these two video compression
+formats, focusing on their compression efficiency, technical
+specifications, computational requirements, and real-world applications
+to show why AVC became the industry standard.</p>
+<h2 id="overview-of-the-standards">Overview of the Standards</h2>
+<p>MPEG-4 is a broad multimedia standard developed by the Moving Picture
+Experts Group, divided into several "parts."</p>
+<ul>
+<li><strong>MPEG-4 Part 2</strong> was released in 1999 and became
+highly popular during the early days of internet video through
+third-party implementations like DivX and Xvid.</li>
+<li><strong>MPEG-4 Part 10 (AVC / H.264)</strong> was released in 2003
+as a joint partnership to succeed Part 2, aiming to provide much higher
+video quality at substantially lower bitrates.</li>
+</ul>
+<h2 id="compression-efficiency-and-bandwidth">Compression Efficiency and
+Bandwidth</h2>
+<p>The primary advantage of MPEG-4 AVC over MPEG-4 Part 2 is its
+superior compression efficiency. AVC can deliver the same visual quality
+as MPEG-4 Part 2 while using roughly 50% less data. This massive
+reduction in bitrate allowed service providers to stream high-definition
+content over the internet and broadcast HD television over limited
+bandwidth networks.</p>
+<h2 id="technical-improvements-in-avc">Technical Improvements in
+AVC</h2>
+<p>AVC achieves its superior performance through several architectural
+upgrades that are either missing or less sophisticated in MPEG-4 Part
+2:</p>
+<ul>
+<li><strong>Intra-prediction:</strong> While MPEG-4 Part 2 compresses
+frames individually with limited spatial prediction, AVC uses advanced
+intra-prediction. It predicts blocks of pixels within a single frame
+using the pixels of surrounding blocks, greatly reducing spatial
+redundancy.</li>
+<li><strong>Variable Block-Size Motion Compensation:</strong> MPEG-4
+Part 2 uses rigid 16x16 or 8x8 pixel blocks for motion estimation. AVC
+can segment blocks down to 4x4 pixels, allowing the encoder to track
+precise movements of small objects more accurately.</li>
+<li><strong>Quarter-Pixel Precision:</strong> AVC utilizes quarter-pixel
+(1/4-pel) motion vector precision, which is much more precise than the
+half-pixel precision used in MPEG-4 Part 2. This results in sharper
+images during high-motion scenes.</li>
+<li><strong>In-Loop Deblocking Filter:</strong> AVC features an
+integrated deblocking filter that automatically smooths out blocky
+artifacts along block boundaries before the frame is sent to the
+display. MPEG-4 Part 2 lacks this integrated loop, often resulting in
+visible pixelation in low-bitrate videos.</li>
+</ul>
+<h2 id="computational-complexity">Computational Complexity</h2>
+<p>The advanced algorithms used in MPEG-4 AVC require significantly more
+processing power to encode and decode than MPEG-4 Part 2. When AVC was
+first introduced, legacy computers and mobile devices struggled to play
+it smoothly without dedicated hardware. Today, almost all modern
+processors, graphics cards, and smartphones feature built-in hardware
+acceleration for AVC, making its higher computational cost irrelevant
+for modern hardware.</p>
+<h2 id="use-cases-and-adoption">Use Cases and Adoption</h2>
+<p>MPEG-4 Part 2 is now considered a legacy format. It is rarely used in
+modern workflows and is mostly found in older security camera systems or
+legacy AVI media files.</p>
+<p>MPEG-4 AVC, on the other hand, remains one of the most widely
+compatible and frequently used video formats in the world. It is the
+standard format for Blu-ray discs, high-definition digital broadcasting
+(cable and satellite), and the vast majority of web streaming platforms
+including YouTube, Vimeo, and Netflix.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

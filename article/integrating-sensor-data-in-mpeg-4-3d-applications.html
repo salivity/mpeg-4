@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Integrating Sensor Data in MPEG-4 3D Applications - mpeg-4</title>
+    <meta name="description" content="MPEG-4 integrates external sensor data streams into interactive 3D media applications through its object-based Systems architecture, primarily utilizing Binary Format for Scenes (BIFS) and dedicated input sensor nodes. By combining dynamic scene graph ma">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/integrating-sensor-data-in-mpeg-4-3d-applications">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Integrating Sensor Data in MPEG-4 3D Applications - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/integrating-sensor-data-in-mpeg-4-3d-applications" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="MPEG-4 integrates external sensor data streams into interactive 3D media applications through its object-based Systems architecture, primarily utilizing Binary Format for Scenes (BIFS) and dedicated input sensor nodes. By combining dynamic scene graph ma" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="integrating-sensor-data-in-mpeg-4-3d-applications">Integrating
+Sensor Data in MPEG-4 3D Applications</h1>
+<p>MPEG-4 integrates external sensor data streams into interactive 3D
+media applications through its object-based Systems architecture,
+primarily utilizing Binary Format for Scenes (BIFS) and dedicated input
+sensor nodes. By combining dynamic scene graph manipulation,
+standardized event routing, and continuous animation stream
+synchronization, the standard allows real-time external data—such as
+motion capture, environmental measurements, and user inputs—to directly
+drive the behavior, geometry, and rendering of interactive 3D virtual
+environments.</p>
+<h3 id="the-bifs-scene-graph-and-inputsensor-nodes">The BIFS Scene Graph
+and InputSensor Nodes</h3>
+<p>At the core of MPEG-4’s 3D capabilities is MPEG-4 Part 11, known as
+Binary Format for Scenes (BIFS). BIFS represents a 3D scene as a
+hierarchical, node-based scene graph. To ingest data from external
+hardware, MPEG-4 provides specialized sensor nodes, most notably the
+<code>InputSensor</code> node.</p>
+<p>Unlike standard user-interface sensors (such as
+<code>TouchSensor</code> or <code>PlaneSensor</code>, which capture
+mouse and keyboard clicks within the viewport), an
+<code>InputSensor</code> serves as an abstract interface between the
+MPEG-4 terminal and external devices. It maps physical input
+streams—such as data from VR trackers, gyroscopes, biometric monitors,
+or IoT devices—into standardized data types (such as
+<code>SFVec3f</code> for 3D coordinates or <code>SFRotation</code> for
+orientations) within the scene graph.</p>
+<h3 id="event-routing-and-dynamic-processing">Event Routing and Dynamic
+Processing</h3>
+<p>Once external sensor data is mapped into the scene, MPEG-4 uses an
+event-driven architecture based on <code>ROUTE</code> statements:</p>
+<ul>
+<li><strong>Event Propagation:</strong> When an external sensor updates
+its state, it emits an <code>eventOut</code> signal containing the new
+data.</li>
+<li><strong>Direct Routing:</strong> The <code>ROUTE</code> mechanism
+transfers this value directly to an <code>eventIn</code> field of a
+target node, such as a <code>Transform</code> node's translation or
+rotation field, instantly updating an object's position or
+orientation.</li>
+<li><strong>Script-Based Processing:</strong> For complex logic, sensor
+streams can be routed to <code>Script</code> nodes. Scripts (written in
+ECMAScript or Java) compute complex transformations, filter sensor
+noise, or trigger conditional state changes before passing the processed
+values back to the rendering pipeline.</li>
+</ul>
+<h3 id="streaming-and-parametric-animation-streams">Streaming and
+Parametric Animation Streams</h3>
+<p>MPEG-4 supports real-time, streaming sensor integration using
+specialized elementary streams:</p>
+<ul>
+<li><strong>BIFS Command Streams:</strong> External sensors can generate
+continuous BIFS update commands delivered over elementary streams,
+modifying node attributes, adding objects, or altering scene hierarchy
+on the fly.</li>
+<li><strong>BAP and FAP Streams:</strong> For human-centric sensor data,
+MPEG-4 defines Body Animation Parameters (BAP) and Facial Animation
+Parameters (FAP). Tracking sensors (such as depth cameras or data
+gloves) convert physical movements into standardized BAP/FAP streams
+that drive rigged 3D human meshes with minimal bandwidth
+consumption.</li>
+</ul>
+<h3 id="synchronization-and-terminal-architecture">Synchronization and
+Terminal Architecture</h3>
+<p>To maintain coherence between multiple incoming sensor feeds, audio,
+and visual media, MPEG-4 relies on its Synchronization Layer (SL) and
+the MPEG-4 Delivery Multimedia Integration Framework (DMIF). Each sensor
+packet receives an Object Clock Reference (OCR) and Composition Time
+Stamps (CTS), ensuring that low-latency sensor inputs execute
+synchronously with corresponding video, audio, and physics simulations
+in the interactive 3D viewport.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

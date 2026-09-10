@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How MPEG-4 Allocates Bitrate Across Visual Objects - mpeg-4</title>
+    <meta name="description" content="This article provides an overview of how the MPEG-4 standard manages bitrate distribution across multiple distinct visual elements in a video sequence. Unlike traditional frame-based video coding, MPEG-4 Part 2 treats a scene as a composition of separate">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/how-mpeg-4-allocates-bitrate-across-visual-objects">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How MPEG-4 Allocates Bitrate Across Visual Objects - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/how-mpeg-4-allocates-bitrate-across-visual-objects" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article provides an overview of how the MPEG-4 standard manages bitrate distribution across multiple distinct visual elements in a video sequence. Unlike traditional frame-based video coding, MPEG-4 Part 2 treats a scene as a composition of separate" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="how-mpeg-4-allocates-bitrate-across-visual-objects">How MPEG-4
+Allocates Bitrate Across Visual Objects</h1>
+<p>This article provides an overview of how the MPEG-4 standard manages
+bitrate distribution across multiple distinct visual elements in a video
+sequence. Unlike traditional frame-based video coding, MPEG-4 Part 2
+treats a scene as a composition of separate visual objects. By
+decoupling these objects, the encoder can dynamically distribute bits
+according to the semantic importance, motion activity, and spatial
+complexity of each individual object, optimizing both bandwidth
+utilization and perceptual video quality.</p>
+<h3 id="object-based-scene-architecture">Object-Based Scene
+Architecture</h3>
+<p>To manage bitrates independently, MPEG-4 deconstructs a scene into a
+hierarchical structure:</p>
+<ul>
+<li><strong>Video Object (VO):</strong> Represents a specific 2D or 3D
+visual entity over time, such as a person, a car, or a background.</li>
+<li><strong>Video Object Layer (VOL):</strong> Provides scalability by
+allowing a single Video Object to be encoded at multiple spatial,
+temporal, or quality resolutions.</li>
+<li><strong>Video Object Plane (VOP):</strong> Represents a single
+temporal instance of a Video Object (analogous to an individual frame
+for that specific object).</li>
+</ul>
+<p>A scene composition layer coordinates these separate streams,
+defining how and where each object is rendered on the target
+display.</p>
+<h3 id="the-joint-rate-control-framework">The Joint Rate Control
+Framework</h3>
+<p>MPEG-4 manages arbitrary bitrate allocation using a centralized,
+multi-level rate control mechanism. Instead of allocating bits uniformly
+across a rectangular grid, the encoder uses a two-tiered rate
+controller:</p>
+<ol type="1">
+<li><strong>Scene-Level (Global) Bit Budgeting:</strong> The global rate
+controller assesses total available channel bandwidth and target frame
+rates, calculating the total bit budget available for the entire scene
+at a given timestamp.</li>
+<li><strong>Object-Level Bit Distribution:</strong> The encoder
+evaluates each VOP and divides the total bit budget among the active
+objects based on defined priorities and mathematical rate-distortion
+(R-D) modeling.</li>
+</ol>
+<h3 id="factors-governing-object-bit-allocation">Factors Governing
+Object Bit Allocation</h3>
+<p>Arbitrary bitrate allocation relies on dynamically weighting each
+visual object using several key parameters:</p>
+<ul>
+<li><strong>Semantic Priority:</strong> Encoders can assign higher
+priority to critical foreground elements (such as a human face) and
+lower priority to non-critical elements (such as a static
+background).</li>
+<li><strong>Shape Complexity:</strong> MPEG-4 encodes arbitrary shapes
+using alpha planes (binary or grayscale). The bit budget allocates
+dedicated data for shape boundary information before allocating texture
+bits.</li>
+<li><strong>Motion Complexity:</strong> Objects exhibiting high or
+unpredictable motion require more motion vectors and prediction-error
+bits compared to stationary or uniformly moving objects.</li>
+<li><strong>Texture and Spatial Activity:</strong> High-frequency
+details within an object demand a higher bit density to prevent blocking
+and blurring artifacts.</li>
+</ul>
+<h3
+id="mathematical-modeling-the-vm-rate-control-algorithm">Mathematical
+Modeling: The VM Rate Control Algorithm</h3>
+<p>MPEG-4 standardizes a reference rate control algorithm known as the
+Verification Model (VM). The algorithm determines target bit
+distribution per object by estimating the relationship between coding
+bits, distortion, and the Quantization Parameter (<span
+class="math inline">\(QP\)</span>).</p>
+<p>The allocation process follows these steps:</p>
+<ol type="1">
+<li><strong>Target Bit Assignment:</strong> The encoder calculates
+target bits for each object based on its buffer status, user-defined
+priority weights, and variance (complexity) of the motion-compensated
+residual.</li>
+<li><strong>Quantization Parameter Selection:</strong> Using a quadratic
+rate-distortion model, the encoder computes the optimal <span
+class="math inline">\(QP\)</span> for each object: <span
+class="math display">\[\text{Bits} = X_1 \cdot \frac{S}{QP} + X_2 \cdot
+\frac{S}{QP^2}\]</span> <em>(where <span
+class="math inline">\(S\)</span> represents spatial complexity/variance,
+and <span class="math inline">\(X_1, X_2\)</span> are model parameters
+updated after encoding each VOP).</em></li>
+<li><strong>Buffer Feedback and Adaptation:</strong> If an object uses
+fewer bits than allocated, the surplus is returned to the common buffer
+pool to be redistributed to more complex objects in subsequent
+intervals.</li>
+</ol>
+<h3 id="bit-distribution-across-component-layers">Bit Distribution
+Across Component Layers</h3>
+<p>Once bits are assigned to a specific visual object, the bitrate is
+partitioned across three core sub-components:</p>
+<ul>
+<li><strong>Shape Bits:</strong> Transmit the arbitrary bounding contour
+of the object.</li>
+<li><strong>Motion Bits:</strong> Transmit motion vectors derived from
+block-based motion estimation within the object's active
+boundaries.</li>
+<li><strong>Texture Bits:</strong> Transmit the Discrete Cosine
+Transform (DCT) coefficients of the pixel values and residual
+errors.</li>
+</ul>
+<p>This layered distribution guarantees that essential structural
+features (geometry and location) are preserved even under severe
+bandwidth constraints, while high-frequency texture details are
+throttled independently per object.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

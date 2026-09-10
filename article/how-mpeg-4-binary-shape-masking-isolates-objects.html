@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How MPEG-4 Binary Shape Masking Isolates Objects - mpeg-4</title>
+    <meta name="description" content="This article explains how the MPEG-4 video standard employs binary shape masking to separate foreground visual elements from background content. By utilizing Video Object Planes, binary alpha planes, and specialized macroblock coding, MPEG-4 enables cont">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/how-mpeg-4-binary-shape-masking-isolates-objects">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How MPEG-4 Binary Shape Masking Isolates Objects - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/how-mpeg-4-binary-shape-masking-isolates-objects" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explains how the MPEG-4 video standard employs binary shape masking to separate foreground visual elements from background content. By utilizing Video Object Planes, binary alpha planes, and specialized macroblock coding, MPEG-4 enables cont" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="how-mpeg-4-binary-shape-masking-isolates-objects">How MPEG-4
+Binary Shape Masking Isolates Objects</h1>
+<p>This article explains how the MPEG-4 video standard employs binary
+shape masking to separate foreground visual elements from background
+content. By utilizing Video Object Planes, binary alpha planes, and
+specialized macroblock coding, MPEG-4 enables content-based
+representation, compression, and manipulation of individual visual
+objects within a dynamic scene.</p>
+<h3 id="video-object-planes-and-scene-decomposition">Video Object Planes
+and Scene Decomposition</h3>
+<p>MPEG-4 Part 2 diverges from traditional frame-based video coding by
+treating scenes as collections of independent entities known as Video
+Objects (VOs). Each temporal instance of a Video Object is encapsulated
+within a tight rectangular bounding box known as a Video Object Plane
+(VOP).</p>
+<p>To isolate the visual object from the remainder of the bounding box,
+MPEG-4 pairs standard texture and motion data with shape information.
+This shape representation dictates which pixels within the rectangular
+VOP belong to the semantic foreground object and which represent empty
+space.</p>
+<h3 id="the-binary-alpha-plane">The Binary Alpha Plane</h3>
+<p>Binary shape coding relies on a Binary Alpha Plane (BAP), a
+single-bit bitmap synchronized with the luminance component of the
+video. In this binary mask:</p>
+<ul>
+<li><strong>Opaque Pixels (Value = 255 or 1):</strong> Designate areas
+that belong entirely to the foreground visual object.</li>
+<li><strong>Transparent Pixels (Value = 0):</strong> Designate areas
+that lie outside the object boundaries, effectively representing empty
+space or the background.</li>
+</ul>
+<p>By applying this binary grid over the bounding box, the decoder can
+determine the exact silhouette of the visual object at any given
+frame.</p>
+<h3 id="macroblock-based-shape-classification">Macroblock-Based Shape
+Classification</h3>
+<p>For transmission and compression efficiency, MPEG-4 divides the
+binary alpha plane into 16x16 pixel blocks called Binary Alpha Blocks
+(BABs). Each BAB is classified into one of three operational
+categories:</p>
+<ol type="1">
+<li><strong>All-Transparent:</strong> The block contains zero foreground
+pixels. The encoder completely skips texture and motion encoding for
+this block, saving significant bitrate.</li>
+<li><strong>All-Opaque:</strong> The block is entirely filled by the
+visual object. It is compressed using standard Discrete Cosine Transform
+(DCT) and motion estimation techniques, requiring no shape transmission
+overhead.</li>
+<li><strong>Boundary:</strong> The block contains both opaque and
+transparent pixels, marking the edge of the visual object. These blocks
+require explicit binary shape coding alongside adapted texture
+encoding.</li>
+</ol>
+<h3 id="context-based-arithmetic-encoding-cae">Context-Based Arithmetic
+Encoding (CAE)</h3>
+<p>To compress the precise contour within boundary blocks without
+consuming excessive bandwidth, MPEG-4 uses Context-based Arithmetic
+Encoding (CAE). CAE leverages statistical dependencies between
+neighboring shape pixels to predict mask values.</p>
+<ul>
+<li><strong>Intra-CAE:</strong> Uses a 10-pixel spatial template
+composed of previously decoded adjacent pixels within the current frame
+to predict the current pixel's binary state.</li>
+<li><strong>Inter-CAE:</strong> Uses a 9-pixel spatio-temporal template
+combined with shape-specific motion vectors to predict the current
+boundary based on the object’s contour in preceding frames.</li>
+</ul>
+<h3 id="texture-padding-and-final-compositing">Texture Padding and Final
+Compositing</h3>
+<p>Encoding boundary blocks presents a challenge: performing DCT across
+sharp artificial edges between the object and transparent regions can
+introduce high-frequency compression artifacts. To resolve this, MPEG-4
+applies repetitive padding or low-pass extrapolation. Transparent pixels
+immediately adjacent to the object boundary are filled with values
+replicated from nearby opaque pixels before the DCT is calculated.</p>
+<p>At playback, the decoder applies the reconstructed binary shape mask
+to discard the padded values, isolating the crisp foreground contour and
+allowing it to be composited seamlessly over any target background.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

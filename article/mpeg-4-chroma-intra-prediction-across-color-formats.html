@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPEG-4 Chroma Intra-Prediction Across Color Formats - mpeg-4</title>
+    <meta name="description" content="This article examines how MPEG-4—specifically MPEG-4 Part 10 (AVC/H.264) and its Fidelity Range Extensions (FRExt)—handles chroma intra-prediction across 4:2:0, 4:2:2, and 4:4:4 color sampling structures. It details how the codec dynamically adapts b">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/mpeg-4-chroma-intra-prediction-across-color-formats">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MPEG-4 Chroma Intra-Prediction Across Color Formats - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/mpeg-4-chroma-intra-prediction-across-color-formats" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article examines how MPEG-4—specifically MPEG-4 Part 10 (AVC/H.264) and its Fidelity Range Extensions (FRExt)—handles chroma intra-prediction across 4:2:0, 4:2:2, and 4:4:4 color sampling structures. It details how the codec dynamically adapts b" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="mpeg-4-chroma-intra-prediction-across-color-formats">MPEG-4
+Chroma Intra-Prediction Across Color Formats</h1>
+<p>This article examines how MPEG-4—specifically MPEG-4 Part 10
+(AVC/H.264) and its Fidelity Range Extensions (FRExt)—handles chroma
+intra-prediction across 4:2:0, 4:2:2, and 4:4:4 color sampling
+structures. It details how the codec dynamically adapts block sizes,
+prediction directions, and mathematical filtering to maintain spatial
+redundancy reduction regardless of chroma resolution.</p>
+<h3 id="fundamentals-of-chroma-intra-prediction">Fundamentals of Chroma
+Intra-Prediction</h3>
+<p>Intra-prediction reduces spatial redundancy by predicting the pixel
+values of a target block using adjacent, previously decoded boundary
+samples from the top and left neighboring blocks. While early MPEG-4
+standards (Part 2) relied primarily on transform-domain DC and AC
+coefficient prediction, modern MPEG-4 implementations (Part 10 / AVC)
+perform spatial domain intra-prediction for both luma and chroma
+components.</p>
+<p>Because different chroma sampling structures alter the spatial
+dimensions of the chroma planes relative to the luma plane (16x16
+macroblocks), the prediction mechanisms adapt accordingly.</p>
+<h3 id="420-chroma-sampling">4:2:0 Chroma Sampling</h3>
+<p>In the standard 4:2:0 structure, chroma channels (<span
+class="math inline">\(Cb\)</span> and <span
+class="math inline">\(Cr\)</span>) are subsampled by half horizontally
+and vertically, resulting in an 8x8 pixel block per macroblock.</p>
+<ul>
+<li><strong>Block Size:</strong> Intra-prediction operates on an 8x8
+chroma block.</li>
+<li><strong>Available Modes:</strong> Four spatial prediction modes are
+used:
+<ul>
+<li><strong>DC Mode (Mode 0):</strong> Averages the available top and
+left neighbor pixels to produce a flat prediction block.</li>
+<li><strong>Horizontal Mode (Mode 1):</strong> Extends the left
+reconstructed column horizontally across the block.</li>
+<li><strong>Vertical Mode (Mode 2):</strong> Extends the top
+reconstructed row vertically down the block.</li>
+<li><strong>Plane Mode (Mode 3):</strong> Applies a linear spatial
+interpolation across the horizontal and vertical directions to model
+smooth gradients.</li>
+</ul></li>
+<li><strong>Shared Prediction:</strong> Both <span
+class="math inline">\(Cb\)</span> and <span
+class="math inline">\(Cr\)</span> channels utilize the same
+intra-prediction mode selection within a single macroblock to save
+signaling overhead.</li>
+</ul>
+<h3 id="422-chroma-sampling">4:2:2 Chroma Sampling</h3>
+<p>In 4:2:2 sampling, chroma is subsampled by half horizontally but
+retains full vertical resolution, yielding an 8x16 chroma block per
+macroblock.</p>
+<ul>
+<li><strong>Block Size:</strong> Prediction operates on 8x16 rectangular
+blocks.</li>
+<li><strong>Algorithm Adaptation:</strong> The same four basic modes
+(DC, Horizontal, Vertical, Plane) are employed, but their mathematical
+formulations adapt to the non-square geometry:
+<ul>
+<li><strong>DC Mode:</strong> Re-weights the average calculation based
+on 8 top samples and 16 left samples.</li>
+<li><strong>Vertical &amp; Horizontal Modes:</strong> The top 8 samples
+are extended downward across 16 rows, while the left 16 samples are
+projected horizontally across 8 columns.</li>
+<li><strong>Plane Mode:</strong> The gradient equations and slope
+calculations are adjusted to account for the asymmetric horizontal
+(<span class="math inline">\(H=8\)</span>) and vertical (<span
+class="math inline">\(V=16\)</span>) boundary dimensions.</li>
+</ul></li>
+</ul>
+<h3 id="444-chroma-sampling">4:4:4 Chroma Sampling</h3>
+<p>In full-resolution 4:4:4 sampling, chroma planes have the exact same
+spatial dimensions as the luma plane (16x16 pixels per macroblock).
+MPEG-4 handles 4:4:4 chroma intra-prediction using two distinct
+methods:</p>
+<ol type="1">
+<li><p><strong>Integrated 4:4:4 Mode:</strong></p>
+<ul>
+<li>Uses 16x16 chroma blocks employing the standard four chroma modes
+(DC, Horizontal, Vertical, Plane), or:</li>
+<li>Employs the full suite of luma intra-prediction modes (such as 4x4,
+8x8, and 16x16 directional modes, offering up to 9 distinct
+angles/directions) directly on the chroma channels.</li>
+</ul></li>
+<li><p><strong>Separate Color Plane Coding:</strong></p>
+<ul>
+<li>Splits the color video into three completely independent monochrome
+channels (Y, Cb, Cr or R, G, B).</li>
+<li>Each channel is encoded independently as a separate luma-like plane,
+allowing each color component to independently select its own partition
+sizes (4x4, 8x8, 16x16) and all 9 directional prediction modes without
+being tied to the primary luma channel decisions.</li>
+</ul></li>
+</ol>
+<h3 id="boundary-handling-and-filtering">Boundary Handling and
+Filtering</h3>
+<p>Across all sampling structures, boundary samples undergo specific
+availability checks:</p>
+<ul>
+<li>If upper or left blocks are missing (e.g., at frame edges or slice
+boundaries), the prediction fallback logic adjusts dynamically,
+substituting available boundaries or defaulting to fixed mid-level
+values (e.g., 128 for 8-bit video).</li>
+<li>For larger partition sizes in high-profile 4:4:4 workflows, low-pass
+smoothing filters are applied to boundary reference samples prior to
+directional extrapolation to prevent high-frequency prediction
+artifacts.</li>
+</ul></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

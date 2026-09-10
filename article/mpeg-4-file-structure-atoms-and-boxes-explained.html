@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPEG-4 File Structure: Atoms and Boxes Explained - mpeg-4</title>
+    <meta name="description" content="The MPEG-4 (MP4) file format is a widely used digital multimedia container format most commonly used to store video, audio, and subtitles. This article provides a clear, concise breakdown of how the standard MPEG-4 file format structures its data using h">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/mpeg-4-file-structure-atoms-and-boxes-explained">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MPEG-4 File Structure: Atoms and Boxes Explained - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/mpeg-4-file-structure-atoms-and-boxes-explained" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The MPEG-4 (MP4) file format is a widely used digital multimedia container format most commonly used to store video, audio, and subtitles. This article provides a clear, concise breakdown of how the standard MPEG-4 file format structures its data using h" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="mpeg-4-file-structure-atoms-and-boxes-explained">MPEG-4 File
+Structure: Atoms and Boxes Explained</h1>
+<p>The MPEG-4 (MP4) file format is a widely used digital multimedia
+container format most commonly used to store video, audio, and
+subtitles. This article provides a clear, concise breakdown of how the
+standard MPEG-4 file format structures its data using hierarchical
+building blocks known as atoms or boxes, explaining their roles, types,
+and how they organize multimedia data for playback.</p>
+<h2 id="the-concept-of-boxes-atoms">The Concept of Boxes (Atoms)</h2>
+<p>At the core of the MPEG-4 file format (defined by the ISO/IEC
+14496-12 standard) is an object-oriented structure. Every piece of data
+in an MP4 file is encapsulated within a container called a
+<strong>box</strong> (historically referred to as an
+<strong>atom</strong> in Apple’s QuickTime format).</p>
+<p>An MP4 file is essentially a continuous sequence of these boxes.
+Boxes can contain actual data, or they can act as containers that hold
+other sub-boxes, creating a hierarchical, tree-like nested
+structure.</p>
+<h2 id="the-anatomy-of-a-box">The Anatomy of a Box</h2>
+<p>Every box starts with a standard header that allows parsers to
+navigate the file without needing to decode the actual payload. A basic
+box header consists of two main fields:</p>
+<ol type="1">
+<li><strong>Size (4 bytes):</strong> A 32-bit integer indicating the
+total size of the box in bytes, including the header. If the size is set
+to 1, a 64-bit large size field follows the type field to accommodate
+files larger than 4 gigabytes.</li>
+<li><strong>Type (4 bytes):</strong> A four-character code (FourCC)
+comprised of ASCII characters that identifies the box's function (e.g.,
+<code>ftyp</code>, <code>moov</code>, <code>mdat</code>).</li>
+</ol>
+<p>Following the header is the <strong>payload</strong>, which contains
+either specific data fields or nested sub-boxes.</p>
+<h2 id="key-boxes-in-an-mp4-file">Key Boxes in an MP4 File</h2>
+<p>While there are dozens of different box types defined in the MPEG-4
+standard, a typical, playable MP4 file relies on a few critical
+root-level boxes:</p>
+<h3 id="1-ftyp-file-type-box">1. ftyp (File Type Box)</h3>
+<p>This is always the first box in the file. It identifies the file's
+compatible brands, specifications, and minor version. This tells the
+media player which decoders and standards are required to read the
+file.</p>
+<h3 id="2-moov-movie-box">2. moov (Movie Box)</h3>
+<p>The <code>moov</code> box is the metadata container for the entire
+file. It does not contain the actual audio or video samples, but rather
+the instructions on how to play them. Because it contains the timeline,
+codecs, and location offsets of the media samples, a player cannot start
+playback until it parses the <code>moov</code> box. It contains nested
+sub-boxes such as:</p>
+<ul>
+<li><strong>mvhd (Movie Header):</strong> Contains overall file
+information like creation time, duration, and time scale.</li>
+<li><strong>trak (Track Box):</strong> Represents a single track of
+media (e.g., one for video, one for audio).</li>
+<li><strong>stbl (Sample Table Box):</strong> Located deep inside the
+track box, this index maps media sample times to physical byte offsets
+within the file.</li>
+</ul>
+<h3 id="3-mdat-media-data-box">3. mdat (Media Data Box)</h3>
+<p>The <code>mdat</code> box contains the actual raw, compressed media
+payloads—the video frames, audio packets, and subtitle strings. Since it
+holds the bulk of the file's data, it is usually the largest box. The
+<code>mdat</code> box is unformatted raw data; players rely entirely on
+the structural map inside the <code>moov</code> box to locate and decode
+individual frames within it.</p>
+<h2 id="how-players-read-the-structure">How Players Read the
+Structure</h2>
+<p>To play an MP4 file, a media player performs the following
+sequence:</p>
+<ol type="1">
+<li>It reads the <code>ftyp</code> box to confirm compatibility.</li>
+<li>It locates and parses the <code>moov</code> box to build an index of
+the video and audio tracks, finding where each frame starts and how long
+it lasts.</li>
+<li>It uses the byte offsets from the <code>moov</code> box to jump to
+specific locations inside the <code>mdat</code> box, extracting and
+decoding the raw media packets for seamless real-time playback.</li>
+</ol></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

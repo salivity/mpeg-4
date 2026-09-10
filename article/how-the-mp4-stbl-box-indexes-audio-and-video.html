@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How the MP4 stbl Box Indexes Audio and Video - mpeg-4</title>
+    <meta name="description" content="The Sample Table box (stbl) acts as the central indexing directory for media tracks inside an MPEG-4 (MP4 / ISOBMFF) container. Rather than scattering metadata across the media payload, an MP4 file stores raw audio and video data in the Media Data box (m">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/how-the-mp4-stbl-box-indexes-audio-and-video">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How the MP4 stbl Box Indexes Audio and Video - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/how-the-mp4-stbl-box-indexes-audio-and-video" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The Sample Table box (stbl) acts as the central indexing directory for media tracks inside an MPEG-4 (MP4 / ISOBMFF) container. Rather than scattering metadata across the media payload, an MP4 file stores raw audio and video data in the Media Data box (m" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="how-the-mp4-stbl-box-indexes-audio-and-video">How the MP4 stbl
+Box Indexes Audio and Video</h1>
+<p>The Sample Table box (<code>stbl</code>) acts as the central indexing
+directory for media tracks inside an MPEG-4 (MP4 / ISOBMFF) container.
+Rather than scattering metadata across the media payload, an MP4 file
+stores raw audio and video data in the Media Data box
+(<code>mdat</code>) and uses the sub-boxes inside <code>stbl</code> to
+map every frame's exact timing, size, file offset, and keyframe status.
+This design allows media players to seek instantly to any point in a
+track, calculate byte locations without parsing the raw stream, and
+properly synchronize audio with video.</p>
+<h3 id="core-sub-boxes-of-the-stbl-hierarchy">Core Sub-Boxes of the
+<code>stbl</code> Hierarchy</h3>
+<p>The <code>stbl</code> box resides inside the
+<code>moov.trak.mdia.minf</code> hierarchy and contains several
+dedicated sub-tables, each responsible for a distinct indexing
+property:</p>
+<ul>
+<li><strong>Sample Description Box (<code>stsd</code>):</strong> Defines
+the codec (such as H.264, HEVC, AAC) and initialization parameters
+(width, height, color space, audio sample rate) required to decode the
+samples in this track.</li>
+<li><strong>Time-to-Sample Box (<code>stts</code>):</strong> Maps sample
+numbers to their decoding durations (Decode Time Stamp, or DTS). It
+compresses this mapping by grouping consecutive frames that share the
+same delta duration.</li>
+<li><strong>Composition Time to Sample Box (<code>ctts</code>):</strong>
+Used when video contains out-of-order frames (such as B-frames). It
+stores the offset between a frame's decode timestamp (DTS) and its
+presentation timestamp (PTS).</li>
+<li><strong>Sync Sample Box (<code>stss</code>):</strong> Lists the
+sample numbers that are keyframes (I-frames/IDR-frames). Media players
+query this table when seeking so playback can start from an
+independently decodable frame.</li>
+<li><strong>Sample-to-Chunk Box (<code>stsc</code>):</strong> Groups
+samples into larger blocks called "chunks." This table maps ranges of
+chunks to the number of samples they contain and links them to their
+corresponding description in <code>stsd</code>.</li>
+<li><strong>Sample Size Box (<code>stsz</code> /
+<code>stz2</code>):</strong> Lists the exact size in bytes of every
+individual sample, or specifies a single uniform size if all samples are
+identical.</li>
+<li><strong>Chunk Offset Box (<code>stco</code> /
+<code>co64</code>):</strong> Contains the absolute byte offset from the
+start of the file to the beginning of each chunk (<code>stco</code> uses
+32-bit pointers; <code>co64</code> uses 64-bit pointers for files larger
+than 4 GB).</li>
+</ul>
+<h3 id="how-a-player-locates-a-frame-step-by-step">How a Player Locates
+a Frame: Step-by-Step</h3>
+<p>When a media player needs to retrieve a video frame or audio packet
+at a target playback timestamp, it traverses the <code>stbl</code>
+tables in a sequential lookup:</p>
+<ol type="1">
+<li><strong>Timestamp to Sample Number:</strong> The player calculates
+the target decode time and consults <code>stts</code> (and
+<code>ctts</code> if present) to determine the exact sample index <span
+class="math inline">\(N\)</span>.</li>
+<li><strong>Keyframe Adjustment (Seeking):</strong> If seeking, the
+player checks <code>stss</code> to find the nearest keyframe index equal
+to or preceding sample <span class="math inline">\(N\)</span>.</li>
+<li><strong>Sample to Chunk Mapping:</strong> The player searches
+<code>stsc</code> to find which chunk contains sample <span
+class="math inline">\(N\)</span>, as well as the position of sample
+<span class="math inline">\(N\)</span> relative to the start of that
+chunk.</li>
+<li><strong>Chunk Offset Lookup:</strong> The player looks up the target
+chunk in <code>stco</code> (or <code>co64</code>) to retrieve the
+absolute byte offset of the chunk within the MP4 file.</li>
+<li><strong>Exact Byte Calculation:</strong> The player consults
+<code>stsz</code> to sum the byte lengths of all samples within the same
+chunk that precede sample <span class="math inline">\(N\)</span>. Adding
+this sum to the chunk's base offset yields the exact starting byte
+address and length of sample <span class="math inline">\(N\)</span>
+inside the <code>mdat</code> container.</li>
+</ol></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

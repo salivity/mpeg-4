@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPEG-4 Motion Estimation and Compensation Explained - mpeg-4</title>
+    <meta name="description" content="This article explains how the MPEG-4 video encoding standard utilizes motion estimation and compensation to achieve high compression efficiency. By analyzing the movement of objects between video frames (estimation) and only encoding the differences (com">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/mpeg-4-motion-estimation-and-compensation-explained">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MPEG-4 Motion Estimation and Compensation Explained - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/mpeg-4-motion-estimation-and-compensation-explained" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explains how the MPEG-4 video encoding standard utilizes motion estimation and compensation to achieve high compression efficiency. By analyzing the movement of objects between video frames (estimation) and only encoding the differences (com" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="mpeg-4-motion-estimation-and-compensation-explained">MPEG-4
+Motion Estimation and Compensation Explained</h1>
+<p>This article explains how the MPEG-4 video encoding standard utilizes
+motion estimation and compensation to achieve high compression
+efficiency. By analyzing the movement of objects between video frames
+(estimation) and only encoding the differences (compensation), MPEG-4
+drastically reduces file sizes while maintaining visual quality. Below,
+we break down the core mechanisms of this process, including
+block-matching, motion vectors, residual coding, and the specific frame
+types involved.</p>
+<h2 id="the-goal-reducing-temporal-redundancy">The Goal: Reducing
+Temporal Redundancy</h2>
+<p>In any video sequence, consecutive frames are highly similar. If a
+person walks across a static background, most of the pixels representing
+the background remain unchanged from one frame to the next. MPEG-4
+exploits this "temporal redundancy" so it does not have to compress and
+save every frame as a completely new image. Instead, it describes frames
+based on how they have changed relative to previous or future
+frames.</p>
+<h2 id="step-1-motion-estimation-block-matching">Step 1: Motion
+Estimation (Block Matching)</h2>
+<p>Motion estimation is the process of locating moving objects within a
+video sequence. MPEG-4 performs this by dividing a video frame into a
+grid of small squares called <strong>macroblocks</strong> (typically
+16x16 pixels).</p>
+<ol type="1">
+<li><strong>Search Window:</strong> To encode a new frame (the target
+frame), the encoder looks at a previously encoded frame (the reference
+frame).</li>
+<li><strong>Block Matching:</strong> For each macroblock in the target
+frame, the encoder searches a designated area (the search window) in the
+reference frame to find a macroblock that looks most similar.</li>
+<li><strong>Evaluation Metrics:</strong> The encoder uses mathematical
+algorithms, such as the Sum of Absolute Differences (SAD) or Mean
+Absolute Difference (MAD), to determine which block in the reference
+frame is the closest match.</li>
+</ol>
+<p>Once the best matching block is found, the encoder calculates the
+spatial shift between the matching block in the reference frame and the
+block in the current frame. This displacement is represented as a 2D
+coordinate called a <strong>Motion Vector</strong>.</p>
+<h2 id="step-2-motion-compensation">Step 2: Motion Compensation</h2>
+<p>Once the motion vectors are established, the encoder performs motion
+compensation to construct a predicted frame.</p>
+<p>Instead of saving the entire pixel data of the current macroblock,
+the encoder uses the motion vector to copy the matching macroblock from
+the reference frame. However, because motion is rarely perfect, there is
+usually a slight difference between the predicted block and the actual
+block.</p>
+<p>To account for this, the encoder subtracts the predicted block from
+the actual target block. The result of this subtraction is the
+<strong>prediction error</strong> or <strong>residual</strong>. The
+encoder then compresses and saves only two things:</p>
+<ul>
+<li>The <strong>motion vectors</strong> (which require very little
+data).</li>
+<li>The <strong>residual error</strong> (which contains far less detail
+and is much easier to compress than a full image).</li>
+</ul>
+<p>During playback, the decoder reads the motion vectors, grabs the
+matching blocks from the reference frame, shifts them accordingly, and
+adds the decoded residual error to reconstruct the original frame.</p>
+<h2 id="frame-types-in-mpeg-4">Frame Types in MPEG-4</h2>
+<p>To manage motion estimation and compensation efficiently, MPEG-4
+organizes video frames into three primary types:</p>
+<ul>
+<li><strong>I-Frames (Intra-coded):</strong> These are self-contained
+frames compressed like JPEG images. They do not use motion estimation or
+compensation. They serve as random-access points and reference
+anchors.</li>
+<li><strong>P-Frames (Predicted):</strong> These frames use forward
+motion estimation. They reference the closest preceding I-frame or
+P-frame to predict their content.</li>
+<li><strong>B-Frames (Bi-directional Predicted):</strong> These frames
+use both past and future I-frames or P-frames as references. By
+interpolating motion from two directions, B-frames achieve the highest
+level of compression.</li>
+</ul>
+<h2 id="advanced-mpeg-4-features">Advanced MPEG-4 Features</h2>
+<p>MPEG-4 introduced several advanced tools to improve the accuracy of
+motion estimation and compensation:</p>
+<ul>
+<li><strong>Sub-pixel Motion Estimation:</strong> Instead of matching
+blocks pixel-by-pixel, MPEG-4 can interpolate half-pixel (1/2-pel) or
+quarter-pixel (1/4-pel) positions. This allows the encoder to track
+extremely smooth or slow movements.</li>
+<li><strong>Global Motion Compensation (GMC):</strong> This feature
+models global camera movements like panning, zooming, and tilting.
+Instead of assigning motion vectors to individual macroblocks, GMC
+applies a single motion model to the entire frame, saving massive
+amounts of data in scenes with camera movement.</li>
+</ul></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

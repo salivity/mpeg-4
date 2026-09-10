@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eye-Pattern Analysis in MPEG-4 Physical Layer - mpeg-4</title>
+    <meta name="description" content="Eye-pattern analysis is a fundamental diagnostic technique used to evaluate signal integrity and verify the physical layer delivery of digital video streams, such as MPEG-4. By superimposing repetitive digital transitions onto a single time base on an os">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/eye-pattern-analysis-in-mpeg-4-physical-layer">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Eye-Pattern Analysis in MPEG-4 Physical Layer - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/eye-pattern-analysis-in-mpeg-4-physical-layer" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Eye-pattern analysis is a fundamental diagnostic technique used to evaluate signal integrity and verify the physical layer delivery of digital video streams, such as MPEG-4. By superimposing repetitive digital transitions onto a single time base on an os" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="eye-pattern-analysis-in-mpeg-4-physical-layer">Eye-Pattern
+Analysis in MPEG-4 Physical Layer</h1>
+<p>Eye-pattern analysis is a fundamental diagnostic technique used to
+evaluate signal integrity and verify the physical layer delivery of
+digital video streams, such as MPEG-4. By superimposing repetitive
+digital transitions onto a single time base on an oscilloscope,
+engineers gain an immediate visual representation of signal quality,
+noise levels, and timing errors. This article explains how eye-pattern
+analysis functions, the critical metrics it reveals, and why it is
+indispensable for ensuring uncorrupted physical transmission of MPEG-4
+data over broadcast, IP, and coaxial networks.</p>
+<h3
+id="the-significance-of-the-physical-layer-in-mpeg-4-transmission">The
+Significance of the Physical Layer in MPEG-4 Transmission</h3>
+<p>MPEG-4 video streams depend heavily on physical layer stability,
+whether carried over Serial Digital Interface (SDI), DVB-ASI, Ethernet,
+or optical links. While MPEG-4 compression optimizes bandwidth
+efficiency, high-compression streams are particularly vulnerable to
+physical layer anomalies. A single burst of physical bit errors can
+corrupt keyframes (I-frames), causing visible artifacts, macroblocking,
+buffer underflows, or complete loss of decoding synchronization
+downstream. Eye-pattern analysis allows technicians to isolate and
+resolve physical hardware defects before they manifest as
+transport-stream or decoded-video faults.</p>
+<h3 id="key-metrics-assessed-via-eye-patterns">Key Metrics Assessed via
+Eye Patterns</h3>
+<p>An eye diagram provides comprehensive parametric data regarding the
+health of the underlying high-speed electrical or optical signal:</p>
+<ul>
+<li><strong>Eye Height:</strong> Measures the vertical opening of the
+diagram, reflecting the signal-to-noise ratio (SNR) and available noise
+margin. A compressed or narrow vertical opening indicates excessive
+cable attenuation, improper termination, or amplitude degradation.</li>
+<li><strong>Eye Width:</strong> Represents the horizontal opening, which
+indicates the timing jitter margin. A horizontally closed eye reveals
+clock drift, phase noise, or excessive dispersion in the transmission
+line.</li>
+<li><strong>Rise and Fall Times:</strong> Evaluates the transition
+speeds between binary states. Slower transition edges reduce the overall
+opening, while overly steep edges can induce high-frequency ringing and
+electromagnetic interference (EMI).</li>
+<li><strong>Jitter (Random and Deterministic):</strong> Visualized by
+the thickness of the crossing points at the center of the eye. Excessive
+jitter directly correlates with receiver bit error rate (BER)
+increases.</li>
+<li><strong>Overshoot and Ringing:</strong> Structural ripples at the
+top and bottom rails indicate impedance mismatches, cable reflections,
+or inadequate transmission line design.</li>
+</ul>
+<h3 id="mask-testing-and-compliance-verification">Mask Testing and
+Compliance Verification</h3>
+<p>To automate physical layer verification, test equipment utilizes
+standardized "masks"—geometric keep-out zones placed in the center and
+boundaries of the eye diagram. For an MPEG-4 transmission link to be
+certified, the waveform must not infringe upon the defined mask
+boundaries established by standards bodies such as SMPTE or ITU-T.
+Violations indicate that the receiver's decision-making circuitry will
+fail to reliably distinguish binary ones from zeros, leading to dropped
+MPEG-4 packets.</p>
+<h3 id="isolating-physical-faults-from-data-errors">Isolating Physical
+Faults from Data Errors</h3>
+<p>Eye-pattern analysis provides an objective demarcation point in video
+engineering. If an MPEG-4 stream exhibits playback artifacts, analyzing
+the physical eye pattern determines whether the issue stems from cable
+degradation, faulty connectors, or driver amplifier failure at the
+physical layer, or if the fault is rooted upstream in the MPEG-4 encoder
+configuration, multiplexer, or packet-layer routing. Consequently, it
+remains an essential tool for commissioning, troubleshooting, and
+maintaining reliable digital video delivery systems.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

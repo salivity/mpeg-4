@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPEG-4 AVC Pan-Scan Display via SEI Messages - mpeg-4</title>
+    <meta name="description" content="MPEG-4 AVC (H.264) manages dynamic aspect ratio adaptation and cropping through Supplemental Enhancement Information (SEI) messages, specifically utilizing the pan-scan rectangle SEI payload. This mechanism enables content creators to encode a single hig">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/mpeg-4-avc-pan-scan-display-via-sei-messages">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MPEG-4 AVC Pan-Scan Display via SEI Messages - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/mpeg-4-avc-pan-scan-display-via-sei-messages" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="MPEG-4 AVC (H.264) manages dynamic aspect ratio adaptation and cropping through Supplemental Enhancement Information (SEI) messages, specifically utilizing the pan-scan rectangle SEI payload. This mechanism enables content creators to encode a single hig" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="mpeg-4-avc-pan-scan-display-via-sei-messages">MPEG-4 AVC
+Pan-Scan Display via SEI Messages</h1>
+<p>MPEG-4 AVC (H.264) manages dynamic aspect ratio adaptation and
+cropping through Supplemental Enhancement Information (SEI) messages,
+specifically utilizing the pan-scan rectangle SEI payload. This
+mechanism enables content creators to encode a single high-resolution or
+wide-aspect video stream while providing decoders with metadata to
+dynamically extract and display specific regions of interest. By
+decoupling display cropping coordinates from the base video decoding
+process, AVC ensures optimal rendering across diverse display formats
+without requiring re-encoding or increasing transmission bandwidth.</p>
+<h3 id="the-role-of-sei-messaging-in-h264avc">The Role of SEI Messaging
+in H.264/AVC</h3>
+<p>In the MPEG-4 AVC standard, the bitstream separates core video
+decoding data from auxiliary rendering metadata. Supplemental
+Enhancement Information (SEI) messages are containers embedded within
+the video stream that provide non-normative data. This data is not
+strictly required by the decoder to reconstruct the raw video samples,
+but it assists display engines, broadcast receivers, and media players
+in presenting the video correctly.</p>
+<h3 id="structure-of-the-pan-scan-rectangle-sei-message">Structure of
+the Pan-Scan Rectangle SEI Message</h3>
+<p>Pan-scan metadata is transmitted inside the
+<code>pan_scan_rect</code> SEI message payload. This message defines one
+or more rectangular regions over the decoded picture buffer using
+specific syntax elements:</p>
+<ul>
+<li><strong><code>pan_scan_rect_id</code></strong>: An identifier
+assigned to the pan-scan rectangle, allowing systems to manage multiple
+predefined crop zones for different target aspect ratios (e.g., 4:3,
+16:9, or custom mobile ratios).</li>
+<li><strong><code>pan_scan_rect_cancel_flag</code></strong>: A boolean
+flag indicating whether previous pan-scan settings should be invalidated
+or reset.</li>
+<li><strong>Offset Parameters (<code>pan_scan_rect_left_offset</code>,
+<code>pan_scan_rect_right_offset</code>,
+<code>pan_scan_rect_top_offset</code>,
+<code>pan_scan_rect_bottom_offset</code>)</strong>: Signed integer
+values that specify the boundary coordinates of the crop window relative
+to the decoded picture's conformance cropping window. These values
+define the precise pixel boundaries to extract for presentation.</li>
+<li><strong><code>pan_scan_rect_repetition_period</code></strong>:
+Specifies the persistence of the pan-scan instruction, indicating
+whether the coordinates apply to a single frame, a range of frames, or
+until the next IDR/SEI update.</li>
+</ul>
+<h3 id="how-the-decoupled-display-process-works">How the Decoupled
+Display Process Works</h3>
+<ol type="1">
+<li><strong>Base Decoding</strong>: The MPEG-4 AVC decoder reconstructs
+the full-frame image according to the Sequence Parameter Set (SPS) and
+Picture Parameter Set (PPS), storing the full resolution frame in the
+Decoded Picture Buffer (DPB).</li>
+<li><strong>SEI Parsing</strong>: The decoder parses the active
+<code>pan_scan_rect</code> SEI message associated with the current
+Access Unit.</li>
+<li><strong>Coordinate Calculation</strong>: The display processor
+calculates the active viewing window by applying the offset values to
+the native frame dimensions.</li>
+<li><strong>Rendering and Scaling</strong>: The selected sub-rectangle
+is extracted and scaled by the video output processor to fit the target
+physical screen aspect ratio.</li>
+</ol>
+<h3 id="advantages-of-sei-based-pan-scan">Advantages of SEI-Based
+Pan-Scan</h3>
+<ul>
+<li><strong>Bandwidth Efficiency</strong>: Broadcasters and streaming
+services do not need to transmit separate streams for standard,
+widescreen, and mobile formats.</li>
+<li><strong>Non-Destructive Cropping</strong>: Because the coordinates
+exist solely in the metadata layer, the underlying picture data remains
+intact, allowing compatible decoders to switch display modes (such as
+full widescreen or letterbox) on demand.</li>
+<li><strong>Dynamic Camera Tracking</strong>: Pan-scan coordinates can
+change dynamically across consecutive frames, enabling smooth panning
+effects that follow the primary subject matter across scenes.</li>
+</ul></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logarithmic Search in MPEG-4 Motion Estimation - mpeg-4</title>
+    <meta name="description" content="The logarithmic search algorithm in MPEG-4 video encoding serves to drastically accelerate the motion estimation process by minimizing the computational load required to find motion vectors between consecutive video frames. In standard video compression,">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/logarithmic-search-in-mpeg-4-motion-estimation">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Logarithmic Search in MPEG-4 Motion Estimation - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/logarithmic-search-in-mpeg-4-motion-estimation" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The logarithmic search algorithm in MPEG-4 video encoding serves to drastically accelerate the motion estimation process by minimizing the computational load required to find motion vectors between consecutive video frames. In standard video compression," />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="logarithmic-search-in-mpeg-4-motion-estimation">Logarithmic
+Search in MPEG-4 Motion Estimation</h1>
+<p>The logarithmic search algorithm in MPEG-4 video encoding serves to
+drastically accelerate the motion estimation process by minimizing the
+computational load required to find motion vectors between consecutive
+video frames. In standard video compression, identifying temporal
+redundancies through block-matching is the most resource-intensive task.
+The logarithmic search replaces exhaustive pixel-by-pixel comparisons
+with a structured, multi-step sub-sampling method, enabling fast,
+real-time video encoding while preserving visual quality.</p>
+<h3 id="overcoming-the-bottleneck-of-exhaustive-search">Overcoming the
+Bottleneck of Exhaustive Search</h3>
+<p>In MPEG-4 inter-frame prediction, macroblocks in a current frame are
+matched against reference frames to calculate motion vectors. A Full
+Search (FS) algorithm evaluates every possible candidate location within
+a predefined search window, ensuring the absolute best match (global
+minimum error). However, this exhaustive method demands immense
+processing power and memory bandwidth, making real-time encoding on
+resource-constrained devices nearly impossible.</p>
+<p>The primary purpose of the logarithmic search algorithm—most notably
+the 2D Logarithmic Search (TDLS)—is to overcome this bottleneck by
+testing only a fraction of the candidate locations in a search area,
+thereby slashing latency and processor load.</p>
+<h3 id="how-the-logarithmic-search-operates">How the Logarithmic Search
+Operates</h3>
+<p>The algorithm systematically narrows down the search space using a
+coarse-to-fine strategy:</p>
+<ol type="1">
+<li><strong>Initial Grid Evaluation:</strong> The algorithm begins at
+the center of the search area and evaluates a sparse grid of candidate
+points spaced at an initial step size (typically a power of two, such as
+<span class="math inline">\(\pm 2\)</span> or <span
+class="math inline">\(\pm 4\)</span> pixels).</li>
+<li><strong>Error Minimization:</strong> It computes a matching
+criterion, such as the Sum of Absolute Differences (SAD) or Mean Squared
+Error (MSE), at each point.</li>
+<li><strong>Step-Size Reduction:</strong> The point with the minimum
+error becomes the center of the next iteration. If the best match is
+found at the current center or reaches the boundary, the step size is
+halved (e.g., from 4 to 2, then 2 to 1).</li>
+<li><strong>Final Refinement:</strong> When the step size reaches 1
+pixel, the algorithm evaluates the final adjacent points to select the
+ultimate motion vector.</li>
+</ol>
+<h3 id="core-benefits-in-mpeg-4-encoding">Core Benefits in MPEG-4
+Encoding</h3>
+<ul>
+<li><strong>Computational Efficiency:</strong> Logarithmic search
+decreases the number of evaluated search points from hundreds down to a
+small, logarithmic fraction (proportional to <span
+class="math inline">\(\log_2(N)\)</span> of the search window size <span
+class="math inline">\(N\)</span>).</li>
+<li><strong>Real-Time Performance:</strong> By reducing arithmetic
+operations, it enables hardware and software encoders to achieve
+standard frame rates (such as 30 or 60 frames per second) even on
+low-power mobile processors.</li>
+<li><strong>Balanced Compression and Quality:</strong> Although fast
+search algorithms risk getting trapped in local minima, logarithmic
+search reliably finds motion vectors close to the global optimum,
+ensuring the compressed MPEG-4 stream maintains high coding efficiency
+and peak signal-to-noise ratio (PSNR).</li>
+</ul></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

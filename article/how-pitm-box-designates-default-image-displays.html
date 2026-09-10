@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How pitm Box Designates Default Image Displays - mpeg-4</title>
+    <meta name="description" content="In MPEG-4-derived file formats such as the ISO Base Media File Format (ISOBMFF) and derived image specifications like HEIF and AVIF, the Primary Item Box (pitm) serves as an explicit pointer that identifies which item in a multi-item container acts as th">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/how-pitm-box-designates-default-image-displays">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How pitm Box Designates Default Image Displays - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/how-pitm-box-designates-default-image-displays" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="In MPEG-4-derived file formats such as the ISO Base Media File Format (ISOBMFF) and derived image specifications like HEIF and AVIF, the Primary Item Box (pitm) serves as an explicit pointer that identifies which item in a multi-item container acts as th" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="how-pitm-box-designates-default-image-displays">How pitm Box
+Designates Default Image Displays</h1>
+<p>In MPEG-4-derived file formats such as the ISO Base Media File Format
+(ISOBMFF) and derived image specifications like HEIF and AVIF, the
+Primary Item Box (<code>pitm</code>) serves as an explicit pointer that
+identifies which item in a multi-item container acts as the default or
+main image. Instead of requiring a parser to load all embedded assets or
+guess which image to display first, the <code>pitm</code> box contains a
+single identifier linking directly to the primary visual payload among
+thumbnails, image bursts, auxiliary maps, or metadata layers.</p>
+<h3 id="context-within-isobmff-and-the-meta-box">Context Within ISOBMFF
+and the Meta Box</h3>
+<p>Unlike traditional MP4 files that organize continuous audiovisual
+content into timed "tracks," untimed visual items (such as static
+images, image sequences, or configuration properties) are stored as
+discrete "items" inside a root or track-level Metadata Box
+(<code>meta</code>).</p>
+<p>A single container can store dozens of separate items, including:</p>
+<ul>
+<li>Master full-resolution images</li>
+<li>Derived images (e.g., identity transforms, rotations, or grid
+assemblies)</li>
+<li>Auxiliary images (such as alpha/depth maps)</li>
+<li>Thumbnail previews</li>
+</ul>
+<p>Because the container does not inherently order these items by
+presentation priority, the parser relies on explicit box definitions
+inside <code>meta</code> to determine how to process the file.</p>
+<h3 id="internal-structure-of-the-pitm-box">Internal Structure of the
+<code>pitm</code> Box</h3>
+<p>The <code>pitm</code> box is defined as a <code>FullBox</code>,
+meaning it includes standard 4-byte box header fields along with a
+1-byte version and 3-byte flag descriptor:</p>
+<ul>
+<li><strong>Box Type:</strong> <code>'pitm'</code></li>
+<li><strong>Version 0:</strong> Uses a 16-bit unsigned integer
+(<code>item_ID</code>) to reference items with IDs up to 65,535.</li>
+<li><strong>Version 1:</strong> Extends the <code>item_ID</code> field
+to a 32-bit unsigned integer to support larger item collections.</li>
+<li><strong>Flags:</strong> Set to 0.</li>
+<li><strong>Payload:</strong> The specific <code>item_ID</code>
+representing the default image.</li>
+</ul>
+<h3 id="how-parsers-resolve-the-default-image">How Parsers Resolve the
+Default Image</h3>
+<p>When an image rendering engine processes an ISOBMFF-derived image
+file, it follows a structured sequence:</p>
+<ol type="1">
+<li><strong>Locate the Meta Box:</strong> The parser navigates to the
+top-level <code>'meta'</code> box.</li>
+<li><strong>Read the Primary Item Box:</strong> It extracts the
+<code>item_ID</code> specified inside the <code>'pitm'</code> box.</li>
+<li><strong>Cross-Reference Item Information
+(<code>iinf</code>):</strong> The parser checks the Item Information Box
+to determine the format and properties associated with that
+<code>item_ID</code> (such as codec type, MIME type, or item
+protection).</li>
+<li><strong>Locate Data Extents (<code>iloc</code>):</strong> The parser
+queries the Item Location Box (<code>iloc</code>) using the extracted
+<code>item_ID</code> to find the exact byte offsets and lengths where
+the primary image's compressed bitstream is stored inside the Media Data
+Box (<code>mdat</code>).</li>
+<li><strong>Render the Display:</strong> The parser decodes and displays
+the targeted payload immediately, ignoring secondary assets like
+thumbnails or alpha channels until explicitly requested.</li>
+</ol>
+<h3 id="fallback-and-best-practices">Fallback and Best Practices</h3>
+<p>If a container contains untimed image items but lacks a
+<code>pitm</code> box, the file structure becomes ambiguous. Conforming
+HEIF and AVIF readers will typically fall back to treating the first
+valid image entry found within the Item Information Box
+(<code>iinf</code>) as the display image, but standard compliance
+requires the presence of <code>'pitm'</code> whenever a single visual
+representation must be unambiguously presented as the primary cover
+image.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

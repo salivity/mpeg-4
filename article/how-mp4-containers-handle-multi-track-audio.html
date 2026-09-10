@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How MP4 Containers Handle Multi-Track Audio - mpeg-4</title>
+    <meta name="description" content="The MPEG-4 Part 14 (MP4) container format encapsulates multi-track audio alternatives by utilizing a hierarchical box-based architecture derived from the ISO Base Media File Format (ISOBMFF). Through dedicated track structures, standardized language tagg">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/how-mp4-containers-handle-multi-track-audio">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How MP4 Containers Handle Multi-Track Audio - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/how-mp4-containers-handle-multi-track-audio" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The MPEG-4 Part 14 (MP4) container format encapsulates multi-track audio alternatives by utilizing a hierarchical box-based architecture derived from the ISO Base Media File Format (ISOBMFF). Through dedicated track structures, standardized language tagg" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="how-mp4-containers-handle-multi-track-audio">How MP4 Containers
+Handle Multi-Track Audio</h1>
+<p>The MPEG-4 Part 14 (MP4) container format encapsulates multi-track
+audio alternatives by utilizing a hierarchical box-based architecture
+derived from the ISO Base Media File Format (ISOBMFF). Through dedicated
+track structures, standardized language tagging, and grouping
+mechanisms, an MP4 file can store multiple independent audio
+streams—such as different languages, audio descriptions, commentary, or
+varying channel configurations—within a single file. This allows
+playback engines to dynamically identify, select, and switch between
+alternative tracks without requiring redundant video data or stream
+interruptions.</p>
+<h3 id="the-box-hierarchy-for-audio-tracks">The Box Hierarchy for Audio
+Tracks</h3>
+<p>MP4 files organize data into self-contained units called "boxes" (or
+atoms). Metadata defining the structure of the media resides within the
+Movie Box (<code>moov</code>), while the raw compressed media samples
+sit inside the Media Data Box (<code>mdat</code>).</p>
+<p>For every distinct audio stream, the container generates an
+independent Track Box (<code>trak</code>) inside the <code>moov</code>
+box. A file containing English stereo, Spanish stereo, and English
+director's commentary will contain three separate <code>trak</code>
+instances alongside the video track.</p>
+<h3 id="defining-alternatives-with-alternate_group">Defining
+Alternatives with <code>alternate_group</code></h3>
+<p>The primary mechanism for managing alternative audio streams is the
+<code>alternate_group</code> field located inside the Track Header Box
+(<code>tkhd</code>).</p>
+<ul>
+<li><strong>Group Identification:</strong> The
+<code>alternate_group</code> is an integer identifier. All tracks that
+serve as mutual alternatives to one another share the same non-zero ID.
+For example, three language options might all be assigned
+<code>alternate_group = 1</code>.</li>
+<li><strong>Mutual Exclusion:</strong> When tracks share an
+<code>alternate_group</code> ID, it signals to the demuxer that only one
+of these tracks should be decoded and played simultaneously.</li>
+<li><strong>Distinct Groups:</strong> If a secondary audio stream is
+intended to play concurrently with the main audio (such as an audio
+description or secondary commentary mix), it can be assigned a different
+group ID or set to <code>0</code> (indicating no group membership).</li>
+</ul>
+<h3 id="language-and-role-metadata">Language and Role Metadata</h3>
+<p>To enable automated or user-driven track selection, each audio track
+provides identification metadata through sub-boxes within its
+<code>trak</code> hierarchy:</p>
+<ol type="1">
+<li><strong>Media Header Box (<code>mdhd</code>):</strong> Contains the
+ISO 639-2/T three-letter language code (e.g., <code>eng</code>,
+<code>spa</code>, <code>fra</code>). Players evaluate this field against
+system preferences to select the default track automatically.</li>
+<li><strong>Handler Reference Box (<code>hdlr</code>):</strong> Declares
+the track type as <code>soun</code> (sound media), instructing the
+demuxer to route the stream to an audio decoder.</li>
+<li><strong>User Data and Extended Tags (<code>udta</code>):</strong>
+Allows encoders to embed human-readable labels, such as "Director's
+Commentary" or "Stereo Downmix," which media players display in audio
+selection menus.</li>
+</ol>
+<h3 id="codec-and-channel-independence">Codec and Channel
+Independence</h3>
+<p>Each audio track maintains its own Sample Table Box
+(<code>stbl</code>) containing a Sample Description Box
+(<code>stsd</code>). This allows each alternative audio track to operate
+with complete technical independence:</p>
+<ul>
+<li><strong>Format Diversity:</strong> One track may use AAC-LC for
+broad compatibility, while an alternative track inside the same file
+uses Dolby Digital Plus (E-AC-3) for multi-channel surround sound.</li>
+<li><strong>Channel Layouts:</strong> Tracks can vary in channel counts
+(e.g., 2.0 stereo vs. 5.1 surround) and sample rates without conflicting
+with each other.</li>
+</ul>
+<h3 id="interleaving-and-demuxing-in-the-media-data-box">Interleaving
+and Demuxing in the Media Data Box</h3>
+<p>Although each audio track is defined separately in metadata, the
+actual encoded frames are interleaved inside the <code>mdat</code> box.
+The MP4 container breaks the audio streams and video streams into chunks
+and interleaves them based on presentation time.</p>
+<p>The Sample Table (<code>stbl</code>) provides the byte offsets
+(<code>stco</code> or <code>co64</code>), chunk mappings
+(<code>stsc</code>), and time-to-sample tables (<code>stts</code>) for
+each track. When a user switches languages during playback, the demuxer
+uses these tables to cease reading sample offsets for the inactive audio
+track and begin reading the sample offsets for the selected track,
+maintaining continuous synchronization with the video stream.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

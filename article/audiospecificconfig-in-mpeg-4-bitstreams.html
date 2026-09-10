@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AudioSpecificConfig in MPEG-4 Bitstreams - mpeg-4</title>
+    <meta name="description" content="The AudioSpecificConfig (ASC) is the foundational configuration structure defined in the ISO/IEC 14496-3 (MPEG-4 Audio) standard, serving as the essential metadata payload that enables an audio decoder to correctly interpret and render an MPEG-4 audio bi">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/audiospecificconfig-in-mpeg-4-bitstreams">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="AudioSpecificConfig in MPEG-4 Bitstreams - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/audiospecificconfig-in-mpeg-4-bitstreams" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The AudioSpecificConfig (ASC) is the foundational configuration structure defined in the ISO/IEC 14496-3 (MPEG-4 Audio) standard, serving as the essential metadata payload that enables an audio decoder to correctly interpret and render an MPEG-4 audio bi" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="audiospecificconfig-in-mpeg-4-bitstreams">AudioSpecificConfig in
+MPEG-4 Bitstreams</h1>
+<p>The <code>AudioSpecificConfig</code> (ASC) is the foundational
+configuration structure defined in the ISO/IEC 14496-3 (MPEG-4 Audio)
+standard, serving as the essential metadata payload that enables an
+audio decoder to correctly interpret and render an MPEG-4 audio
+bitstream. Without this structure, an MPEG-4 audio decoder cannot
+determine the coding tools used, the sampling rate, the channel
+allocation, or how to unpack the incoming raw audio frames.</p>
+<h3 id="primary-purpose-and-role">Primary Purpose and Role</h3>
+<p>In MPEG-4 audio delivery, compressed audio frames consist purely of
+encoded spectral data and bitstream elements. To optimize bandwidth and
+eliminate redundant frame headers, static configuration data is
+separated from individual audio frames. The
+<code>AudioSpecificConfig</code> encapsulates this static configuration.
+It provides the decoder with all necessary parameters to allocate
+internal buffers, set up filter banks, configure channel layouts, and
+initialize the appropriate decoding pipeline prior to processing raw
+data blocks.</p>
+<h3 id="key-structural-components">Key Structural Components</h3>
+<p>The bitstream syntax of <code>AudioSpecificConfig</code> is
+hierarchically structured and contains several mandatory and conditional
+fields:</p>
+<ul>
+<li><strong>Audio Object Type (<code>audioObjectType</code>):</strong>
+Identifies the exact compression scheme and toolset required (e.g., AAC
+Main, AAC-LC, AAC-LD, HE-AAC, or ALS). It dictates which specific parser
+and decoding algorithms must be engaged.</li>
+<li><strong>Sampling Frequency Index
+(<code>samplingFrequencyIndex</code>):</strong> A 4-bit field mapping to
+standard audio sample rates (ranging from 96 kHz down to 7.35 kHz). If
+set to an escape value (<code>0xF</code>), a direct 24-bit integer
+(<code>samplingFrequency</code>) defines a custom explicit sample
+rate.</li>
+<li><strong>Channel Configuration
+(<code>channelConfiguration</code>):</strong> A 4-bit field defining
+standard speaker layouts (e.g., mono, stereo, 5.1 surround). When custom
+or complex multi-channel mapping is required, this field is set to
+<code>0</code>, and a nested <code>program_config_element()</code> (PCE)
+defines the speaker topology.</li>
+<li><strong>Object-Specific Configurations:</strong> Depending on the
+Audio Object Type, the ASC embeds dedicated sub-configurations, most
+notably the <code>GASpecificConfig</code> (General Audio Specific
+Config) for AAC variants. This sub-element conveys frame length (1024 or
+960 samples), core coder dependencies, and scalability layers.</li>
+<li><strong>Extension Signatures (e.g., SBR and PS):</strong> To support
+backward compatibility with advanced profiles like HE-AAC (Spectral Band
+Replication) and HE-AAC v2 (Parametric Stereo), the ASC can append
+extension type fields. This allows basic AAC-LC decoders to parse the
+baseline elements while enhanced decoders detect and initialize
+high-efficiency post-processing modules.</li>
+</ul>
+<h3 id="transmission-and-transport-methods">Transmission and Transport
+Methods</h3>
+<p><code>AudioSpecificConfig</code> is transmitted either out-of-band or
+within bitstream multiplex wrappers:</p>
+<ul>
+<li><strong>File Formats (MP4/M4A):</strong> In ISO base media file
+formats, the ASC is stored out-of-band inside the initialization header
+within the Elementary Stream Descriptor Atom (<code>esds</code>),
+specifically in the <code>DecoderConfigDescriptor</code>.</li>
+<li><strong>Network Streaming (RTSP/SDP):</strong> In RTP/RTSP streaming
+sessions, the ASC is conveyed out-of-band as a hexadecimal string inside
+the Session Description Protocol (SDP) via the <code>config</code>
+parameter of the <code>a=fmtp</code> attribute line.</li>
+<li><strong>Multiplexed Bitstreams (LATM/LOAS):</strong> In broadcast
+environments using Low-overhead Audio Stream (LOAS) or Low-overhead
+Audio Transport Multiplex (LATM), the ASC is encapsulated inside the
+<code>AudioStreamOwner</code> (AudioMuxConfig) header, either
+transmitted periodically in-band or announced prior to the stream.</li>
+</ul></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

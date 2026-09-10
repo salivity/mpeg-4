@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ISOBMFF vs MP4: Key Container Differences - mpeg-4</title>
+    <meta name="description" content="The ISO Base Media File Format (ISOBMFF) and the finalized MPEG-4 Part 14 (MP4) container are closely related standards, but they serve different roles in multimedia storage. In short, ISOBMFF is an abstract architectural blueprint that defines a flexibl">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/isobmff-vs-mp4-key-container-differences">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="ISOBMFF vs MP4: Key Container Differences - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/isobmff-vs-mp4-key-container-differences" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The ISO Base Media File Format (ISOBMFF) and the finalized MPEG-4 Part 14 (MP4) container are closely related standards, but they serve different roles in multimedia storage. In short, ISOBMFF is an abstract architectural blueprint that defines a flexibl" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="isobmff-vs-mp4-key-container-differences">ISOBMFF vs MP4: Key
+Container Differences</h1>
+<p>The ISO Base Media File Format (ISOBMFF) and the finalized MPEG-4
+Part 14 (MP4) container are closely related standards, but they serve
+different roles in multimedia storage. In short, ISOBMFF is an abstract
+architectural blueprint that defines a flexible, box-based structure for
+time-based media, whereas MP4 is a specific, finalized implementation of
+that blueprint designed to package MPEG-4 audio, video, and metadata
+streams. Understanding the difference comes down to recognizing the
+relationship between a generalized base specification and a concrete
+media format.</p>
+<h2 id="what-is-the-iso-base-media-file-format-isobmff">What is the ISO
+Base Media File Format (ISOBMFF)?</h2>
+<p>Standardized as <strong>ISO/IEC 14496-12</strong>, the ISO Base Media
+File Format is an object-oriented file structure derived from Apple's
+QuickTime file format. It acts as an open, generic framework rather than
+a directly playable media container for end-users.</p>
+<p>ISOBMFF organizes data into hierarchical blocks called
+<strong>boxes</strong> (or atoms), such as:</p>
+<ul>
+<li><code>ftyp</code>: File type and compatibility brand.</li>
+<li><code>moov</code>: Metadata container describing the timing,
+structure, and codecs of the tracks.</li>
+<li><code>mdat</code>: Media data container holding the raw audio,
+video, or subtitle payloads.</li>
+</ul>
+<p>Because ISOBMFF is codec-agnostic and structural, it does not mandate
+specific compression standards. Instead, it serves as the universal
+foundation for numerous modern multimedia formats, including MP4,
+QuickTime (MOV), 3GP, HEIF, and AVIF.</p>
+<h2 id="what-is-the-mpeg-4-container-mp4">What is the MPEG-4 Container
+(MP4)?</h2>
+<p>Standardized as <strong>ISO/IEC 14496-14</strong>, the MP4 container
+format is an explicit extension and finalized profile of ISOBMFF. It
+takes the abstract rules and box hierarchy defined in ISOBMFF and
+standardizes how MPEG-specific codecs (such as H.264/AVC, H.265/HEVC,
+and AAC) and object descriptors must be stored, synchronized, and
+identified.</p>
+<p>Files adhering to the MP4 specification carry defined file extensions
+(typically <code>.mp4</code>, <code>.m4a</code>, or <code>.m4v</code>)
+and declare compatibility brands within the <code>ftyp</code> box (such
+as <code>mp41</code>, <code>mp42</code>, or <code>isom</code>).</p>
+<h2 id="core-differences">Core Differences</h2>
+<h3 id="1-specification-level-template-vs-implementation">1.
+Specification Level: Template vs. Implementation</h3>
+<ul>
+<li><strong>ISOBMFF</strong> is a structural template defining how to
+build a media file, establish timelines, and encapsulate data
+packets.</li>
+<li><strong>MP4</strong> is a concrete deployment of that template with
+designated rules for handling MPEG-compliant media streams.</li>
+</ul>
+<h3 id="2-codec-and-feature-support">2. Codec and Feature Support</h3>
+<ul>
+<li><strong>ISOBMFF</strong> does not define specific audio or video
+codecs. It provides generic sample entry structures that other
+specifications can build upon.</li>
+<li><strong>MP4</strong> explicitly specifies how to map MPEG-4 codecs,
+Advanced Audio Coding (AAC), timed text, and streaming hints into the
+container.</li>
+</ul>
+<h3 id="3-file-type-identification-ftyp-brand">3. File Type
+Identification (<code>ftyp</code> Brand)</h3>
+<ul>
+<li>Files based purely on <strong>ISOBMFF</strong> are labeled with
+generic compatibility identifiers, primarily the <code>isom</code>
+brand.</li>
+<li>A finalized <strong>MP4</strong> container identifies itself with
+specific brands, such as <code>mp41</code> or <code>mp42</code>,
+signaling to media players that the contents conform strictly to the
+MPEG-4 Part 14 specification.</li>
+</ul>
+<h3 id="4-relationship-and-hierarchy">4. Relationship and Hierarchy</h3>
+<p>All MP4 files are ISOBMFF files, but not all ISOBMFF files are MP4
+files. ISOBMFF serves as the parent standard, while MP4 is one of its
+most widely deployed derivatives.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

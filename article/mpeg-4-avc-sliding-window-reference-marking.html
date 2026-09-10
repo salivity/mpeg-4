@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPEG-4 AVC Sliding Window Reference Marking - mpeg-4</title>
+    <meta name="description" content="This article provides an overview of how MPEG-4 AVC (H.264) decoders manage reference frames using the Sliding Window reference picture marking mode. It explores the Decoded Picture Buffer (DPB) mechanics, the automatic First-In, First-Out (FIFO) evictio">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/mpeg-4-avc-sliding-window-reference-marking">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MPEG-4 AVC Sliding Window Reference Marking - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/mpeg-4-avc-sliding-window-reference-marking" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article provides an overview of how MPEG-4 AVC (H.264) decoders manage reference frames using the Sliding Window reference picture marking mode. It explores the Decoded Picture Buffer (DPB) mechanics, the automatic First-In, First-Out (FIFO) evictio" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="mpeg-4-avc-sliding-window-reference-marking">MPEG-4 AVC Sliding
+Window Reference Marking</h1>
+<p>This article provides an overview of how MPEG-4 AVC (H.264) decoders
+manage reference frames using the Sliding Window reference picture
+marking mode. It explores the Decoded Picture Buffer (DPB) mechanics,
+the automatic First-In, First-Out (FIFO) eviction process, and the
+specific signaling syntax used to maintain decoder memory constraints
+during video playback.</p>
+<hr />
+<h3 id="the-role-of-the-decoded-picture-buffer-dpb">The Role of the
+Decoded Picture Buffer (DPB)</h3>
+<p>In MPEG-4 AVC video decoding, inter-predicted frames rely on
+previously decoded pictures stored in the Decoded Picture Buffer (DPB).
+Because hardware memory is finite, the decoder must actively manage
+which frames remain available for reference and which can be discarded.
+The standard provides two methods for reference picture management:
+Adaptive Memory Control (using explicit MMCO commands) and the default
+<strong>Sliding Window</strong> mechanism.</p>
+<hr />
+<h3 id="how-the-sliding-window-mode-operates">How the Sliding Window
+Mode Operates</h3>
+<p>The Sliding Window reference picture marking mode is an automated,
+First-In, First-Out (FIFO) queue system. It ensures that the number of
+active reference frames never exceeds the decoder's allocated capacity
+without requiring explicit frame-by-frame removal instructions from the
+video bitstream.</p>
+<ol type="1">
+<li><p><strong>Signaling Activation:</strong> The sliding window mode is
+engaged when the slice header flag
+<code>adaptive_ref_pic_marking_mode_flag</code> is set to
+<code>0</code>. This signals to the decoder that reference picture
+marking should follow standard automated rules rather than custom memory
+commands.</p></li>
+<li><p><strong>Frame Classification:</strong> When a newly decoded
+reference picture enters the DPB, it is initially marked as a "used for
+short-term reference" picture.</p></li>
+<li><p><strong>Capacity Threshold Evaluation:</strong> The decoder
+evaluates the maximum number of reference frames allowed, determined by
+the <code>max_num_ref_frames</code> syntax element defined in the active
+Sequence Parameter Set (SPS).</p></li>
+<li><p><strong>FIFO Eviction:</strong> If adding the newly decoded
+picture causes the total number of short-term reference frames to exceed
+the allowed limit (accounting for any long-term reference frames
+present):</p>
+<ul>
+<li>The decoder locates the short-term reference picture with the lowest
+<code>FrameNum</code> (the oldest in decoding order).</li>
+<li>This oldest frame is automatically re-marked as "unused for
+reference."</li>
+<li>Once a frame is marked as unused for reference and has already been
+output (displayed), its memory slot in the DPB can be overwritten by
+incoming frames.</li>
+</ul></li>
+</ol>
+<hr />
+<h3 id="key-operational-characteristics">Key Operational
+Characteristics</h3>
+<ul>
+<li><strong>Zero Overhead:</strong> Unlike adaptive marking, which
+requires transmitting specific Memory Management Control Operation
+(MMCO) commands in slice headers, the sliding window operates
+implicitly, saving bitstream overhead.</li>
+<li><strong>Short-Term Focus:</strong> The sliding window only manages
+frames marked as short-term references. Pictures explicitly marked as
+"used for long-term reference" are shielded from the sliding window and
+will not be evicted automatically.</li>
+<li><strong>Deterministic Synchronization:</strong> Because the eviction
+logic is strictly defined by decoding order and fixed buffer limits,
+both the encoder and decoder maintain identical reference lists without
+needing continuous synchronization commands.</li>
+</ul></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

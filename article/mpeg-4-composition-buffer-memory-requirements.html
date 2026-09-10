@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPEG-4 Composition Buffer Memory Requirements - mpeg-4</title>
+    <meta name="description" content="The MPEG-4 Composition Buffer (CB) plays a critical role in the MPEG-4 Systems terminal architecture by storing decoded Composition Units (CUs) before they are rendered by the compositor. This article details the specific memory management requirements g">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/mpeg-4-composition-buffer-memory-requirements">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MPEG-4 Composition Buffer Memory Requirements - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/mpeg-4-composition-buffer-memory-requirements" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The MPEG-4 Composition Buffer (CB) plays a critical role in the MPEG-4 Systems terminal architecture by storing decoded Composition Units (CUs) before they are rendered by the compositor. This article details the specific memory management requirements g" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="mpeg-4-composition-buffer-memory-requirements">MPEG-4
+Composition Buffer Memory Requirements</h1>
+<p>The MPEG-4 Composition Buffer (CB) plays a critical role in the
+MPEG-4 Systems terminal architecture by storing decoded Composition
+Units (CUs) before they are rendered by the compositor. This article
+details the specific memory management requirements governing the
+Composition Buffer, including sizing constraints, memory allocation
+policies, data persistence rules, and synchronization mechanisms
+necessary to maintain seamless audiovisual playback without buffer
+overflow or underflow.</p>
+<h3 id="architecture-overview">Architecture Overview</h3>
+<p>In the MPEG-4 terminal model (ISO/IEC 14496-1), elementary streams
+flow from the network or storage into the Decoding Buffer (DB), pass
+through the stream decoder, and are output as uncompressed Composition
+Units directly into the Composition Buffer. The compositor subsequently
+fetches these units from the CB to assemble the final scene on the
+display or audio output.</p>
+<h3 id="sizing-and-memory-allocation">Sizing and Memory Allocation</h3>
+<p>Memory allocation for the Composition Buffer depends on the specific
+media type, stream profiles, and level constraints defined in the MPEG-4
+specification:</p>
+<ul>
+<li><strong>Uncompressed Frame Storage:</strong> The CB must allocate
+sufficient contiguous memory to hold raw, uncompressed media samples.
+For visual streams, this includes YUV/RGB pixel planes along with
+transparency (alpha) channels for arbitrarily shaped visual objects. For
+audio streams, it must accommodate raw PCM buffers.</li>
+<li><strong>Peak Memory Sizing:</strong> Buffer capacity must be sized
+according to the maximum dimensions and bit depth defined in the
+stream's <code>DecoderConfigDescriptor</code>. It must accommodate peak
+frame rates and maximum frame sizes to prevent allocation failures
+during complex scene presentations.</li>
+<li><strong>Multi-Object Allocation:</strong> Because MPEG-4 handles
+scene composition with multiple independent visual and audio objects,
+the system must dynamically allocate or partition memory across multiple
+concurrent composition buffers.</li>
+</ul>
+<h3 id="timing-and-unit-lifecycle">Timing and Unit Lifecycle</h3>
+<p>The management of data entering and leaving the Composition Buffer
+relies on strict clock synchronization:</p>
+<ul>
+<li><strong>Ingress (Decoding Time):</strong> A Composition Unit enters
+the CB immediately after decoding. If a Decoding Time Stamp (DTS) is
+present, the decoded data is placed into the CB at that precise
+instant.</li>
+<li><strong>Egress (Composition Time):</strong> A Composition Unit is
+consumed and rendered at its designated Composition Time Stamp (CTS),
+synchronized to the Object Clock Reference (OCR) or System Time Clock
+(STC).</li>
+<li><strong>Deallocation:</strong> Once a CU’s presentation duration
+expires, its memory must be immediately freed or recycled via a buffer
+pool to accommodate upcoming decoded frames.</li>
+</ul>
+<h3 id="object-persistence-and-retention-rules">Object Persistence and
+Retention Rules</h3>
+<p>Unlike traditional linear video pipelines where frames are discarded
+immediately after rendering, MPEG-4 supports object-based
+persistence:</p>
+<ul>
+<li><strong>Continuous vs. Static Objects:</strong> Continuous media
+(such as video) replaces buffer contents at regular frame intervals.
+Static media (such as background graphics or 2D sprites) must remain
+allocated in the CB until an explicit scene update or terminal event
+instructs the compositor to release the resource.</li>
+<li><strong>Shared Memory Schemes:</strong> To minimize copying
+overhead, high-performance implementations often utilize zero-copy
+memory management, where decoded frames in the CB are directly mapped as
+rendering surfaces for the compositor or GPU.</li>
+</ul>
+<h3 id="overflow-and-underflow-prevention">Overflow and Underflow
+Prevention</h3>
+<p>Proper memory management requires the terminal to adhere to the
+MPEG-4 System Target Decoder (STD) model:</p>
+<ul>
+<li><strong>Overflow Prevention:</strong> The decoder must not output a
+CU if the target CB lacks adequate space. If the buffer overflows,
+unrendered data is overwritten, causing visual artifacts or
+desynchronization.</li>
+<li><strong>Underflow Prevention:</strong> If the compositor queries the
+CB at a specific CTS and the required CU is absent due to decoding
+latency, an underflow condition occurs, leading to frame drops or
+repeated frames.</li>
+</ul></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

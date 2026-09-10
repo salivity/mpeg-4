@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1080p MPEG-4 AVC Decoding Memory Requirements - mpeg-4</title>
+    <meta name="description" content="Decoding a 1080p MPEG-4 AVC (H.264) video stream requires a dedicated hardware memory footprint determined by frame resolution, color subsampling, reference frame allocations, and internal processing buffers. This article breaks down the exact memory req">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/1080p-mpeg-4-avc-decoding-memory-requirements">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="1080p MPEG-4 AVC Decoding Memory Requirements - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/1080p-mpeg-4-avc-decoding-memory-requirements" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Decoding a 1080p MPEG-4 AVC (H.264) video stream requires a dedicated hardware memory footprint determined by frame resolution, color subsampling, reference frame allocations, and internal processing buffers. This article breaks down the exact memory req" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="1080p-mpeg-4-avc-decoding-memory-requirements">1080p MPEG-4 AVC
+Decoding Memory Requirements</h1>
+<p>Decoding a 1080p MPEG-4 AVC (H.264) video stream requires a dedicated
+hardware memory footprint determined by frame resolution, color
+subsampling, reference frame allocations, and internal processing
+buffers. This article breaks down the exact memory requirements for
+hardware decoders, detailing the sizes for the Decoded Picture Buffer
+(DPB), raw frame stores, coded bitstream input buffers, and metadata
+scratchpads needed for smooth 1080p playback.</p>
+<h3 id="raw-frame-buffer-calculations">Raw Frame Buffer
+Calculations</h3>
+<p>MPEG-4 AVC decodes video in 16x16 macroblock units. Standard 1080p
+video (1920x1080) is rounded up to the nearest macroblock boundary,
+resulting in an internal resolution of 1920x1088 pixels (120x68
+macroblocks).</p>
+<p>For the standard 8-bit YUV 4:2:0 chroma subsampling profile:</p>
+<ul>
+<li><strong>Luma (Y) Plane:</strong> <span class="math inline">\(1920
+\times 1088 = 2,088,960\text{ bytes}\)</span> (~2.09 MB)</li>
+<li><strong>Chroma (Cb/Cr) Planes:</strong> <span
+class="math inline">\((1920 \times 1088) / 2 = 1,044,480\text{
+bytes}\)</span> (~1.04 MB)</li>
+<li><strong>Total per Raw Uncompressed Frame:</strong> <span
+class="math inline">\(3,133,440\text{ bytes}\)</span> (~2.99 MiB or 3.13
+MB)</li>
+</ul>
+<h3 id="decoded-picture-buffer-dpb">Decoded Picture Buffer (DPB)</h3>
+<p>The DPB stores reference frames used for inter-frame prediction and
+handles frame reordering for display. H.264 specifies profile levels
+that dictate the maximum DPB capacity.</p>
+<p>For 1080p streams, the standard profile level is <strong>Level
+4.1</strong>:</p>
+<ul>
+<li><strong>Standard Level 4.1 DPB Limit:</strong> 12,288,000 bytes
+(equivalent to 4 reference frames at <span
+class="math inline">\(1920\times1088\)</span>).</li>
+<li><strong>Typical Operational DPB:</strong> Hardware decoders
+generally allocate between 4 and 5 reference frame buffers plus 1 active
+decoding frame buffer.</li>
+<li><strong>DPB Memory Footprint:</strong> <span class="math inline">\(5
+\text{ to } 6 \text{ frames} \times 3.13\text{ MB} \approx
+\mathbf{15.65\text{ MB to } 18.78\text{ MB}}\)</span>.</li>
+</ul>
+<p>If an encoder targets Level 5.1 with maximum reference frames (up to
+16 frames), DPB memory requirements can scale up to <strong>~50
+MB</strong>, though standard broadcast and streaming profiles strictly
+constrain this to 4–5 frames.</p>
+<h3 id="coded-picture-buffer-cpb--bitstream-buffer">Coded Picture Buffer
+(CPB / Bitstream Buffer)</h3>
+<p>The CPB temporarily holds the incoming compressed elementary stream
+(NAL units) before entropy decoding:</p>
+<ul>
+<li>Under H.264 Level 4.1, the maximum bit rate is 50 Mbps (or 62.5 Mbps
+for High Profile).</li>
+<li>The CPB is typically sized between <strong>2 MB and 8 MB</strong> to
+handle bitrate spikes, VBV (Video Buffer Verifier) compliance, and
+smooth jitter across network or disk inputs.</li>
+</ul>
+<h3 id="motion-vector-and-intermediate-metadata-buffers">Motion Vector
+and Intermediate Metadata Buffers</h3>
+<p>Hardware decoders require working memory to maintain temporal direct
+mode data, motion vectors (MVs), and deblocking filter states:</p>
+<ul>
+<li><strong>Collocated Motion Vector Storage:</strong> Approximately 64
+to 128 bytes per macroblock per reference frame. For 8,160 macroblocks
+across 5 frames, this requires roughly <strong>0.5 MB to 1
+MB</strong>.</li>
+<li><strong>Deblocking Filter and Intra-Prediction Line
+Buffers:</strong> Internal SRAM or dedicated DRAM line buffers requiring
+approximately <strong>128 KB to 256 KB</strong>.</li>
+</ul>
+<h3 id="total-system-memory-footprint">Total System Memory
+Footprint</h3>
+<p>To reliably decode a 1080p H.264 Level 4.1 stream, the total memory
+footprint breakdown is:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Component</th>
+<th style="text-align: left;">Typical Memory Allocation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Decoded Picture Buffer (4–5 Ref +
+1 Target)</strong></td>
+<td style="text-align: left;">15.65 MB – 18.78 MB</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Display/Render Pipeline Buffers
+(Double/Triple Buffering)</strong></td>
+<td style="text-align: left;">6.26 MB – 9.39 MB</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Coded Picture / Input Bitstream
+Buffer</strong></td>
+<td style="text-align: left;">2.00 MB – 8.00 MB</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Motion Vectors &amp; Hardware
+Metadata</strong></td>
+<td style="text-align: left;">0.50 MB – 1.50 MB</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Total Hardware RAM
+Footprint</strong></td>
+<td style="text-align: left;"><strong>~24.5 MB – 38 MB</strong></td>
+</tr>
+</tbody>
+</table>
+<p>In resource-constrained embedded systems, a bare-minimum
+implementation requires at least <strong>20 MB to 25 MB</strong> of
+dedicated RAM. For robust media players with multi-threaded decoding,
+deep display pipelines, and higher profile support, memory allocations
+typically range between <strong>35 MB and 64 MB</strong>.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

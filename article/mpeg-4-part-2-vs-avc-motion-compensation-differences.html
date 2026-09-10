@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPEG-4 Part 2 vs AVC Motion Compensation Differences - mpeg-4</title>
+    <meta name="description" content="Motion compensation is a fundamental video compression technique designed to reduce temporal redundancy between successive frames. While both MPEG-4 Part 2 (Visual) and MPEG-4 Part 10 AVC (Advanced Video Coding / H.264) rely on block-based motion estimat">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/mpeg-4-part-2-vs-avc-motion-compensation-differences">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MPEG-4 Part 2 vs AVC Motion Compensation Differences - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/mpeg-4-part-2-vs-avc-motion-compensation-differences" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Motion compensation is a fundamental video compression technique designed to reduce temporal redundancy between successive frames. While both MPEG-4 Part 2 (Visual) and MPEG-4 Part 10 AVC (Advanced Video Coding / H.264) rely on block-based motion estimat" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="mpeg-4-part-2-vs-avc-motion-compensation-differences">MPEG-4
+Part 2 vs AVC Motion Compensation Differences</h1>
+<p>Motion compensation is a fundamental video compression technique
+designed to reduce temporal redundancy between successive frames. While
+both MPEG-4 Part 2 (Visual) and MPEG-4 Part 10 AVC (Advanced Video
+Coding / H.264) rely on block-based motion estimation and compensation,
+AVC introduces substantial algorithmic advancements. AVC achieves
+significantly higher compression efficiency through variable block-size
+motion compensation, enhanced sub-pixel interpolation filters,
+multi-frame referencing, and advanced bi-directional prediction
+mechanisms compared to the simpler, more rigid architecture of MPEG-4
+Part 2.</p>
+<h3 id="block-size-and-partitioning-flexibility">Block Size and
+Partitioning Flexibility</h3>
+<ul>
+<li><strong>MPEG-4 Part 2:</strong> Motion compensation operates
+primarily on standard 16x16 pixel macroblocks. In its Advanced Simple
+Profile (ASP), an encoder can split a 16x16 macroblock into four 8x8
+sub-blocks (inter-8x8 mode), allowing a maximum of four motion vectors
+per macroblock.</li>
+<li><strong>MPEG-4 AVC:</strong> Introduces Variable Block-Size Motion
+Compensation (VBSMC) structured hierarchically. A 16x16 macroblock can
+be partitioned into 16x16, 16x8, 8x16, or 8x8 blocks. Furthermore, each
+8x8 block can be partitioned into 8x4, 4x8, or 4x4 sub-blocks. This
+allows up to 16 distinct motion vectors per macroblock, enabling precise
+tracking of small, non-rigid, or irregularly shaped moving objects.</li>
+</ul>
+<h3 id="sub-pixel-precision-and-interpolation-filters">Sub-Pixel
+Precision and Interpolation Filters</h3>
+<ul>
+<li><strong>MPEG-4 Part 2:</strong> Standard profiles utilize half-pixel
+(1/2-pel) precision via simple bilinear interpolation. The Advanced
+Simple Profile supports quarter-pixel (1/4-pel) precision, but it
+computes half-pel positions using basic filtering and quarter-pel
+positions using simple linear averaging of adjacent integer and half-pel
+samples.</li>
+<li><strong>MPEG-4 AVC:</strong> Employs standard quarter-pixel
+(1/4-pel) precision across most profiles with a more sophisticated
+two-stage filtering algorithm:
+<ol type="1">
+<li>Half-pel sample values are calculated using a 6-tap FIR (Finite
+Impulse Response) filter with weights <span class="math inline">\([1,
+-5, 20, 20, -5, 1] / 32\)</span>, which preserves higher-frequency image
+details and reduces aliasing.</li>
+<li>Quarter-pel sample values are subsequently generated by bilinear
+interpolation between adjacent integer and half-pel samples.</li>
+</ol></li>
+</ul>
+<h3 id="reference-frame-management">Reference Frame Management</h3>
+<ul>
+<li><strong>MPEG-4 Part 2:</strong> Uses single-frame referencing.
+P-frames predict exclusively from the single most recent reconstructed
+I- or P-frame. B-frames predict from strictly one past reference frame
+and one future reference frame.</li>
+<li><strong>MPEG-4 AVC:</strong> Features Multi-Reference Frame
+Prediction. Decoders maintain a Decoded Picture Buffer (DPB) that allows
+P-frames and B-frames to reference up to 16 different previously decoded
+frames. The reference selection is transmitted per partition, allowing
+an encoder to optimize prediction across scene cuts, uncovered
+background regions, and repetitive motions.</li>
+</ul>
+<h3 id="generalized-bi-prediction-and-weighted-prediction">Generalized
+Bi-Prediction and Weighted Prediction</h3>
+<ul>
+<li><strong>MPEG-4 Part 2:</strong> B-frame prediction relies on strict
+temporal ordering (one preceding frame and one succeeding frame) using
+standard arithmetic averaging: <span
+class="math display">\[\text{Prediction} = \frac{\text{Forward} +
+\text{Backward}}{2}\]</span></li>
+<li><strong>MPEG-4 AVC:</strong> Introduces generalized B-slices
+(bi-predictive slices) and Weighted Prediction:
+<ul>
+<li><strong>Generalized Prediction Lists:</strong> AVC maintains two
+reference picture lists (List 0 and List 1). A bi-predicted block can
+use two frames that are both temporally in the past, both in the future,
+or in opposite temporal directions.</li>
+<li><strong>Explicit and Implicit Weighted Prediction:</strong> Allows
+scaling factors and offsets to be applied to reference samples prior to
+motion compensation. This provides superior compression performance
+during fades, cross-dissolves, and illumination changes.</li>
+</ul></li>
+</ul>
+<h3 id="motion-vector-prediction">Motion Vector Prediction</h3>
+<ul>
+<li><strong>MPEG-4 Part 2:</strong> Uses median prediction based on
+three neighboring motion vectors (left, above, and above-right) to
+calculate the motion vector difference (MVD).</li>
+<li><strong>MPEG-4 AVC:</strong> Retains directional median prediction
+but adapts it to the diverse geometry of variable partition sizes (e.g.,
+16x8 and 8x16 partitions use specific directional neighbors rather than
+the standard median). AVC also supports Direct Mode prediction (Spatial
+and Temporal) for B-slices to infer motion vectors without transmitting
+motion vector residuals.</li>
+</ul></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPEG 4 Body Animation Parameters Mathematical Model - mpeg-4</title>
+    <meta name="description" content="This article provides a technical overview of the mathematical formulation underpinning Body Animation Parameters (BAPs) within the MPEG-4 Synthetic/Natural Hybrid Coding (SNHC) standard. It details the hierarchical kinematic framework, local joint trans">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/mpeg-4-body-animation-parameters-mathematical-model">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MPEG 4 Body Animation Parameters Mathematical Model - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/mpeg-4-body-animation-parameters-mathematical-model" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article provides a technical overview of the mathematical formulation underpinning Body Animation Parameters (BAPs) within the MPEG-4 Synthetic/Natural Hybrid Coding (SNHC) standard. It details the hierarchical kinematic framework, local joint trans" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="mpeg-4-body-animation-parameters-mathematical-model">MPEG 4 Body
+Animation Parameters Mathematical Model</h1>
+<p>This article provides a technical overview of the mathematical
+formulation underpinning Body Animation Parameters (BAPs) within the
+MPEG-4 Synthetic/Natural Hybrid Coding (SNHC) standard. It details the
+hierarchical kinematic framework, local joint transformation equations,
+rotational parameterization methods, normalization mechanisms based on
+Body Definition Parameters (BDPs), and the linear blend skinning
+formulas used to deform synthetic body meshes.</p>
+<h3 id="kinematic-hierarchy-and-forward-kinematics">Kinematic Hierarchy
+and Forward Kinematics</h3>
+<p>The MPEG-4 Body Animation architecture models the human body as an
+articulated kinematic chain composed of rigid segments connected by
+joints. The spatial configuration of any segment <span
+class="math inline">\(i\)</span> is calculated recursively relative to
+its parent joint in the hierarchy using Forward Kinematics (FK).</p>
+<p>The global transformation matrix <span
+class="math inline">\(\mathbf{M}_i\)</span> for joint <span
+class="math inline">\(i\)</span> is given by:</p>
+<p><span class="math display">\[\mathbf{M}_i =
+\mathbf{M}_{\text{parent}(i)} \cdot \mathbf{T}_{i, \text{bind}} \cdot
+\mathbf{R}_i(\text{BAP}) \cdot \mathbf{T}_i(\text{BAP})\]</span></p>
+<p>Where:</p>
+<ul>
+<li><span class="math inline">\(\mathbf{M}_{\text{parent}(i)}\)</span>
+is the <span class="math inline">\(4 \times 4\)</span> homogeneous
+global transformation matrix of the parent joint.</li>
+<li><span class="math inline">\(\mathbf{T}_{i, \text{bind}}\)</span> is
+the static translation matrix defining the joint offset in the default
+reference posture (neutral pose).</li>
+<li><span class="math inline">\(\mathbf{R}_i(\text{BAP})\)</span> is the
+time-varying rotation matrix driven by rotational BAPs.</li>
+<li><span class="math inline">\(\mathbf{T}_i(\text{BAP})\)</span> is the
+translational matrix driven by translation BAPs (primarily applied to
+the root joint/pelvis).</li>
+</ul>
+<h3 id="rotational-parameterization">Rotational Parameterization</h3>
+<p>MPEG-4 defines up to 296 BAPs, covering rotational degrees of freedom
+(DOFs) across standard anatomical joints. Joint rotations are
+parameterized using Euler angles executed in a standardized sequence
+(typically <span class="math inline">\(Z\)</span>-<span
+class="math inline">\(X\)</span>-<span class="math inline">\(Y\)</span>
+or <span class="math inline">\(X\)</span>-<span
+class="math inline">\(Y\)</span>-<span class="math inline">\(Z\)</span>
+depending on the joint specification):</p>
+<p><span class="math display">\[\mathbf{R}_i = \mathbf{R}_z(\theta_z)
+\cdot \mathbf{R}_x(\theta_x) \cdot \mathbf{R}_y(\theta_y)\]</span></p>
+<p>For an individual rotation about an axis <span
+class="math inline">\(\mathbf{u} = [u_x, u_y, u_z]^T\)</span> by an
+angle <span class="math inline">\(\theta\)</span>, the rotation matrix
+<span class="math inline">\(\mathbf{R}(\theta, \mathbf{u})\)</span>
+corresponds to Rodrigues' rotation formula:</p>
+<p><span class="math display">\[\mathbf{R}(\theta, \mathbf{u}) =
+\mathbf{I} + (\sin\theta)\mathbf{K} + (1 -
+\cos\theta)\mathbf{K}^2\]</span></p>
+<p>Where <span class="math inline">\(\mathbf{I}\)</span> is the <span
+class="math inline">\(3 \times 3\)</span> identity matrix and <span
+class="math inline">\(\mathbf{K}\)</span> is the skew-symmetric
+cross-product matrix of the unit vector <span
+class="math inline">\(\mathbf{u}\)</span>:</p>
+<p><span class="math display">\[\mathbf{K} = \begin{bmatrix} 0 &amp;
+-u_z &amp; u_y \\ u_z &amp; 0 &amp; -u_x \\ -u_y &amp; u_x &amp; 0
+\end{bmatrix}\]</span></p>
+<h3 id="quantization-and-normalization-mechanics">Quantization and
+Normalization Mechanics</h3>
+<p>BAP streams transmit integer values to optimize bandwidth. To convert
+transmitted integer values into continuous physical angles or
+translations, a dequantization and scaling formula is applied:</p>
+<p><span class="math display">\[\theta = \text{BAP\_Value} \times
+s_{\text{angular}}\]</span></p>
+<p>For rotational parameters, <span
+class="math inline">\(s_{\text{angular}}\)</span> is defined in
+thousandths of a radian (<span class="math inline">\(10^{-3}\text{
+rad}\)</span>) or fractions of degrees.</p>
+<p>For translational parameters, normalization relies on Body Definition
+Parameters (BDPs) to ensure model independence. Distances are scaled
+using standard body dimension units (such as the distance between hips
+or head-to-neck height):</p>
+<p><span class="math display">\[\mathbf{t} = \text{BAP\_Value} \cdot
+s_{\text{trans}} \cdot D_{\text{ref}}\]</span></p>
+<p>Where <span class="math inline">\(D_{\text{ref}}\)</span> is a
+reference dimension scalar extracted from the model's BDP set.</p>
+<h3 id="mesh-surface-deformation-linear-blend-skinning">Mesh Surface
+Deformation (Linear Blend Skinning)</h3>
+<p>Once the global transformation matrices <span
+class="math inline">\(\mathbf{M}_i\)</span> are updated by the BAP
+stream, the synthetic character's skin vertices are deformed using
+Linear Blend Skinning (LBS). The deformed position <span
+class="math inline">\(\mathbf{v}&#39;\)</span> of a vertex <span
+class="math inline">\(\mathbf{v}_0\)</span> in rest pose is computed
+as:</p>
+<p><span class="math display">\[\mathbf{v}&#39; = \sum_{j \in J} w_j
+\cdot \mathbf{M}_j \cdot \mathbf{M}_{j, 0}^{-1} \cdot
+\mathbf{v}_0\]</span></p>
+<p>Subject to the partition of unity constraint:</p>
+<p><span class="math display">\[\sum_{j \in J} w_j = 1, \quad w_j \ge
+0\]</span></p>
+<p>Where:</p>
+<ul>
+<li><span class="math inline">\(J\)</span> is the set of influencing
+joints for the vertex.</li>
+<li><span class="math inline">\(w_j\)</span> is the scalar skinning
+weight linking the vertex to joint <span
+class="math inline">\(j\)</span>.</li>
+<li><span class="math inline">\(\mathbf{M}_j\)</span> is the current
+global transformation matrix of joint <span
+class="math inline">\(j\)</span>.</li>
+<li><span class="math inline">\(\mathbf{M}_{j, 0}^{-1}\)</span> is the
+inverse rest-pose transformation matrix of joint <span
+class="math inline">\(j\)</span>.</li>
+</ul></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

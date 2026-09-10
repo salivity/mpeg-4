@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visual Object Plane vs Video Frame in MPEG-4 - mpeg-4</title>
+    <meta name="description" content="The primary difference between a traditional video frame and a Visual Object Plane (VOP) in MPEG-4 lies in how visual information is structured and encoded: a traditional video frame treats every image as a single, static rectangular grid of pixels, wher">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/visual-object-plane-vs-video-frame-in-mpeg-4">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Visual Object Plane vs Video Frame in MPEG-4 - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/visual-object-plane-vs-video-frame-in-mpeg-4" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The primary difference between a traditional video frame and a Visual Object Plane (VOP) in MPEG-4 lies in how visual information is structured and encoded: a traditional video frame treats every image as a single, static rectangular grid of pixels, wher" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="visual-object-plane-vs-video-frame-in-mpeg-4">Visual Object
+Plane vs Video Frame in MPEG-4</h1>
+<p>The primary difference between a traditional video frame and a Visual
+Object Plane (VOP) in MPEG-4 lies in how visual information is
+structured and encoded: a traditional video frame treats every image as
+a single, static rectangular grid of pixels, whereas a Visual Object
+Plane represents a snapshot of an independently encoded, arbitrarily
+shaped visual object within a scene. This distinction marks the shift
+from frame-based video coding to object-based video coding, allowing
+distinct elements of a video to be manipulated, compressed, and rendered
+separately.</p>
+<h2 id="understanding-the-traditional-video-frame">Understanding the
+Traditional Video Frame</h2>
+<p>A traditional video frame is a fixed-size rectangular matrix of
+pixels representing an entire visual scene at a specific instant in
+time. Standards such as MPEG-1, MPEG-2, and standard profiles of modern
+codecs divide this full rectangle into smaller blocks (like macroblocks)
+to analyze spatial and temporal redundancy.</p>
+<p>In this model:</p>
+<ul>
+<li>The background and foreground elements are locked together in a
+single layer.</li>
+<li>Compression is applied uniformly across the entire frame without
+semantic understanding of the objects inside the scene.</li>
+<li>Modifying a single element in the video requires decoding, altering,
+and re-encoding the entire rectangular image.</li>
+</ul>
+<h2 id="understanding-the-visual-object-plane-vop">Understanding the
+Visual Object Plane (VOP)</h2>
+<p>A Visual Object Plane (VOP) is a core concept introduced in MPEG-4
+Part 2 (Visual). In object-based coding, a video scene is decomposed
+into separate visual objects (VOs), such as a moving person, a vehicle,
+or a static background. A VOP is a 2D temporal instance of a specific
+Visual Object at a given time point.</p>
+<p>Key features of a VOP include:</p>
+<ul>
+<li><strong>Arbitrary Shape:</strong> Unlike fixed rectangular frames, a
+VOP can have any shape defined by binary or grayscale alpha shape
+masks.</li>
+<li><strong>Independent Encoding:</strong> Each object is encoded as a
+separate bitstream with its own motion vectors, texture data, and shape
+information.</li>
+<li><strong>Scene Composition:</strong> The final image displayed to the
+viewer is constructed at the decoder stage by layering multiple VOPs
+onto a background using scene description protocols like BIFS (Binary
+Format for Scenes).</li>
+</ul>
+<h2 id="core-differences">Core Differences</h2>
+<h3 id="1-geometry-and-shape">1. Geometry and Shape</h3>
+<ul>
+<li><strong>Traditional Frame:</strong> Always rectangular with rigid,
+predefined dimensions (e.g., 1920x1080).</li>
+<li><strong>VOP:</strong> Can be irregularly shaped. It is enclosed
+within a bounding box that tightly wraps the object, encoding only the
+pixels belonging to that object along with transparency data.</li>
+</ul>
+<h3 id="2-compression-and-bitrate-allocation">2. Compression and Bitrate
+Allocation</h3>
+<ul>
+<li><strong>Traditional Frame:</strong> Compresses the full scene
+together. Bitrate allocation algorithms must balance quality across the
+entire frame.</li>
+<li><strong>VOP:</strong> Allows dynamic and selective bitrate
+distribution. High bitrates can be assigned to critical foreground
+objects (such as human faces or moving subjects), while static or less
+important background VOPs receive fewer bits.</li>
+</ul>
+<h3 id="3-interactivity-and-manipulation">3. Interactivity and
+Manipulation</h3>
+<ul>
+<li><strong>Traditional Frame:</strong> Completely static for the end
+user. The viewer cannot interact with individual elements without
+external metadata overlays.</li>
+<li><strong>VOP:</strong> Enables direct interaction. Decoders can
+reposition, scale, delete, or replace individual objects in real time
+(e.g., changing a language-specific sign in a video or removing a
+character) without re-rendering the full scene.</li>
+</ul>
+<h3 id="4-coding-types">4. Coding Types</h3>
+<ul>
+<li><strong>Traditional Frame:</strong> Uses standard frame types:
+I-frames (Intra), P-frames (Predicted), and B-frames
+(Bi-directional).</li>
+<li><strong>VOP:</strong> Uses equivalent object-level types: I-VOP,
+P-VOP, and B-VOP, alongside specialized types such as the
+<strong>S-VOP</strong> (Sprite VOP), which allows a static background
+panoramic image to be transmitted once and panned/zoomed via simple
+parameters.</li>
+</ul></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>360 Video Metadata in MPEG-4 Files Explained - mpeg-4</title>
+    <meta name="description" content="MPEG-4 (MP4) files store spatial metadata for 360-degree immersive video through dedicated data structures embedded directly within the container format's hierarchy. By utilizing specialized metadata boxes—historically user-defined uuid atoms containin">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/360-video-metadata-in-mpeg-4-files-explained">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="360 Video Metadata in MPEG-4 Files Explained - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/360-video-metadata-in-mpeg-4-files-explained" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="MPEG-4 (MP4) files store spatial metadata for 360-degree immersive video through dedicated data structures embedded directly within the container format's hierarchy. By utilizing specialized metadata boxes—historically user-defined uuid atoms containin" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="360-video-metadata-in-mpeg-4-files-explained">360 Video Metadata
+in MPEG-4 Files Explained</h1>
+<p>MPEG-4 (MP4) files store spatial metadata for 360-degree immersive
+video through dedicated data structures embedded directly within the
+container format's hierarchy. By utilizing specialized metadata
+boxes—historically user-defined <code>uuid</code> atoms containing XML
+schemas, and more recently standardized <code>sv3d</code> (Spherical
+Video) boxes defined by ISO/IEC specifications—video players are
+instructed how to project flat, equirectangular or cubemap video frames
+onto a 3D spherical viewport for real-time immersive playback.</p>
+<h3 id="the-iso-base-media-file-format-isobmff-structure">The ISO Base
+Media File Format (ISOBMFF) Structure</h3>
+<p>The MP4 format is derived from the ISO Base Media File Format
+(ISOBMFF), which organizes all video, audio, and metadata into discrete
+hierarchical blocks called "boxes" (or "atoms"). Each box consists of a
+header specifying its size and a four-character code (FourCC)
+identifying its type. Because ISOBMFF is modular, additional information
+about projection, camera orientation, and stereoscopic geometry can be
+attached to the video stream without disrupting standard decoding
+pipelines.</p>
+<h3 id="the-spatial-media-xml-and-uuid-box">The Spatial Media XML and
+<code>uuid</code> Box</h3>
+<p>The initial industry standard for 360-degree video metadata was
+introduced via Google's Spatial Media specification. Under this
+implementation, spatial metadata is encoded as an RDF-compliant XML
+block and inserted into a custom user-data box (<code>uuid</code>)
+located inside the movie header (<code>moov</code>) or video track
+(<code>trak</code>) box.</p>
+<p>This XML block provides critical rendering parameters, including:</p>
+<ul>
+<li><strong>Spherical:</strong> A boolean flag confirming the presence
+of spherical video.</li>
+<li><strong>Stitched:</strong> Indicates whether the video frames have
+already been stitched together into a single panoramic projection.</li>
+<li><strong>ProjectionType:</strong> Defines the geometric projection
+format, most commonly <code>equirectangular</code>.</li>
+<li><strong>StereoMode:</strong> Specifies whether the video is
+monoscopic, top-bottom stereoscopic, or left-right stereoscopic.</li>
+<li><strong>Initial View Orientation:</strong> Declares the default yaw,
+pitch, and roll angles to establish the initial viewing direction for
+the user.</li>
+</ul>
+<h3 id="standardized-sv3d-spherical-video-box">Standardized
+<code>sv3d</code> Spherical Video Box</h3>
+<p>To standardize omnidirectional video, the Moving Picture Experts
+Group (MPEG) developed formal extensions under ISO/IEC 14496-12 and
+ISO/IEC 23090-2 (Omnidirectional MediA Format, or OMAF). In this
+standardized approach, spatial metadata is encapsulated within the
+<code>sv3d</code> (Spherical Video Box), which resides inside the Sample
+Description Box (<code>stsd</code>) of the video track.</p>
+<p>The <code>sv3d</code> container includes specific sub-boxes:</p>
+<ul>
+<li><strong><code>svhd</code> (Spherical Video Header):</strong>
+Contains high-level properties, including metadata versioning.</li>
+<li><strong><code>proj</code> (Projection Box):</strong> Encapsulates
+the specific mathematical mapping applied to the video frame, containing
+further child boxes such as <code>eqrp</code> (Equirectangular
+Projection) or <code>cbmp</code> (Cubemap Projection).</li>
+<li><strong><code>pose</code> (Pose Box):</strong> Defines orientation
+adjustments via yaw, pitch, and roll rotation values relative to the
+world coordinate system.</li>
+</ul>
+<h3 id="playback-execution">Playback Execution</h3>
+<p>When a media player or WebGL renderer opens the MP4 file, it parses
+the box hierarchy before decoding the pixel data stored in the media
+data box (<code>mdat</code>). If the player detects the
+<code>sv3d</code> box or the spatial media <code>uuid</code> atom, it
+bypasses traditional planar 2D display pipelines. Instead, it maps the
+decoded 2D frames onto a virtual 3D mesh (such as a UV sphere or cube)
+and positions the virtual camera at the center of the geometry, updating
+the rendered field of view in response to user head movement or mouse
+interactions.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

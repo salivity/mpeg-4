@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPEG-4 sbgp Box: Linking Frames to Sample Groups - mpeg-4</title>
+    <meta name="description" content="The Sample-to-Group box (sbgp) in the ISO Base Media File Format (ISOBMFF / MPEG-4 Part 12) provides an efficient mechanism for assigning individual media samples (video frames or audio packets) to specific characteristics, playback properties, or proces">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/mpeg-4-sbgp-box-linking-frames-to-sample-groups">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MPEG-4 sbgp Box: Linking Frames to Sample Groups - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/mpeg-4-sbgp-box-linking-frames-to-sample-groups" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The Sample-to-Group box (sbgp) in the ISO Base Media File Format (ISOBMFF / MPEG-4 Part 12) provides an efficient mechanism for assigning individual media samples (video frames or audio packets) to specific characteristics, playback properties, or proces" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="mpeg-4-sbgp-box-linking-frames-to-sample-groups">MPEG-4 sbgp
+Box: Linking Frames to Sample Groups</h1>
+<p>The Sample-to-Group box (<code>sbgp</code>) in the ISO Base Media
+File Format (ISOBMFF / MPEG-4 Part 12) provides an efficient mechanism
+for assigning individual media samples (video frames or audio packets)
+to specific characteristics, playback properties, or processing
+profiles. Instead of attaching redundant metadata to every individual
+sample, the <code>sbgp</code> box uses run-length encoding to map
+continuous sequences of samples to specific entries defined inside a
+paired Sample Group Description box (<code>sgpd</code>). This decoupled
+architecture allows decoders and media engines to apply customized
+handling—such as selective encryption, random access recovery, or
+dynamic layering—to precise subsets of frames.</p>
+<h3 id="the-role-of-sbgp-and-sgpd">The Role of <code>sbgp</code> and
+<code>sgpd</code></h3>
+<p>The grouping mechanism relies on two complementary boxes:</p>
+<ol type="1">
+<li><strong>Sample Group Description Box (<code>sgpd</code>)</strong>:
+Serves as a lookup table storing the actual profile definitions,
+configuration parameters, or metadata entries.</li>
+<li><strong>Sample-to-Group Box (<code>sbgp</code>)</strong>: Serves as
+the mapping index that links each frame in the track to an index within
+the <code>sgpd</code> table.</li>
+</ol>
+<p>Both boxes share a matching 4-character identifier called the
+<code>grouping_type</code> (for example, <code>seig</code> for CENC
+sample encryption, or <code>roll</code> for gradual decoder refresh).
+This identifier establishes the specific category of processing to which
+the mapping applies.</p>
+<h3 id="internal-structure-and-mapping-logic">Internal Structure and
+Mapping Logic</h3>
+<p>The <code>sbgp</code> box minimizes file size overhead by grouping
+consecutive samples that share the same configuration into run-length
+entries. Each entry in the <code>sbgp</code> box contains two primary
+fields:</p>
+<ul>
+<li><strong><code>sample_count</code></strong>: The number of
+consecutive samples that share the assigned profile.</li>
+<li><strong><code>group_description_index</code></strong>: A 1-based
+index referencing the specific profile in the corresponding
+<code>sgpd</code> box.</li>
+</ul>
+<p>If a sample is assigned a <code>group_description_index</code> of
+<code>0</code>, it indicates that the sample does not belong to any
+group of that type and requires default or standard processing. A value
+greater than zero directs the demuxer to the <em>n</em>-th entry of the
+matching <code>sgpd</code> table.</p>
+<h3 id="step-by-step-processing-flow">Step-by-Step Processing Flow</h3>
+<p>When a media player or demuxer parses an MPEG-4 container:</p>
+<ol type="1">
+<li><strong>Type Matching</strong>: The parser identifies the required
+processing feature (e.g., selective decryption) and locates the
+<code>sbgp</code> and <code>sgpd</code> boxes with the corresponding
+<code>grouping_type</code>.</li>
+<li><strong>Sequential Mapping</strong>: As the demuxer reads media
+samples sequentially, it tracks the cumulative <code>sample_count</code>
+from the <code>sbgp</code> table to determine the current sample's group
+index.</li>
+<li><strong>Profile Lookup</strong>: The demuxer fetches the
+configuration parameters stored at the corresponding index in the
+<code>sgpd</code> box.</li>
+<li><strong>Execution</strong>: The decoder or rendering engine applies
+the retrieved properties (such as key identifiers, subsample mapping, or
+temporal layer flags) directly to that sample before rendering or
+decoding.</li>
+</ol>
+<h3 id="practical-applications">Practical Applications</h3>
+<ul>
+<li><strong>Common Encryption (CENC)</strong>: Identifies which frames
+are encrypted, specifying unique initialization vectors (IVs) and key
+identifiers per group.</li>
+<li><strong>Gradual Decoder Refresh (GDR / Roll Groups)</strong>: Marks
+non-IDR recovery points, informing the decoder how many frames must be
+decoded before the video stream is fully synchronized.</li>
+<li><strong>Temporal and Spatial Sub-layering</strong>: Flags samples
+for trick-mode play, frame dropping, or dynamic resolution scaling in
+scalable video codecs.</li>
+</ul></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

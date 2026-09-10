@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPEG-4 Stereoscopic 3D Stream Data Structures - mpeg-4</title>
+    <meta name="description" content="This article provides an overview of the specific data structures (atoms or boxes) within the ISO Base Media File Format (ISOBMFF) and MPEG-4 container specification (ISO/IEC 14496-12 and ISO/IEC 14496-15) used to signal, link, and synchronize stereoscop">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/mpeg-4-stereoscopic-3d-stream-data-structures">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MPEG-4 Stereoscopic 3D Stream Data Structures - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/mpeg-4-stereoscopic-3d-stream-data-structures" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article provides an overview of the specific data structures (atoms or boxes) within the ISO Base Media File Format (ISOBMFF) and MPEG-4 container specification (ISO/IEC 14496-12 and ISO/IEC 14496-15) used to signal, link, and synchronize stereoscop" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="mpeg-4-stereoscopic-3d-stream-data-structures">MPEG-4
+Stereoscopic 3D Stream Data Structures</h1>
+<p>This article provides an overview of the specific data structures
+(atoms or boxes) within the ISO Base Media File Format (ISOBMFF) and
+MPEG-4 container specification (ISO/IEC 14496-12 and ISO/IEC 14496-15)
+used to signal, link, and synchronize stereoscopic 3D video streams. It
+details the role of track references, sample entries, and stereo
+composition metadata required for hardware and software decoders to
+assemble stereoscopic views correctly.</p>
+<h3 id="the-track-reference-box-tref">The Track Reference Box
+(<code>tref</code>)</h3>
+<p>In multi-track stereoscopic setups where the left and right eyes are
+encoded as separate elementary streams, the Track Reference Box
+(<code>tref</code>) establishes the primary relationship between these
+tracks. Placed within the Track Box (<code>trak</code>), the
+<code>tref</code> atom contains specific four-character code (FourCC)
+reference types:</p>
+<ul>
+<li><strong><code>sbas</code> (Stereo Base):</strong> Links a dependent
+eye track (typically the right eye or secondary view) to the base video
+track (the primary or left eye).</li>
+<li><strong><code>vdep</code> (View Dependency):</strong> Used in
+Multiview Video Coding (MVC) configurations to indicate that the
+decoding of the current track depends on the reference track.</li>
+</ul>
+<h3 id="the-stereo-video-box-stvi">The Stereo Video Box
+(<code>stvi</code>)</h3>
+<p>The Stereo Video Box (<code>stvi</code>) is placed inside the visual
+Sample Entry (such as <code>avc1</code> or <code>mp4v</code> inside the
+<code>stsd</code> Sample Table) to declare stereoscopic metadata. It
+identifies whether the video is stereoscopic and how the left and right
+views are packed. Key fields include:</p>
+<ul>
+<li><strong><code>single_view_allowed</code>:</strong> A 2-bit field
+indicating whether the track can fall back to 2D rendering when 3D
+display is unsupported.</li>
+<li><strong><code>stereo_scheme</code>:</strong> A 32-bit identifier
+signaling the standardization scheme used (e.g., ISO/IEC 14496-12
+standard schemes or third-party formats).</li>
+<li><strong><code>stereo_indication_type</code>:</strong> Defines the
+spatial arrangement, including frame-packed layouts (side-by-side,
+top-and-bottom, row/column interleaved) or distinct multi-track
+combinations, as well as assigning which visual field maps to the left
+or right eye.</li>
+</ul>
+<h3 id="multiview-video-coding-structures-vwdi-and-mvcg">Multiview Video
+Coding Structures (<code>vwdi</code> and <code>mvcg</code>)</h3>
+<p>For stereoscopic content encoded via H.264 MVC or HEVC extensions
+defined in ISO/IEC 14496-15, advanced multiview associations are mapped
+using specialized sample entries and metadata boxes:</p>
+<ul>
+<li><strong><code>mvc1</code> / <code>mvc2</code> Sample
+Entries:</strong> Replaces standard 2D sample entries to signal that
+elementary stream NAL units contain multiview extensions.</li>
+<li><strong>View Identifier Box (<code>vwdi</code>):</strong> Contains
+the view identification map, directly assigning stream layers to
+specific eye positions via <code>view_id</code> attributes and defining
+temporal/inter-view dependencies.</li>
+<li><strong>Multiview Group Box (<code>mvcg</code>):</strong> Aggregates
+multiple tracks or operational points, grouping tier and view
+combinations for predictable buffer management and synchronized stereo
+playback.</li>
+</ul></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

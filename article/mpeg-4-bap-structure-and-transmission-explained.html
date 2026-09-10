@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPEG-4 BAP: Structure and Transmission Explained - mpeg-4</title>
+    <meta name="description" content="MPEG-4 Body Animation Parameters (BAP) provide a standardized framework for animating 3D humanoid figures efficiently across low-bandwidth networks. By defining joint rotations and displacements independently of any proprietary 3D mesh, the MPEG-4 Synthe">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/mpeg-4-bap-structure-and-transmission-explained">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MPEG-4 BAP: Structure and Transmission Explained - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/mpeg-4-bap-structure-and-transmission-explained" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="MPEG-4 Body Animation Parameters (BAP) provide a standardized framework for animating 3D humanoid figures efficiently across low-bandwidth networks. By defining joint rotations and displacements independently of any proprietary 3D mesh, the MPEG-4 Synthe" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="mpeg-4-bap-structure-and-transmission-explained">MPEG-4 BAP:
+Structure and Transmission Explained</h1>
+<p>MPEG-4 Body Animation Parameters (BAP) provide a standardized
+framework for animating 3D humanoid figures efficiently across
+low-bandwidth networks. By defining joint rotations and displacements
+independently of any proprietary 3D mesh, the MPEG-4 Synthetic/Natural
+Hybrid Coding (SNHC) standard allows synthetic characters to be driven
+by compact data streams. This article outlines the architectural
+structure of BAP, how parameters are grouped and encoded, and the
+mechanisms used to transmit body motion data across multimedia
+systems.</p>
+<h2 id="the-structure-of-body-animation-parameters">The Structure of
+Body Animation Parameters</h2>
+<p>MPEG-4 defines 296 standard Body Animation Parameters to specify the
+posture and motion of a virtual human body. These parameters are
+designed to be model-independent, meaning they can drive any compliant
+3D avatar regardless of its specific mesh topology or visual design.</p>
+<p>The structural characteristics of BAP include:</p>
+<ul>
+<li><strong>Joint Topology and Degrees of Freedom (DoF):</strong> The
+parameter set models the human skeleton using hierarchical joints based
+on the H-Anim standard. Parameters correspond to specific rotational
+(pitch, yaw, roll) and translational movements for body parts such as
+the spine, neck, shoulders, elbows, wrists, hips, knees, and
+ankles.</li>
+<li><strong>Separation of Form and Motion:</strong> MPEG-4 distinguishes
+between Body Definition Parameters (BDP) and Body Animation Parameters
+(BAP). BDPs define the static shape, dimensions, and visual surface of
+the avatar, while BAPs contain strictly the time-varying motion
+data.</li>
+<li><strong>Standardized Units:</strong> Rotational parameters are
+typically expressed in radians or normalized angular units relative to a
+standardized default pose, while translational parameters adjust for
+spatial shifts.</li>
+</ul>
+<h2 id="grouping-and-masking-mechanisms">Grouping and Masking
+Mechanisms</h2>
+<p>To optimize processing and transmission, BAPs are organized into 15
+functional groups, such as the torso, head, left arm, and right leg.</p>
+<p>Systems do not need to transmit all 296 parameters simultaneously.
+Instead, MPEG-4 uses <strong>BAP Masks</strong>:</p>
+<ol type="1">
+<li><strong>BAP Group Mask:</strong> A bitmask that indicates which of
+the 15 functional groups contain active data in the stream.</li>
+<li><strong>BAP Parameter Mask:</strong> A finer bitmask within each
+active group that specifies the exact individual parameters being
+updated in a given frame.</li>
+</ol>
+<p>This masking system allows applications to animate only the upper
+body (such as for sign language or conversational avatars) without
+transmitting redundant zero-value data for stationary limbs.</p>
+<h2 id="encoding-and-compression">Encoding and Compression</h2>
+<p>BAP streams are heavily compressed to achieve low bitrates, often
+requiring only a few kilobits per second (typically 2 to 5 kbps). The
+compression pipeline relies on three main stages:</p>
+<ol type="1">
+<li><strong>Quantization:</strong> Parameter values are quantized to
+reduce precision to human-perceptible thresholds, eliminating redundant
+numerical detail.</li>
+<li><strong>Predictive Coding (DPCM):</strong> Because skeletal motion
+is continuous, the encoder computes the difference between the current
+frame's parameter value and the predicted value from previous frames
+(Differential Pulse Code Modulation).</li>
+<li><strong>Entropy Coding:</strong> The resulting prediction errors are
+encoded using adaptive arithmetic coding to minimize the final bit
+count.</li>
+</ol>
+<h2 id="transmission-in-mpeg-4-systems">Transmission in MPEG-4
+Systems</h2>
+<p>Once encoded, the BAP data is packetized and delivered via the
+standard MPEG-4 Systems architecture:</p>
+<ul>
+<li><strong>Elementary Streams (ES):</strong> The encoded BAP sequence
+forms an Elementary Stream dedicated to animation.</li>
+<li><strong>Synchronization Layer (SL):</strong> The SL packetizes the
+BAP stream, adding timestamps (Composition Time Stamps) and sequence
+numbers to ensure the motion remains synchronized with accompanying
+media, such as synthetic speech (Text-to-Speech) or Face Animation
+Parameters (FAP).</li>
+<li><strong>Delivery Multimedia Integration Framework (DMIF):</strong>
+The synchronized stream is mapped to transport protocols like RTP/UDP/IP
+for real-time streaming or packaged into MP4 file containers for local
+playback.</li>
+</ul>
+<p>At the receiver end, the MPEG-4 terminal decodes the BAP stream, maps
+the decoded joint angles to the local 3D avatar’s kinematic skeleton,
+and renders the synchronized movement in real time.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPEG-4 BIFS User Input vs Automated Scene Updates - mpeg-4</title>
+    <meta name="description" content="In MPEG-4 Binary Format for Scenes (BIFS), user-interactive inputs and automated scene updates are distinguished through an architectural separation between stream-level commands and local event-routing mechanisms. Automated updates are transmitted downs">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/mpeg-4-bifs-user-input-vs-automated-scene-updates">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MPEG-4 BIFS User Input vs Automated Scene Updates - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/mpeg-4-bifs-user-input-vs-automated-scene-updates" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="In MPEG-4 Binary Format for Scenes (BIFS), user-interactive inputs and automated scene updates are distinguished through an architectural separation between stream-level commands and local event-routing mechanisms. Automated updates are transmitted downs" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="mpeg-4-bifs-user-input-vs-automated-scene-updates">MPEG-4 BIFS
+User Input vs Automated Scene Updates</h1>
+<p>In MPEG-4 Binary Format for Scenes (BIFS), user-interactive inputs
+and automated scene updates are distinguished through an architectural
+separation between stream-level commands and local event-routing
+mechanisms. Automated updates are transmitted downstream as timed binary
+commands via dedicated elementary streams, whereas user interactions are
+captured locally at runtime using specialized sensor nodes and internal
+event cascades. This separation allows the MPEG-4 terminal to process
+real-time user manipulation independently of scheduled broadcast
+modifications.</p>
+<h3 id="automated-scene-updates-via-stream-commands">Automated Scene
+Updates via Stream Commands</h3>
+<p>Automated updates are driven externally by the content provider or
+multiplexer. They do not originate from terminal hardware but arrive
+through the MPEG-4 Systems transport layer as part of the BIFS-Command
+or BIFS-Anim elementary streams.</p>
+<ul>
+<li><strong>BIFS-Command Stream:</strong> Delivers discrete modification
+instructions—such as <code>NodeInsert</code>, <code>NodeDelete</code>,
+<code>NodeReplace</code>, <code>FieldReplace</code>,
+<code>RouteInsert</code>, and <code>RouteDelete</code>—that alter the
+structure or attributes of the existing scene graph.</li>
+<li><strong>Synchronization and Timing:</strong> Every command packet is
+tagged with an Object Clock Reference (OCR) and a Composition Time Stamp
+(CTS). The terminal's BIFS decoder applies these updates strictly when
+the terminal's system time matches the CTS, ensuring frame-accurate,
+automated transitions without client intervention.</li>
+<li><strong>BIFS-Anim:</strong> For continuous automated modifications
+(such as smooth animations or synthetic mesh deformation), dedicated
+animation frames update specific node fields directly at predetermined
+sample rates.</li>
+</ul>
+<h3 id="user-interactive-input-via-scene-graph-sensors">User-Interactive
+Input via Scene Graph Sensors</h3>
+<p>User interaction is handled entirely within the client-side scene
+graph runtime rather than arriving through the incoming command stream.
+BIFS inherits the VRML event model to handle asynchronous input from
+local peripherals (e.g., mice, keyboards, touchscreens, or remotes).</p>
+<ul>
+<li><strong>Sensor Nodes:</strong> The scene author embeds sensor nodes
+within the hierarchy. Common sensors include <code>TouchSensor</code>
+(pointer clicks and hovers), <code>PlaneSensor</code> and
+<code>CylinderSensor</code> (drag gestures), and <code>KeySensor</code>
+(keyboard or remote keypresses).</li>
+<li><strong>Event Generation:</strong> When a user interacts with visual
+geometry associated with a sensor, the sensor node generates an
+<code>eventOut</code> containing state data (such as
+<code>isOver</code>, <code>isActive</code>, or
+<code>touchTime</code>).</li>
+<li><strong>Dynamic ROUTE Mechanism:</strong> Events propagate locally
+through predefined <code>ROUTE</code> statements connecting the sensor's
+<code>eventOut</code> to a target node’s <code>eventIn</code> or to a
+<code>Script</code> node executing ECMAScript or MPEG-J logic. This
+execution occurs locally in real time without needing network
+round-trips.</li>
+</ul>
+<h3 id="how-the-mpeg-4-terminal-resolves-the-two-mechanisms">How the
+MPEG-4 Terminal Resolves the Two Mechanisms</h3>
+<p>The MPEG-4 terminal differentiates and balances these processes
+through distinct processing pipelines:</p>
+<ol type="1">
+<li><strong>Source Origin and Ingestion:</strong> The BIFS decoder
+exclusively handles automated updates pulled from transport buffers,
+modifying the scene graph tree. Concurrently, the terminal's rendering
+and windowing engine listens to hardware input devices, mapping
+coordinate hits to sensor nodes.</li>
+<li><strong>Execution Context:</strong> Automated stream updates mutate
+node values directly via command decoders at synchronization boundaries.
+User actions trigger localized, asynchronous event cascades through the
+routing table.</li>
+<li><strong>Upstream Communication:</strong> If a user interaction must
+influence the automated broadcast, the client does not inject commands
+into the incoming BIFS stream. Instead, it utilizes an upstream
+interaction channel (MPEG-4 FlexMux or external IP return paths) to
+notify the server, maintaining a clear separation between incoming
+automated data and outgoing user actions.</li>
+</ol></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

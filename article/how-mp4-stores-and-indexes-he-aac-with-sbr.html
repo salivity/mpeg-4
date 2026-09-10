@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How MP4 Stores and Indexes HE-AAC with SBR - mpeg-4</title>
+    <meta name="description" content="This article explains the technical mechanisms the MPEG-4 Part 14 (MP4) container format uses to encapsulate, signal, and index High Efficiency Advanced Audio Coding (HE-AAC) streams equipped with Spectral Band Replication (SBR). It covers how the ISO Ba">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/how-mp4-stores-and-indexes-he-aac-with-sbr">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How MP4 Stores and Indexes HE-AAC with SBR - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/how-mp4-stores-and-indexes-he-aac-with-sbr" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explains the technical mechanisms the MPEG-4 Part 14 (MP4) container format uses to encapsulate, signal, and index High Efficiency Advanced Audio Coding (HE-AAC) streams equipped with Spectral Band Replication (SBR). It covers how the ISO Ba" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="how-mp4-stores-and-indexes-he-aac-with-sbr">How MP4 Stores and
+Indexes HE-AAC with SBR</h1>
+<p>This article explains the technical mechanisms the MPEG-4 Part 14
+(MP4) container format uses to encapsulate, signal, and index High
+Efficiency Advanced Audio Coding (HE-AAC) streams equipped with Spectral
+Band Replication (SBR). It covers how the ISO Base Media File Format
+structure stores the audio stream using specific metadata descriptors,
+how SBR extensions are signaled for backward and forward compatibility,
+and how standard sample tables manage the indexing and playback timing
+of the encoded frames.</p>
+<h3 id="he-aac-and-sbr-architecture-in-mpeg-4">HE-AAC and SBR
+Architecture in MPEG-4</h3>
+<p>High Efficiency AAC (HE-AAC v1) pairs a standard AAC Low Complexity
+(AAC-LC) core codec with Spectral Band Replication (SBR). The core codec
+operates at half the target sampling rate (e.g., 22.05 kHz) to encode
+lower frequencies efficiently, while the SBR tool synthesizes
+high-frequency content at the full sampling rate (e.g., 44.1 kHz).</p>
+<p>Inside an MPEG-4 container, this dual-rate system is treated as a
+continuous elementary stream of audio access units (frames). The MP4
+container is responsible for two primary tasks: declaring the stream
+configuration so decoders know how to process both the core and the SBR
+payload, and indexing the individual frames for synchronized playback
+and seeking.</p>
+<h3 id="the-sample-table-hierarchy">The Sample Table Hierarchy</h3>
+<p>MPEG-4 files store audio track metadata inside an object-oriented box
+(atom) hierarchy located within the <code>moov</code> (Movie) atom. The
+path to audio indexing is:</p>
+<p><code>moov</code> <span class="math inline">\(\rightarrow\)</span>
+<code>trak</code> <span class="math inline">\(\rightarrow\)</span>
+<code>mdia</code> <span class="math inline">\(\rightarrow\)</span>
+<code>minf</code> <span class="math inline">\(\rightarrow\)</span>
+<code>stbl</code> (Sample Table Box)</p>
+<p>The <code>stbl</code> container contains the essential structures for
+describing and locating audio samples:</p>
+<ul>
+<li><strong><code>stsd</code> (Sample Description):</strong> Stores
+codec configuration and stream initialization parameters.</li>
+<li><strong><code>stts</code> (Time-to-Sample):</strong> Maps frame
+counts to playback duration.</li>
+<li><strong><code>stsz</code> / <code>stz2</code> (Sample
+Sizes):</strong> Defines the byte size of each individual audio access
+unit.</li>
+<li><strong><code>stsc</code> (Sample-to-Chunk):</strong> Groups samples
+into contiguous chunks.</li>
+<li><strong><code>stco</code> / <code>co64</code> (Chunk
+Offsets):</strong> Stores the absolute file offsets where data chunks
+reside in the <code>mdat</code> (Media Data) box.</li>
+</ul>
+<h3 id="stream-declaration-and-sbr-signaling-stsd-and-esds">Stream
+Declaration and SBR Signaling (<code>stsd</code> and
+<code>esds</code>)</h3>
+<p>The <code>stsd</code> atom contains an <code>mp4a</code> sample
+entry. Within <code>mp4a</code>, an Elementary Stream Descriptor
+(<code>esds</code>) box stores the <code>AudioSpecificConfig</code>
+(ASC). The ASC defines the Audio Object Type (AOT), sampling frequency,
+and channel configuration.</p>
+<p>Because SBR is an extension layered over AAC-LC, MPEG-4 provides
+three distinct methods to signal SBR data inside the ASC:</p>
+<h4 id="1-explicit-hierarchical-signaling-backward-compatible">1.
+Explicit Hierarchical Signaling (Backward-Compatible)</h4>
+<p>The ASC explicitly defines the base AOT as AAC-LC (AOT 2) along with
+the core sample rate. It then appends extension data identifying the
+presence of SBR (AOT 5) and the higher, reconstructed output sampling
+rate.</p>
+<ul>
+<li><strong>Legacy Decoders:</strong> Read only the core configuration
+(AOT 2) and ignore the extension, outputting base-band audio at the core
+rate.</li>
+<li><strong>HE-AAC Decoders:</strong> Read both sections and properly
+initialize the SBR synthesis filterbank.</li>
+</ul>
+<h4 id="2-explicit-direct-signaling-non-backward-compatible">2. Explicit
+Direct Signaling (Non-Backward-Compatible)</h4>
+<p>The ASC directly declares the base AOT as SBR (AOT 5) and specifies
+the final output sample rate upfront, followed by internal parameters
+indicating the underlying core codec (AAC-LC). Legacy decoders that do
+not recognize AOT 5 will fail to initialize the track.</p>
+<h4 id="3-implicit-signaling">3. Implicit Signaling</h4>
+<p>The ASC only declares standard AAC-LC (AOT 2) and the core sampling
+rate, containing no container-level mention of SBR. The SBR data is
+embedded entirely within the bitstream as
+<code>extension_payload()</code> elements inside the raw AAC frames. The
+decoder must parse the audio frames dynamically to detect and activate
+SBR processing.</p>
+<h3 id="frame-timing-and-indexing-stts-and-stsz">Frame Timing and
+Indexing (<code>stts</code> and <code>stsz</code>)</h3>
+<p>Each raw HE-AAC access unit contains both the AAC-LC payload and the
+SBR extension payload. The container indexes these combined units as
+single samples:</p>
+<ul>
+<li><strong>Sample Timing (<code>stts</code>):</strong> A standard
+AAC-LC frame represents 1024 PCM audio samples. When SBR is enabled, it
+doubles the output sample count to 2048 PCM samples per frame at the
+reconstructed sampling rate. The <code>stts</code> box maps each frame
+to its time delta. If the track is declared at the full output rate, the
+delta per sample in <code>stts</code> is set to 2048 time units relative
+to the track timescale.</li>
+<li><strong>Sample Boundaries (<code>stsz</code>):</strong> The
+<code>stsz</code> table lists the exact byte size of each access unit.
+The byte count includes the core AAC spectral data, scale factors, and
+the SBR control data (such as envelope scalefactors and noise floor
+parameters).</li>
+</ul>
+<h3 id="random-access-and-seeking">Random Access and Seeking</h3>
+<p>For seeking, the container relies on the Sync Sample Box
+(<code>stss</code>). Because AAC and HE-AAC are typically encoded using
+self-contained access units without temporal prediction across frame
+boundaries, every frame can function as a random-access point. In such
+files, the <code>stss</code> atom is omitted entirely, signaling that
+all samples are sync samples (key frames). When a seek operation occurs,
+the demuxer locates the target frame via <code>stts</code>, resolves its
+byte location using <code>stsc</code> and <code>stco</code>, and passes
+the access unit to the decoder, which immediately reconstructs both the
+core frequencies and the upper spectrum via SBR.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

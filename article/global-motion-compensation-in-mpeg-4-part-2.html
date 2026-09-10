@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global Motion Compensation in MPEG-4 Part 2 - mpeg-4</title>
+    <meta name="description" content="This article explains the role, mechanics, and practical implications of Global Motion Compensation (GMC) in MPEG-4 Part 2 video compression. It covers how GMC optimizes encoding efficiency during camera movements, how it differs from traditional block-b">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/global-motion-compensation-in-mpeg-4-part-2">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Global Motion Compensation in MPEG-4 Part 2 - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/global-motion-compensation-in-mpeg-4-part-2" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explains the role, mechanics, and practical implications of Global Motion Compensation (GMC) in MPEG-4 Part 2 video compression. It covers how GMC optimizes encoding efficiency during camera movements, how it differs from traditional block-b" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="global-motion-compensation-in-mpeg-4-part-2">Global Motion
+Compensation in MPEG-4 Part 2</h1>
+<p>This article explains the role, mechanics, and practical implications
+of Global Motion Compensation (GMC) in MPEG-4 Part 2 video compression.
+It covers how GMC optimizes encoding efficiency during camera movements,
+how it differs from traditional block-based motion compensation, and the
+hardware compatibility challenges associated with its
+implementation.</p>
+<h3 id="the-purpose-of-global-motion-compensation">The Purpose of Global
+Motion Compensation</h3>
+<p>In digital video encoding, consecutive frames often contain redundant
+visual information. Standard video compression techniques utilize Local
+Motion Compensation (LMC), dividing frames into small macroblocks
+(typically 16x16 pixels) and calculating individual motion vectors for
+each block. While effective for localized object movement, LMC becomes
+inefficient when the entire scene moves due to camera operations such as
+panning, tilting, zooming, or rotation.</p>
+<p>Global Motion Compensation solves this inefficiency by modeling the
+movement of the entire frame—or large background segments—using a single
+mathematical transformation. Instead of transmitting individual motion
+vectors for hundreds of macroblocks, the encoder calculates and
+transmits a single set of global motion parameters for the whole
+frame.</p>
+<h3 id="how-gmc-operates">How GMC Operates</h3>
+<p>GMC relies on parametric motion models to describe spatial
+transformations between reference frames and current frames:</p>
+<ol type="1">
+<li><strong>Global Motion Estimation:</strong> The encoder analyzes the
+frame to detect dominant, uniform motion typical of camera
+movement.</li>
+<li><strong>Parametric Modeling:</strong> The motion is mapped to a
+mathematical model (such as translational, affine, or perspective
+transformations) defined by reference points or warp vectors.</li>
+<li><strong>Frame Warping:</strong> The reference frame is warped
+according to the calculated parameters to predict the current frame's
+background.</li>
+<li><strong>Residual Encoding:</strong> Only the residual differences
+(prediction errors) and non-global moving objects are encoded using
+standard local motion compensation techniques.</li>
+</ol>
+<h3 id="advantages-of-gmc">Advantages of GMC</h3>
+<ul>
+<li><strong>Bitrate Reduction:</strong> Transmitting a unified set of
+motion parameters requires significantly fewer bits than sending
+individual motion vectors for every macroblock in a frame.</li>
+<li><strong>Higher Visual Quality at Lower Bitrates:</strong> By freeing
+up bandwidth normally consumed by motion vector data, more bits can be
+allocated to texture and fine detail, reducing macroblocking artifacts
+during camera pans and zooms.</li>
+<li><strong>Support for Sprite Coding:</strong> GMC enables advanced
+MPEG-4 features like "Sprite Coding," where a large static panoramic
+background (a sprite) is stored, and individual frames are generated
+simply by warping and cropping sections of the sprite based on camera
+trajectory.</li>
+</ul>
+<h3 id="decoding-complexity-and-compatibility-issues">Decoding
+Complexity and Compatibility Issues</h3>
+<p>Despite its compression advantages, GMC introduces substantial
+computational overhead. The warping process requires complex spatial
+interpolations (such as bilinear or bicubic filtering) at the pixel
+level during decoding.</p>
+<p>During the widespread adoption of MPEG-4 Part 2 (popularized by
+codecs like DivX and Xvid), many consumer standalone DVD and media
+players featured hardware chips with limited processing capacity. While
+simple 1-warp-point GMC was generally manageable, advanced
+implementations using 3-warp-point GMC often caused playback stutter,
+frame drops, or total decoding failure on standard consumer hardware.
+Consequently, GMC was frequently disabled in consumer encoding profiles
+to ensure broad device compatibility.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPEG-4 Part 2 Discrete Cosine Transform Formula - mpeg-4</title>
+    <meta name="description" content="This article outlines the mathematical formulation of the two-dimensional Discrete Cosine Transform (DCT) and Inverse Discrete Cosine Transform (IDCT) used in the MPEG-4 Part 2 (Visual) compression standard. It breaks down the forward transform equation,">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/mpeg-4-part-2-discrete-cosine-transform-formula">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MPEG-4 Part 2 Discrete Cosine Transform Formula - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/mpeg-4-part-2-discrete-cosine-transform-formula" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article outlines the mathematical formulation of the two-dimensional Discrete Cosine Transform (DCT) and Inverse Discrete Cosine Transform (IDCT) used in the MPEG-4 Part 2 (Visual) compression standard. It breaks down the forward transform equation," />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="mpeg-4-part-2-discrete-cosine-transform-formula">MPEG-4 Part 2
+Discrete Cosine Transform Formula</h1>
+<p>This article outlines the mathematical formulation of the
+two-dimensional Discrete Cosine Transform (DCT) and Inverse Discrete
+Cosine Transform (IDCT) used in the MPEG-4 Part 2 (Visual) compression
+standard. It breaks down the forward transform equation, the inverse
+reconstruction equation, scaling factors, and key properties governing
+<span class="math inline">\(8 \times 8\)</span> pixel block
+processing.</p>
+<h3 id="the-2d-forward-discrete-cosine-transform-fdct">The 2D Forward
+Discrete Cosine Transform (FDCT)</h3>
+<p>MPEG-4 Part 2 divides image frames and residual prediction error
+blocks into <span class="math inline">\(8 \times 8\)</span> arrays of
+samples. The forward DCT transforms an <span class="math inline">\(8
+\times 8\)</span> spatial domain block of samples <span
+class="math inline">\(f(x, y)\)</span> into an <span
+class="math inline">\(8 \times 8\)</span> frequency domain coefficient
+matrix <span class="math inline">\(F(u, v)\)</span>.</p>
+<p>The mathematical formulation for the forward 2D DCT is:</p>
+<p><span class="math display">\[F(u, v) = \frac{1}{4} C(u) C(v)
+\sum_{x=0}^{7} \sum_{y=0}^{7} f(x, y) \cos\left[ \frac{(2x+1)u\pi}{16}
+\right] \cos\left[ \frac{(2y+1)v\pi}{16} \right]\]</span></p>
+<p>Where:</p>
+<ul>
+<li><span class="math inline">\(x\)</span> and <span
+class="math inline">\(y\)</span> are the spatial coordinates within the
+block (<span class="math inline">\(x, y \in \{0, 1, \dots,
+7\}\)</span>).</li>
+<li><span class="math inline">\(u\)</span> and <span
+class="math inline">\(v\)</span> are the horizontal and vertical spatial
+frequency indices (<span class="math inline">\(u, v \in \{0, 1, \dots,
+7\}\)</span>).</li>
+<li><span class="math inline">\(f(x, y)\)</span> is the input pixel
+value or motion-compensated residual value at position <span
+class="math inline">\((x, y)\)</span>.</li>
+<li><span class="math inline">\(F(u, v)\)</span> is the resulting DCT
+coefficient at frequency coordinates <span class="math inline">\((u,
+v)\)</span>.</li>
+</ul>
+<h3 id="normalization-factors">Normalization Factors</h3>
+<p>The scaling factors <span class="math inline">\(C(u)\)</span> and
+<span class="math inline">\(C(v)\)</span> ensure the transform remains
+orthonormal:</p>
+<p><span class="math display">\[C(u) = \begin{cases} \frac{1}{\sqrt{2}},
+&amp; \text{for } u = 0 \\ 1, &amp; \text{for } u &gt; 0
+\end{cases}\]</span></p>
+<p><span class="math display">\[C(v) = \begin{cases} \frac{1}{\sqrt{2}},
+&amp; \text{for } v = 0 \\ 1, &amp; \text{for } v &gt; 0
+\end{cases}\]</span></p>
+<p>When <span class="math inline">\(u = 0\)</span> and <span
+class="math inline">\(v = 0\)</span>, <span
+class="math inline">\(F(0,0)\)</span> represents the DC coefficient (the
+average energy of the block). All other combinations of <span
+class="math inline">\((u, v)\)</span> yield the AC coefficients,
+representing progressively higher spatial frequencies.</p>
+<h3 id="the-2d-inverse-discrete-cosine-transform-idct">The 2D Inverse
+Discrete Cosine Transform (IDCT)</h3>
+<p>To reconstruct the spatial domain samples from the quantized
+frequency coefficients, MPEG-4 Part 2 uses the 2D Inverse DCT:</p>
+<p><span class="math display">\[f(x, y) = \frac{1}{4} \sum_{u=0}^{7}
+\sum_{v=0}^{7} C(u) C(v) F(u, v) \cos\left[ \frac{(2x+1)u\pi}{16}
+\right] \cos\left[ \frac{(2y+1)v\pi}{16} \right]\]</span></p>
+<p>The variables and scaling factors <span
+class="math inline">\(C(u)\)</span> and <span
+class="math inline">\(C(v)\)</span> retain the same definitions as in
+the forward transform.</p>
+<h3 id="mathematical-properties-in-mpeg-4-part-2">Mathematical
+Properties in MPEG-4 Part 2</h3>
+<ul>
+<li><strong>Separability:</strong> The 2D DCT kernel is separable into
+two successive 1D transforms. In practice, the 2D DCT is computed by
+applying an <span class="math inline">\(8\)</span>-point 1D DCT along
+the rows of the block, followed by an <span
+class="math inline">\(8\)</span>-point 1D DCT along the columns: <span
+class="math display">\[F(u, v) = \text{DCT}_{1D\_col}\left(
+\text{DCT}_{1D\_row}\left( f(x, y) \right) \right)\]</span></li>
+<li><strong>Input Preprocessing:</strong> For intra-coded macroblocks
+with 8-bit unsigned pixel values (<span class="math inline">\(0\)</span>
+to <span class="math inline">\(255\)</span>), input samples are
+level-shifted by subtracting <span class="math inline">\(128\)</span>
+prior to the forward DCT to center values around zero.</li>
+<li><strong>Accuracy and Drift Control:</strong> Because floating-point
+operations can cause rounding differences across different decoders,
+MPEG-4 Part 2 strictly defines IDCT numerical precision and mismatch
+control rules (such as clipping reconstructed values to the <span
+class="math inline">\([-256, 255]\)</span> range and limiting cumulative
+rounding errors) to prevent IDCT drift during inter-frame
+reconstruction.</li>
+</ul></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

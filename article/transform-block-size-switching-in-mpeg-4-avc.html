@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transform Block Size Switching in MPEG-4 AVC - mpeg-4</title>
+    <meta name="description" content="Adaptive transform block size switching in MPEG-4 AVC (H.264/High Profile) allows the encoder to dynamically choose between 4x4 and 8x8 integer Discrete Cosine Transforms (DCT) at the macroblock level. By dynamically selecting the transform dimensions ba">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/transform-block-size-switching-in-mpeg-4-avc">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Transform Block Size Switching in MPEG-4 AVC - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/transform-block-size-switching-in-mpeg-4-avc" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Adaptive transform block size switching in MPEG-4 AVC (H.264/High Profile) allows the encoder to dynamically choose between 4x4 and 8x8 integer Discrete Cosine Transforms (DCT) at the macroblock level. By dynamically selecting the transform dimensions ba" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="transform-block-size-switching-in-mpeg-4-avc">Transform Block
+Size Switching in MPEG-4 AVC</h1>
+<p>Adaptive transform block size switching in MPEG-4 AVC (H.264/High
+Profile) allows the encoder to dynamically choose between 4x4 and 8x8
+integer Discrete Cosine Transforms (DCT) at the macroblock level. By
+dynamically selecting the transform dimensions based on the local
+spatial characteristics of an image, the codec preserves fine textures
+and sharp edges using 4x4 blocks while preventing blocking artifacts and
+improving coding efficiency in flat regions using 8x8 blocks. This
+article explains the technical mechanics of adaptive transform switching
+and how it optimizes detail preservation.</p>
+<h2 id="the-purpose-of-transform-coding">The Purpose of Transform
+Coding</h2>
+<p>Transform coding converts spatial residual data (the difference
+between the original picture and the predicted frame) into the frequency
+domain. In this domain, energy is compacted into fewer coefficients,
+allowing quantization to discard visually redundant high-frequency
+information while maintaining low-frequency structures.</p>
+<p>Standard MPEG-4 AVC profiles initially relied solely on a 4x4 integer
+transform. The introduction of the High Profile added the 8x8 transform,
+allowing encoders to switch between the two sizes adaptively.</p>
+<h2 id="4x4-transforms-preserving-high-frequency-edges">4x4 Transforms:
+Preserving High-Frequency Edges</h2>
+<p>Smaller 4x4 transform blocks excel in areas containing intricate
+details, irregular textures, and sharp, high-contrast edges.</p>
+<ul>
+<li><strong>Spatial Localization of Artifacts:</strong> When
+quantization errors occur in frequency-domain coding, they manifest in
+the spatial domain as "ringing" or "mosquito noise" spread across the
+area of the transform block. A 4x4 block confines these artifacts to a
+tiny 16-pixel area, preventing high-contrast edge noise from bleeding
+into adjacent regions.</li>
+<li><strong>Precise Boundary Representation:</strong> Complex scenes
+with dense visual information (such as text, hair, or foliage) vary
+rapidly across small pixel spans. The 4x4 grid captures localized
+directional variations without over-smoothing sharp transitions.</li>
+</ul>
+<h2 id="8x8-transforms-energy-compaction-in-homogeneous-areas">8x8
+Transforms: Energy Compaction in Homogeneous Areas</h2>
+<p>Larger 8x8 transform blocks provide superior energy compaction in
+smooth regions, subtle gradients, and areas with low-frequency spatial
+variation (such as clear skies or flat walls).</p>
+<ul>
+<li><strong>Higher Decorrelation Efficiency:</strong> Because spatial
+correlation extends across larger distances in flat areas, an 8x8
+transform groups correlated pixels more effectively, representing the
+region with fewer non-zero coefficients.</li>
+<li><strong>Reduction of Blocking Artifacts:</strong> Using 4x4
+transforms in flat areas can cause subtle discontinuities across block
+boundaries, known as blockiness. The 8x8 transform reduces the number of
+block boundaries by 75%, creating smoother visual transitions across
+gradients.</li>
+<li><strong>Bitrate Savings:</strong> The increased coding efficiency of
+8x8 blocks in low-detail areas saves bits that the encoder can
+reallocate to complex, detail-heavy regions.</li>
+</ul>
+<h2 id="how-adaptive-switching-enhances-overall-detail">How Adaptive
+Switching Enhances Overall Detail</h2>
+<p>The encoder uses Rate-Distortion Optimization (RDO) to evaluate both
+4x4 and 8x8 transforms for each 16x16 macroblock, choosing the size that
+minimizes distortion for the target bitrate.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Metric / Scenario</th>
+<th style="text-align: left;">4x4 Transform Block</th>
+<th style="text-align: left;">8x8 Transform Block</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Best Suited For</strong></td>
+<td style="text-align: left;">High-frequency edges, fine textures</td>
+<td style="text-align: left;">Flat gradients, low-frequency areas</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Primary Strength</strong></td>
+<td style="text-align: left;">Restricts ringing artifacts to small
+areas</td>
+<td style="text-align: left;">Maximizes energy compaction and bit
+efficiency</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Artifact Risk</strong></td>
+<td style="text-align: left;">Visible blockiness across large flat
+zones</td>
+<td style="text-align: left;">Ringing artifacts spread across larger
+areas</td>
+</tr>
+</tbody>
+</table>
+<p>By switching between sizes based on content:</p>
+<ol type="1">
+<li><strong>Ringing Artifacts Are Minimized:</strong> Sharp lines and
+borders retain crisp definition because the encoder confines error
+distribution to 4x4 matrices.</li>
+<li><strong>Bit Budget Is Optimized:</strong> Low-detail areas encoded
+with 8x8 blocks consume fewer bits, freeing up data bandwidth for
+complex regions requiring high-fidelity preservation.</li>
+<li><strong>Texture Integrity Is Maintained:</strong> Complex surfaces
+retain natural grain and texture without looking artificially blurred or
+visibly blocked.</li>
+</ol></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

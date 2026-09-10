@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPEG-4 for Multi-User Virtual Environments - mpeg-4</title>
+    <meta name="description" content="MPEG-4 provides an object-based multimedia architecture that goes beyond traditional video coding to enable real-time, interactive, multi-user virtual environments (MUVEs). By combining a standardized 2D and 3D scene description framework, efficient stre">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/mpeg-4-for-multi-user-virtual-environments">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MPEG-4 for Multi-User Virtual Environments - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/mpeg-4-for-multi-user-virtual-environments" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="MPEG-4 provides an object-based multimedia architecture that goes beyond traditional video coding to enable real-time, interactive, multi-user virtual environments (MUVEs). By combining a standardized 2D and 3D scene description framework, efficient stre" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="mpeg-4-for-multi-user-virtual-environments">MPEG-4 for
+Multi-User Virtual Environments</h1>
+<p>MPEG-4 provides an object-based multimedia architecture that goes
+beyond traditional video coding to enable real-time, interactive,
+multi-user virtual environments (MUVEs). By combining a standardized 2D
+and 3D scene description framework, efficient streaming of synthetic and
+natural media objects, and synchronized event routing, MPEG-4 allows
+distributed clients to render and interact within shared virtual spaces
+while maintaining low bandwidth consumption.</p>
+<h3 id="the-object-based-scene-architecture-and-bifs">The Object-Based
+Scene Architecture and BIFS</h3>
+<p>At the core of MPEG-4’s graphics framework is the Binary Format for
+Scenes (BIFS), an extension and binary compression of the VRML97
+standard. Rather than treating a virtual world as a flat pixel stream,
+MPEG-4 structures environments as hierarchical scene graphs composed of
+discrete visual, audio, and synthetic objects (such as 3D meshes,
+procedural textures, and spatial audio sources).</p>
+<p>Because these scene elements are represented as standalone nodes,
+clients can download and assemble the environment locally. In a
+multi-user context, avatars and interactive objects are defined as
+independent sub-trees within the global scene graph, allowing them to be
+updated or replaced without reloading the surrounding environment.</p>
+<h3 id="dynamic-interaction-and-event-routing">Dynamic Interaction and
+Event Routing</h3>
+<p>To support user agency and interaction, MPEG-4 implements an
+event-routing mechanism coupled with sensor nodes. Sensors (such as
+<code>TouchSensor</code>, <code>PlaneSensor</code>, or
+<code>ProximitySensor</code>) detect user inputs and trigger events that
+travel along defined routes to alter node properties, such as object
+positions, animations, or materials.</p>
+<p>In a shared environment, these interactions are propagated using
+lightweight update protocols:</p>
+<ul>
+<li><strong>BIFS-Command:</strong> Transmits discrete scene graph
+modifications, such as inserting a new user's avatar into the world or
+deleting an object.</li>
+<li><strong>BIFS-Anim:</strong> Provides continuous, low-latency
+animation streams specifically designed to transmit continuous motion
+data, such as avatar skeletal movement and facial animation parameters
+(FAPs), without the overhead of full scene retransmissions.</li>
+</ul>
+<h3 id="synchronization-and-multi-user-state-management">Synchronization
+and Multi-User State Management</h3>
+<p>Maintaining a coherent state across multiple participants requires
+continuous synchronization between individual client streams and the
+central server. MPEG-4 addresses this through its Delivery Multimedia
+Integration Framework (DMIF) and the Synchronization Layer (SL).</p>
+<p>Each media component—including avatar motion, ambient audio,
+real-time voice chat, and 3D geometry—is transmitted via separate
+elementary streams (ES). The synchronization layer applies timestamps to
+these packets, ensuring that when an avatar moves or speaks in a shared
+virtual space, all clients in the session render the visual motion and
+directional audio concurrently.</p>
+<p>By offloading the rendering workload to the local client and
+transmitting only compressed state updates and interaction events over
+the network, MPEG-4 provides a scalable, low-bitrate infrastructure for
+collaborative 3D spaces, distributed simulations, and online virtual
+worlds.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

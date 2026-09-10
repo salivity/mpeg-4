@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPEG-4 Text Track Synchronization for Subtitling - mpeg-4</title>
+    <meta name="description" content="This article explains how MPEG-4 handles the synchronization of asynchronous text tracks for real-time subtitling. By treating text as a distinct elementary stream within its object-based architecture, MPEG-4 uses precise timestamping, duration attribute">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/mpeg-4-text-track-synchronization-for-subtitling">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MPEG-4 Text Track Synchronization for Subtitling - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/mpeg-4-text-track-synchronization-for-subtitling" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explains how MPEG-4 handles the synchronization of asynchronous text tracks for real-time subtitling. By treating text as a distinct elementary stream within its object-based architecture, MPEG-4 uses precise timestamping, duration attribute" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="mpeg-4-text-track-synchronization-for-subtitling">MPEG-4 Text
+Track Synchronization for Subtitling</h1>
+<p>This article explains how MPEG-4 handles the synchronization of
+asynchronous text tracks for real-time subtitling. By treating text as a
+distinct elementary stream within its object-based architecture, MPEG-4
+uses precise timestamping, duration attributes, Sync Layer
+packetization, and standard transport protocols to ensure text arrives
+and displays in exact alignment with companion audio and video
+streams.</p>
+<h2 id="the-elementary-stream-architecture">The Elementary Stream
+Architecture</h2>
+<p>MPEG-4 (defined under ISO/IEC 14496) treats all media types—audio,
+video, and text—as independent Elementary Streams (ES). In real-time
+subtitling, text is encoded using formats such as MPEG-4 Part 17
+(Streaming Text / 3GPP Timed Text).</p>
+<p>Because the text data is asynchronous and event-driven (arriving only
+when dialogue or cues occur), it does not follow the fixed frame rates
+typical of video. MPEG-4 manages this disparity by declaring an Object
+Descriptor (OD) for the text track, establishing its relationship with
+the main presentation timeline while allowing independent transport.</p>
+<h2 id="timestamping-and-clock-referencing">Timestamping and Clock
+Referencing</h2>
+<p>Synchronization relies on a common system time base governed by the
+following timing mechanisms:</p>
+<ul>
+<li><strong>Object Clock Reference (OCR):</strong> Streams establish a
+time base using clock references that map the text track's internal
+timeline to the master system time base.</li>
+<li><strong>Composition Time Stamps (CTS) / Presentation Time Stamps
+(PTS):</strong> Every text sample (a subtitle segment or styling
+command) carries a CTS. This defines the exact millisecond when the text
+must appear on the screen relative to the video frames.</li>
+<li><strong>Decoding Time Stamps (DTS):</strong> If text formatting or
+processing requires parsing before rendering, a DTS instructs the
+decoder when to process the payload prior to the display time.</li>
+</ul>
+<h2 id="sample-duration-and-display-clearing">Sample Duration and
+Display Clearing</h2>
+<p>Unlike continuous streams that rely on the arrival of the next frame
+to replace the previous one, text streams need explicit control over
+display duration. MPEG-4 handles this through:</p>
+<ul>
+<li><strong>Explicit Duration Fields:</strong> Each timed text sample
+contains a duration header indicating how long the text remains visible.
+Once the duration elapses, the rendering engine clears the subtitle
+box.</li>
+<li><strong>Empty/Clear Samples:</strong> In real-time generation where
+duration is unknown at the moment of transmission (e.g., live
+captioning), a subsequent empty sample or clear command with a specific
+CTS is dispatched to terminate the active caption.</li>
+</ul>
+<h2 id="sync-layer-sl-packetization">Sync Layer (SL) Packetization</h2>
+<p>Before transport, text elementary streams pass through the MPEG-4
+Sync Layer (SL). The SL wrapper attaches critical synchronization
+metadata to asynchronous text fragments, including:</p>
+<ul>
+<li>Packet sequence numbers to detect loss or out-of-order
+delivery.</li>
+<li>Temporal references (CTS/DTS).</li>
+<li>Random Access Point (RAP) flags, which indicate whether a text
+sample can be rendered independently without relying on prior formatting
+states.</li>
+</ul>
+<h2 id="real-time-transport-via-rtp">Real-Time Transport via RTP</h2>
+<p>For live and real-time streaming, MPEG-4 timed text is typically
+encapsulated in Real-time Transport Protocol (RTP) packets (RFC
+4396).</p>
+<ol type="1">
+<li><strong>Buffer Management:</strong> The receiver’s jitter buffer
+uses RTP timestamps—mapped to the MPEG-4 presentation clock—to hold text
+packets and render them at the precise CTS, smoothing out
+network-induced latency and jitter.</li>
+<li><strong>Redundancy and Late Arrival:</strong> To combat packet loss
+in real-time scenarios, RFC 4396 supports payload aggregation and
+redundant text transmissions. If an asynchronous text packet arrives
+slightly ahead of time, it sits in the buffer until its CTS matches the
+active video frame. If it arrives past its CTS, the renderer drops or
+truncates the sample to prevent out-of-sync captions.</li>
+</ol></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

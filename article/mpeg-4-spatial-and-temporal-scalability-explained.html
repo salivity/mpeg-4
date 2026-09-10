@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPEG-4 Spatial and Temporal Scalability Explained - mpeg-4</title>
+    <meta name="description" content="This article provides a clear overview of how the MPEG-4 compression standard utilizes spatial and temporal scalability to optimize video streaming. It explains the mechanics behind layered video coding, detailing how MPEG-4 adjusts resolution and frame">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/mpeg-4-spatial-and-temporal-scalability-explained">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MPEG-4 Spatial and Temporal Scalability Explained - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/mpeg-4-spatial-and-temporal-scalability-explained" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article provides a clear overview of how the MPEG-4 compression standard utilizes spatial and temporal scalability to optimize video streaming. It explains the mechanics behind layered video coding, detailing how MPEG-4 adjusts resolution and frame" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="mpeg-4-spatial-and-temporal-scalability-explained">MPEG-4
+Spatial and Temporal Scalability Explained</h1>
+<p>This article provides a clear overview of how the MPEG-4 compression
+standard utilizes spatial and temporal scalability to optimize video
+streaming. It explains the mechanics behind layered video coding,
+detailing how MPEG-4 adjusts resolution and frame rates to accommodate
+varying network bandwidths and diverse device capabilities without
+requiring multiple independent streams.</p>
+<h2 id="the-foundation-of-scalability-layered-coding">The Foundation of
+Scalability: Layered Coding</h2>
+<p>MPEG-4 achieves scalability through a technique called layered
+coding. Instead of encoding a video as a single, rigid stream, MPEG-4
+splits the video data into multiple layers:</p>
+<ul>
+<li><strong>The Base Layer:</strong> This layer contains the essential
+video data compressed at the minimum acceptable quality, resolution, and
+frame rate. It requires the least amount of bandwidth to decode and
+ensures that even devices with low processing power or poor network
+connections can display a continuous video.</li>
+<li><strong>The Enhancement Layer(s):</strong> These optional layers
+contain residual data that, when combined with the base layer,
+reconstruct the video at higher resolutions, higher frame rates, or
+better visual quality.</li>
+</ul>
+<p>If a user has a high-speed connection, their player decodes both the
+base and enhancement layers. If the connection drops, the player
+discards the enhancement layers and decodes only the base layer to
+prevent buffering.</p>
+<h2 id="how-mpeg-4-handles-spatial-scalability">How MPEG-4 Handles
+Spatial Scalability</h2>
+<p>Spatial scalability allows a single video stream to be decoded at
+different image resolutions (e.g., switching from standard definition to
+high definition). MPEG-4 manages this through the following process:</p>
+<ol type="1">
+<li><strong>Downsampling:</strong> The original high-resolution video
+frame is downsampled to a lower resolution to create the base
+layer.</li>
+<li><strong>Base Layer Encoding:</strong> This lower-resolution video is
+encoded and transmitted.</li>
+<li><strong>Upsampling and Prediction:</strong> To generate the
+enhancement layer, the encoded base layer frame is decoded and upsampled
+(stretched) back to the original target resolution.</li>
+<li><strong>Difference (Residual) Calculation:</strong> The system
+compares this upsampled frame with the original high-resolution frame to
+find the differences (residual details).</li>
+<li><strong>Enhancement Layer Encoding:</strong> Only these residual
+details (the sharpness, fine textures, and edges) are encoded into the
+enhancement layer.</li>
+</ol>
+<p>When a capable device decodes the stream, it takes the base layer,
+upsamples it, and adds the enhancement layer data on top to reconstruct
+a crisp, high-resolution video.</p>
+<h2 id="how-mpeg-4-handles-temporal-scalability">How MPEG-4 Handles
+Temporal Scalability</h2>
+<p>Temporal scalability allows a video to be decoded at different frame
+rates (e.g., switching from 15 frames per second to 30 or 60 frames per
+second). This is crucial for maintaining smooth motion on capable
+devices while conserving bandwidth on weaker networks.</p>
+<p>MPEG-4 achieves temporal scalability by distributing frames across
+layers:</p>
+<ul>
+<li><strong>Base Layer Frames:</strong> The base layer is encoded with a
+lower frame rate (e.g., every other frame, or only keyframes like
+I-frames and P-frames). This provides a watchable but less smooth
+video.</li>
+<li><strong>Enhancement Layer Frames:</strong> The intermediate frames
+(often B-frames, or bi-directionally predicted frames) are placed into
+the enhancement layer.</li>
+</ul>
+<p>To reconstruct the high-frame-rate video, the decoder inserts the
+enhancement layer frames between the base layer frames. The enhancement
+layer frames use temporal prediction, meaning they reference the frames
+in the base layer to predict motion, which keeps the enhancement layer's
+file size highly efficient.</p>
+<h2 id="advantages-of-mpeg-4-scalability">Advantages of MPEG-4
+Scalability</h2>
+<p>By combining spatial and temporal scalability, MPEG-4 offers several
+key benefits for modern video streaming:</p>
+<ul>
+<li><strong>Bandwidth Adaptability:</strong> Streams can dynamically
+adjust to fluctuating network conditions in real time without dropping
+the connection.</li>
+<li><strong>Backward Compatibility:</strong> Legacy or low-power devices
+can ignore the enhancement layers entirely and decode only the base
+layer, while modern devices can utilize the full stream.</li>
+<li><strong>Storage Efficiency:</strong> Content creators only need to
+store one master file containing the layered data, rather than encoding
+and saving multiple separate files for every possible resolution and
+frame rate combination.</li>
+</ul></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

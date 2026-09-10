@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How Fragmented MP4 Works for Live Streaming - mpeg-4</title>
+    <meta name="description" content="Fragmented MPEG-4 (fMP4) is a technology that enables efficient live streaming over the internet by dividing a standard MP4 file into smaller, sequential, and self-contained segments. Unlike traditional MP4 files that require the entire video metadata to">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/how-fragmented-mp4-works-for-live-streaming">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How Fragmented MP4 Works for Live Streaming - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/how-fragmented-mp4-works-for-live-streaming" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Fragmented MPEG-4 (fMP4) is a technology that enables efficient live streaming over the internet by dividing a standard MP4 file into smaller, sequential, and self-contained segments. Unlike traditional MP4 files that require the entire video metadata to" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="how-fragmented-mp4-works-for-live-streaming">How Fragmented MP4
+Works for Live Streaming</h1>
+<p>Fragmented MPEG-4 (fMP4) is a technology that enables efficient live
+streaming over the internet by dividing a standard MP4 file into
+smaller, sequential, and self-contained segments. Unlike traditional MP4
+files that require the entire video metadata to be loaded before
+playback can begin, fMP4 allows players to decode and play video chunks
+in real-time as they are being generated. This article explains the
+underlying structure of MPEG-4 fragmentation, how the container format
+is modified to support live delivery, and why it is essential for modern
+streaming protocols like HLS and MPEG-DASH.</p>
+<h3 id="the-problem-with-traditional-mp4-for-live-streaming">The Problem
+with Traditional MP4 for Live Streaming</h3>
+<p>In a standard MP4 container, all metadata containing the timing,
+size, and location of every video and audio frame is stored in a single
+structure called the Movie Box (<code>moov</code>). The actual media
+data (the audio and video samples) is stored in the Media Data Box
+(<code>mdat</code>).</p>
+<p>For a player to start decoding a traditional MP4, it must first read
+the <code>moov</code> box. If the <code>moov</code> box is placed at the
+end of the file (the default for many encoders), the player must
+download the entire file before playback starts. Even if the
+<code>moov</code> box is moved to the beginning of the file (a process
+called fast-start), the metadata must still contain information for the
+entire video. During a live stream, the video has no defined end,
+meaning the encoder cannot write a final <code>moov</code> box. This
+makes traditional MP4 entirely unsuitable for live broadcasting.</p>
+<h3 id="how-fragmentation-solves-the-problem">How Fragmentation Solves
+the Problem</h3>
+<p>Fragmentation reorganizes the MPEG-4 container so that the metadata
+and media samples are interleaved throughout the stream in small,
+manageable pieces. Instead of one massive <code>moov</code> box and one
+massive <code>mdat</code> box, a fragmented MP4 (fMP4) file consists of
+an initialization segment followed by a continuous sequence of movie
+fragments.</p>
+<h3 id="the-structure-of-a-fragmented-mp4">The Structure of a Fragmented
+MP4</h3>
+<p>An fMP4 stream is divided into two primary component types:</p>
+<ul>
+<li><strong>Initialization Segment:</strong> This segment contains the
+File Type Box (<code>ftyp</code>) and a minimal Movie Box
+(<code>moov</code>). In an fMP4, this <code>moov</code> box does not
+contain any sample duration or location data. Instead, it only defines
+the track configurations, codecs, and basic properties of the stream.
+The player downloads this small initialization segment once at the
+beginning of the session so it knows how to configure the decoders.</li>
+<li><strong>Media Segments (Fragments):</strong> Following the
+initialization segment, the stream is delivered as a series of
+independent fragments. Each fragment consists of two crucial boxes:
+<ul>
+<li><strong>Movie Fragment Box (<code>moof</code>):</strong> This acts
+as a mini-metadata box. It contains the timing, duration, and byte
+offsets for only the video and audio frames contained within that
+specific fragment.</li>
+<li><strong>Media Data Box (<code>mdat</code>):</strong> This box
+immediately follows the <code>moof</code> box and contains the actual
+encoded video and audio samples for that specific duration (typically 2
+to 6 seconds of video).</li>
+</ul></li>
+</ul>
+<h3 id="the-playback-and-delivery-process">The Playback and Delivery
+Process</h3>
+<p>During a live stream, the encoder continuously compresses the
+incoming audio and video feed. At set intervals (often corresponding to
+keyframe boundaries), the packager closes the current fragment,
+generates the <code>moof</code> and <code>mdat</code> pair, and
+publishes it to a web server.</p>
+<p>The media player retrieves the initialization segment first to set up
+the video decoder. It then fetches the newly created fragments
+sequentially using a manifest or playlist file (such as an
+<code>.m3u8</code> index for HLS or an <code>.mpd</code> file for
+MPEG-DASH).</p>
+<p>Because each fragment contains its own local metadata
+(<code>moof</code>), the player can immediately decode and render the
+frames within the corresponding <code>mdat</code> box without needing
+any information about past or future fragments. This architecture allows
+live streams to be delivered with minimal latency, high compatibility
+over standard HTTP web servers, and the flexibility to switch video
+qualities seamlessly mid-stream.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

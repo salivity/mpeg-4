@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How MPEG-4 Architecture Supports Scalability - mpeg-4</title>
+    <meta name="description" content="This article provides an overview of how the MPEG-4 standard achieves scalability across diverse network conditions and device capabilities. It explains the core architectural mechanisms, including object-based coding, layered bitstreams, and Fine-Granul">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/how-mpeg-4-architecture-supports-scalability">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How MPEG-4 Architecture Supports Scalability - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/how-mpeg-4-architecture-supports-scalability" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article provides an overview of how the MPEG-4 standard achieves scalability across diverse network conditions and device capabilities. It explains the core architectural mechanisms, including object-based coding, layered bitstreams, and Fine-Granul" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="how-mpeg-4-architecture-supports-scalability">How MPEG-4
+Architecture Supports Scalability</h1>
+<p>This article provides an overview of how the MPEG-4 standard achieves
+scalability across diverse network conditions and device capabilities.
+It explains the core architectural mechanisms, including object-based
+coding, layered bitstreams, and Fine-Granularity Scalability (FGS),
+which allow multimedia content to adapt dynamically to varying
+bandwidths and hardware constraints.</p>
+<h2 id="object-based-coding-and-scene-description">Object-Based Coding
+and Scene Description</h2>
+<p>Unlike traditional video standards that compress entire frames as a
+single entity, the MPEG-4 architecture is built on an object-based
+coding paradigm. It treats a scene as a collection of individual
+Audio-Visual Objects (AVOs), such as background images, talking heads,
+or text overlays.</p>
+<p>Each object is coded and transmitted independently. The spatial and
+temporal relationships between these objects are defined using the
+Binary Format for Scenes (BIFS). This object-based approach supports
+scalability by allowing the receiver to prioritize and decode only the
+most essential objects based on available processing power or network
+bandwidth. For example, a low-powered device might choose to render only
+the foreground speaker object while ignoring a complex, animated
+background.</p>
+<h2 id="layered-coding-structure">Layered Coding Structure</h2>
+<p>To support scalable transmission over networks with fluctuating
+bandwidths, the MPEG-4 compression scheme employs a layered coding
+structure. The media stream is divided into multiple layers:</p>
+<ul>
+<li><strong>Base Layer:</strong> This layer contains the fundamental
+data required to decode the media at a basic, minimum acceptable level
+of quality, resolution, or frame rate. It requires very low bandwidth to
+transmit.</li>
+<li><strong>Enhancement Layers:</strong> These layers contain additional
+residual data. When decoded in conjunction with the Base Layer, they
+improve the quality, increase the spatial resolution, or boost the frame
+rate of the reconstructed media.</li>
+</ul>
+<p>If network congestion occurs, the network or the decoder can discard
+the enhancement layers without crashing the stream, ensuring continuous
+playback at a reduced quality level.</p>
+<h2 id="types-of-scalability-in-mpeg-4">Types of Scalability in
+MPEG-4</h2>
+<p>The layered architecture of MPEG-4 supports three primary dimensions
+of scalability:</p>
+<ol type="1">
+<li><strong>Temporal Scalability:</strong> This allows video to be
+decoded at different frame rates. The Base Layer provides a low frame
+rate (e.g., 15 frames per second), while one or more Enhancement Layers
+insert additional frames to achieve higher fluid rates (e.g., 30 or 60
+frames per second).</li>
+<li><strong>Spatial Scalability:</strong> This enables decoding at
+different resolutions. The Base Layer decodes to a small frame size
+(e.g., QCIF), while the Enhancement Layer contains spatial resolution
+enhancement information to upscale the video to larger formats (e.g.,
+CIF or HD).</li>
+<li><strong>Quality (SNR) Scalability:</strong> Also known as
+Signal-to-Noise Ratio scalability, this maintains the same spatial and
+temporal resolution but alters the visual fidelity. The Base Layer
+contains a highly compressed, lower-quality version, and the Enhancement
+Layers provide the missing detail to sharpen the image.</li>
+</ol>
+<h2 id="fine-granularity-scalability-fgs">Fine-Granularity Scalability
+(FGS)</h2>
+<p>To address the highly unpredictable nature of the internet, MPEG-4
+introduced Fine-Granularity Scalability (FGS). Traditional scalability
+techniques rely on discrete enhancement layers, meaning quality can only
+be adjusted in fixed steps.</p>
+<p>FGS structures the enhancement layer bitstream in a
+bit-plane-by-bit-plane fashion. This allows the streaming server or
+network routers to truncate the enhancement bitstream at any arbitrary
+point. The more bits received, the higher the reconstructed video
+quality. This continuous, fine-grained adaptability makes MPEG-4
+exceptionally resilient to real-time bandwidth fluctuations.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPEG-4 Hardware Video Decoder Processing Stages - mpeg-4</title>
+    <meta name="description" content="An MPEG-4 video decoding hardware unit reconstructs uncompressed digital video frames from a compressed elementary bitstream through a dedicated, pipelined hardware architecture. This article outlines the sequential processing stages executed by the hard">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/mpeg-4-hardware-video-decoder-processing-stages">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MPEG-4 Hardware Video Decoder Processing Stages - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/mpeg-4-hardware-video-decoder-processing-stages" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="An MPEG-4 video decoding hardware unit reconstructs uncompressed digital video frames from a compressed elementary bitstream through a dedicated, pipelined hardware architecture. This article outlines the sequential processing stages executed by the hard" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="mpeg-4-hardware-video-decoder-processing-stages">MPEG-4 Hardware
+Video Decoder Processing Stages</h1>
+<p>An MPEG-4 video decoding hardware unit reconstructs uncompressed
+digital video frames from a compressed elementary bitstream through a
+dedicated, pipelined hardware architecture. This article outlines the
+sequential processing stages executed by the hardware—from parsing the
+initial bitstream to outputting the final reconstructed
+pixels—explaining the specific computational tasks performed at each
+step of the pipeline.</p>
+<h2 id="1-bitstream-parsing-and-variable-length-decoding-vld">1.
+Bitstream Parsing and Variable Length Decoding (VLD)</h2>
+<p>The hardware unit receives the compressed bitstream and utilizes a
+dedicated entropy decoding engine. In this stage, the hardware parses
+high-level syntax elements (such as sequence, picture, and macroblock
+headers) and performs Variable Length Decoding (VLD) to unpack:</p>
+<ul>
+<li>Motion vectors (MVs)</li>
+<li>Quantized transform coefficients</li>
+<li>Macroblock prediction modes and types</li>
+</ul>
+<h2 id="2-inverse-scan">2. Inverse Scan</h2>
+<p>Entropy decoding outputs quantized transform coefficients as a
+one-dimensional array. The inverse scan hardware block reorders these
+serialized coefficients back into a two-dimensional matrix (typically
+8x8 blocks). Depending on the specific MPEG-4 profile and coding mode,
+the hardware applies alternate horizontal, alternate vertical, or
+standard zig-zag scanning patterns.</p>
+<h2 id="3-inverse-quantization-dequantization">3. Inverse Quantization
+(Dequantization)</h2>
+<p>The dequantization unit restores the scale of the transform
+coefficients. It multiplies the 2D matrix of quantized values by
+specific quantization matrices and a scaling factor (quantization
+parameter or QP) determined during the parsing stage. This converts the
+quantized values back into the frequency-domain coefficient
+approximations.</p>
+<h2 id="4-inverse-discrete-cosine-transform-idct">4. Inverse Discrete
+Cosine Transform (IDCT)</h2>
+<p>The hardware passes the scaled frequency-domain coefficients into an
+IDCT core. The IDCT translates these frequency components back into the
+spatial domain, producing the residual pixel error data for each block.
+Hardware implementations frequently use specialized Multiply-Accumulate
+(MAC) arrays to execute high-precision matrix multiplications conforming
+to standard precision requirements.</p>
+<h2 id="5-intra-dc-and-ac-prediction--spatial-prediction">5. Intra DC
+and AC Prediction / Spatial Prediction</h2>
+<p>For intra-coded macroblocks, spatial correlation is exploited. The
+hardware uses an AC/DC prediction block to reconstruct the missing
+spatial data using previously decoded neighboring blocks (left and top).
+This stage computes the predicted spatial block before combining it with
+the IDCT residual.</p>
+<h2 id="6-motion-vector-decoding-and-motion-compensation">6. Motion
+Vector Decoding and Motion Compensation</h2>
+<p>For inter-coded macroblocks, the hardware generates predicted blocks
+based on temporal redundancy:</p>
+<ul>
+<li><strong>Motion Vector Reconstruction:</strong> Computes actual
+motion vectors by adding decoded motion vector differences to spatial
+motion vector predictors.</li>
+<li><strong>Reference Frame Fetch:</strong> Direct Memory Access (DMA)
+controllers retrieve reference pixel data from external memory
+(DRAM/Frame Buffer).</li>
+<li><strong>Interpolation:</strong> The motion compensation unit
+performs half-pixel or quarter-pixel interpolation (using bilinear or
+multi-tap filters) to generate sub-pixel accurate reference blocks.</li>
+</ul>
+<h2 id="7-reconstruction-and-accumulation">7. Reconstruction and
+Accumulation</h2>
+<p>The reconstruction unit adds the spatial residual data (from the IDCT
+stage) to the prediction data (from either the Intra Prediction block or
+the Motion Compensation block). This addition generates the raw,
+uncompressed pixel values for luminance (Y) and chrominance (Cb, Cr)
+channels.</p>
+<h2 id="8-in-loop-deblocking-and-deringing-filtering">8. In-Loop
+Deblocking and Deringing Filtering</h2>
+<p>To reduce block boundary artifacts caused by coarse quantization, the
+reconstructed frames pass through an in-loop filter. The hardware
+evaluates pixel gradients across 8x8 block edges and applies adaptive
+smoothing filters. Filtering improves visual quality and ensures that
+reference frames stored for subsequent frame predictions do not
+propagate block edge distortions.</p>
+<h2 id="9-frame-buffer-management-and-output">9. Frame Buffer Management
+and Output</h2>
+<p>The finalized macroblocks are written back to the Decoded Picture
+Buffer (DPB) in external memory via DMA. The hardware controller tracks
+frame presentation timestamps (PTS) and handles frame reordering
+(reconstructing I, P, and B-frames in presentation order). The display
+engine then retrieves these frames for rendering or color-space
+conversion (such as YUV to RGB).</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

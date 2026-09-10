@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How MPEG-4 Handles Packet Loss in Video Streaming - mpeg-4</title>
+    <meta name="description" content="This article explores how the MPEG-4 video compression standard manages packet loss and data corruption during real-time streaming. It examines the key error-resilience tools embedded within the MPEG-4 protocol—such as resynchronization markers, data p">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/how-mpeg-4-handles-packet-loss-in-video-streaming">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How MPEG-4 Handles Packet Loss in Video Streaming - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/how-mpeg-4-handles-packet-loss-in-video-streaming" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explores how the MPEG-4 video compression standard manages packet loss and data corruption during real-time streaming. It examines the key error-resilience tools embedded within the MPEG-4 protocol—such as resynchronization markers, data p" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="how-mpeg-4-handles-packet-loss-in-video-streaming">How MPEG-4
+Handles Packet Loss in Video Streaming</h1>
+<p>This article explores how the MPEG-4 video compression standard
+manages packet loss and data corruption during real-time streaming. It
+examines the key error-resilience tools embedded within the MPEG-4
+protocol—such as resynchronization markers, data partitioning,
+reversible variable-length codes, and error concealment—to explain how
+visual quality is maintained over unstable network connections.</p>
+<p>Active video streaming over IP networks frequently encounters packet
+loss and bit errors. Because MPEG-4 relies heavily on temporal
+compression (where future frames depend on past frames), a single lost
+packet can cause errors to propagate across multiple frames, resulting
+in severe visual distortion. To prevent this, MPEG-4 Part 2 (Visual)
+incorporates several robust error-resilience techniques.</p>
+<h3 id="resynchronization-markers">Resynchronization Markers</h3>
+<p>MPEG-4 mitigates packet loss by dividing video frames into
+independent "video packets." Each packet begins with a unique
+resynchronization marker. If the decoder detects corrupted data, it
+discards the damaged packet and searches the stream for the next
+resynchronization marker. Once found, decoding resumes. This prevents a
+single network error from corrupting the entire video frame, confining
+the damage to a small spatial area.</p>
+<h3 id="data-partitioning">Data Partitioning</h3>
+<p>Within each video packet, MPEG-4 separates high-priority motion data
+from lower-priority texture data (such as color and detail) using a
+motion boundary marker. If the texture data is corrupted or lost, the
+decoder can still recover and use the motion vectors to estimate the
+movement of the image. This allows the decoder to display a slightly
+blurred but structurally accurate moving image, rather than a completely
+broken or frozen frame.</p>
+<h3 id="reversible-variable-length-codes-rvlc">Reversible
+Variable-Length Codes (RVLC)</h3>
+<p>Standard variable-length codes can only be decoded in a forward
+direction; if an error occurs, all subsequent data in that packet
+becomes unreadable. MPEG-4 introduces RVLC, which allows the decoder to
+read data both forward and backward. If an error is detected in the
+middle of a packet, the decoder jumps to the next synchronization marker
+and decodes the packet in reverse. This salvaging technique recovers a
+significant portion of the data that would otherwise be discarded.</p>
+<h3 id="header-extension-codes-hec">Header Extension Codes (HEC)</h3>
+<p>Crucial configuration information, such as the spatial dimensions of
+the video and the frame rate, is typically stored in the main header of
+a video sequence. If this header is lost during transmission, the
+decoder cannot render the stream. MPEG-4 uses Header Extension Codes to
+repeat this vital configuration data inside individual video packets,
+allowing the decoder to recover and configure itself even if the initial
+stream setup packets are lost.</p>
+<h3 id="decoder-side-error-concealment">Decoder-Side Error
+Concealment</h3>
+<p>When packets are entirely lost and cannot be recovered using the
+above methods, the MPEG-4 decoder applies error concealment algorithms
+to hide the defects.</p>
+<ul>
+<li><strong>Spatial concealment</strong> estimates the missing pixels by
+interpolating data from the surrounding, undamaged blocks of the same
+frame.</li>
+<li><strong>Temporal concealment</strong> copies blocks of pixels from
+previous frames into the current frame, utilizing motion vectors to
+place them in the correct location. This effectively masks the loss from
+the viewer during active playback.</li>
+</ul></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

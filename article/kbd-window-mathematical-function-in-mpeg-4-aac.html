@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KBD Window Mathematical Function in MPEG-4 AAC - mpeg-4</title>
+    <meta name="description" content="This article provides an overview of the Kaiser-Bessel Derived (KBD) window function used in MPEG-4 Advanced Audio Coding (AAC). It details the mathematical formulation of the standard Kaiser window, the derivation required to satisfy the Princen-Bradley">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/kbd-window-mathematical-function-in-mpeg-4-aac">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="KBD Window Mathematical Function in MPEG-4 AAC - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/kbd-window-mathematical-function-in-mpeg-4-aac" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article provides an overview of the Kaiser-Bessel Derived (KBD) window function used in MPEG-4 Advanced Audio Coding (AAC). It details the mathematical formulation of the standard Kaiser window, the derivation required to satisfy the Princen-Bradley" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="kbd-window-mathematical-function-in-mpeg-4-aac">KBD Window
+Mathematical Function in MPEG-4 AAC</h1>
+<p>This article provides an overview of the Kaiser-Bessel Derived (KBD)
+window function used in MPEG-4 Advanced Audio Coding (AAC). It details
+the mathematical formulation of the standard Kaiser window, the
+derivation required to satisfy the Princen-Bradley condition for
+Modified Discrete Cosine Transform (MDCT), and the role of the alpha
+parameter in balancing frequency selectivity and time resolution in
+audio compression.</p>
+<hr />
+<h3 id="the-role-of-the-kbd-window-in-mpeg-4-aac">The Role of the KBD
+Window in MPEG-4 AAC</h3>
+<p>In MPEG-4 AAC, audio signals are transformed from the time domain to
+the frequency domain using the Modified Discrete Cosine Transform
+(MDCT). To prevent time-domain aliasing and spectral leakage, MDCT
+requires windowing functions that satisfy the <strong>Princen-Bradley
+condition</strong>.</p>
+<p>AAC standardizes two window types: the <strong>Sine window</strong>
+(ideal for general audio and noise) and the <strong>KBD window</strong>
+(ideal for narrow-band tonal signals due to high stopband
+attenuation).</p>
+<hr />
+<h3 id="1-the-standard-kaiser-window-formulation">1. The Standard Kaiser
+Window Formulation</h3>
+<p>The KBD window is constructed using a kernel based on the
+zeroth-order Kaiser window. For a kernel length <span
+class="math inline">\(M = N/2\)</span>, the Kaiser window <span
+class="math inline">\(w_K(n)\)</span> is defined as:</p>
+<p><span class="math display">\[w_K(n) = \frac{I_0\left(\pi \alpha
+\sqrt{1 - \left(\frac{2n}{M} - 1\right)^2}\right)}{I_0(\pi \alpha)},
+\quad 0 \le n \le M\]</span></p>
+<p>Where:</p>
+<ul>
+<li><span class="math inline">\(N\)</span> is the total window length
+(e.g., 2048 for long blocks, 256 for short blocks in AAC).</li>
+<li><span class="math inline">\(M = N/2\)</span> is the length of the
+Kaiser kernel.</li>
+<li><span class="math inline">\(\alpha\)</span> (alpha) is the tuning
+parameter that controls the trade-off between main-lobe width and
+side-lobe attenuation (typically <span class="math inline">\(\alpha =
+4\)</span> or <span class="math inline">\(\alpha = 6\)</span> in MPEG
+AAC).</li>
+<li><span class="math inline">\(I_0(x)\)</span> is the zeroth-order
+Modified Bessel Function of the first kind, given by the series
+expansion:</li>
+</ul>
+<p><span class="math display">\[I_0(x) = \sum_{k=0}^{\infty}
+\frac{\left(\frac{x}{2}\right)^{2k}}{(k!)^2}\]</span></p>
+<hr />
+<h3 id="2-the-derived-kbd-window-formula">2. The Derived KBD Window
+Formula</h3>
+<p>A raw Kaiser window does not satisfy the Princen-Bradley condition.
+To make it suitable for MDCT, the Kaiser window is integrated via
+cumulative summation to create the derived window <span
+class="math inline">\(d(n)\)</span> of total length <span
+class="math inline">\(N\)</span>:</p>
+<h4 id="first-half-0-le-n--fracn2">First Half (<span
+class="math inline">\(0 \le n &lt; \frac{N}{2}\)</span>):</h4>
+<p><span class="math display">\[d(n) = \sqrt{\frac{\sum_{k=0}^{n}
+w_K(k)}{\sum_{k=0}^{N/2} w_K(k)}}\]</span></p>
+<h4 id="second-half-fracn2-le-n--n">Second Half (<span
+class="math inline">\(\frac{N}{2} \le n &lt; N\)</span>):</h4>
+<p><span class="math display">\[d(n) = \sqrt{\frac{\sum_{k=0}^{N - 1 -
+n} w_K(k)}{\sum_{k=0}^{N/2} w_K(k)}}\]</span></p>
+<p>Alternatively, using the symmetry property <span
+class="math inline">\(d(n) = d(N - 1 - n)\)</span>, the second half can
+simply be evaluated by mirroring the first half.</p>
+<hr />
+<h3 id="3-key-mathematical-properties">3. Key Mathematical
+Properties</h3>
+<p>The formulation ensures two necessary criteria for perfect
+reconstruction in MPEG-4 AAC:</p>
+<ol type="1">
+<li><p><strong>Princen-Bradley Condition (TDAC):</strong> <span
+class="math display">\[d^2(n) + d^2\left(n + \frac{N}{2}\right) = 1,
+\quad 0 \le n &lt; \frac{N}{2}\]</span></p></li>
+<li><p><strong>Time-Reversal Symmetry:</strong> <span
+class="math display">\[d(n) = d(N - 1 - n), \quad 0 \le n &lt;
+N\]</span></p></li>
+</ol>
+<p>By satisfying these properties, the KBD window achieves high stopband
+attenuation, isolating strong spectral peaks and minimizing
+psychoacoustic masking threshold errors during AAC encoding.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

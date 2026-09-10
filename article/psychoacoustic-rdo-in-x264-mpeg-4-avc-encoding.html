@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Psychoacoustic RDO in x264 MPEG-4 AVC Encoding - mpeg-4</title>
+    <meta name="description" content="This article explores how the open-source x264 encoder integrates psychoacoustic principles into Rate-Distortion Optimization (Psy-RDO). While standard video encoding algorithms minimize mathematical error metrics like Mean Squared Error (MSE), x264 modi">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/psychoacoustic-rdo-in-x264-mpeg-4-avc-encoding">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Psychoacoustic RDO in x264 MPEG-4 AVC Encoding - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/psychoacoustic-rdo-in-x264-mpeg-4-avc-encoding" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explores how the open-source x264 encoder integrates psychoacoustic principles into Rate-Distortion Optimization (Psy-RDO). While standard video encoding algorithms minimize mathematical error metrics like Mean Squared Error (MSE), x264 modi" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="psychoacoustic-rdo-in-x264-mpeg-4-avc-encoding">Psychoacoustic
+RDO in x264 MPEG-4 AVC Encoding</h1>
+<p>This article explores how the open-source x264 encoder integrates
+psychoacoustic principles into Rate-Distortion Optimization (Psy-RDO).
+While standard video encoding algorithms minimize mathematical error
+metrics like Mean Squared Error (MSE), x264 modifies these algorithms to
+mimic human visual perception. By adjusting how distortion is calculated
+during macroblock mode decision and quantization, x264 prevents the loss
+of fine textures, edges, and film grain, resulting in higher perceived
+visual quality at the expense of lower objective benchmark scores.</p>
+<h3 id="traditional-rate-distortion-optimization">Traditional
+Rate-Distortion Optimization</h3>
+<p>Standard video compression relies on Rate-Distortion Optimization
+(RDO) to make encoding decisions, such as choosing macroblock partition
+sizes, prediction modes, and motion vectors. Traditional RDO calculates
+a cost function:</p>
+<p><span class="math display">\[J = D + \lambda R\]</span></p>
+<p>In this equation, <span class="math inline">\(R\)</span> represents
+the bitrate cost (bits required), <span
+class="math inline">\(\lambda\)</span> is the Lagrange multiplier tied
+to the quantization parameter, and <span
+class="math inline">\(D\)</span> represents distortion.</p>
+<p>Distortion in traditional systems is computed using mathematical
+metrics like Sum of Squared Errors (SSE) or Peak Signal-to-Noise Ratio
+(PSNR). However, mathematical metrics do not accurately reflect the
+Human Visual System (HVS). Blurring a detailed texture often produces a
+lower mathematical error than slightly shifting the pattern of that
+texture, causing traditional RDO to favor smooth, washed-out images over
+sharp, textured ones.</p>
+<h3 id="psychovisual-rate-distortion-optimization-psy-rd">Psychovisual
+Rate-Distortion Optimization (Psy-RD)</h3>
+<p>To counter mathematical over-smoothing, x264 introduces Psy-RD into
+the mode decision process. Psy-RD modifies the distortion calculation
+(<span class="math inline">\(D\)</span>) by adding an energy-matching
+term that measures high-frequency detail:</p>
+<p><span class="math display">\[D_{\text{psy}} = D + \psi \cdot
+(\text{Energy}_{\text{source}} -
+\text{Energy}_{\text{reconstructed}})\]</span></p>
+<p>Here, <span class="math inline">\(\psi\)</span> (psi) is the
+psychovisual strength parameter, and energy is measured by the variance
+of spatial high-frequency components, such as edge strength and local AC
+transform coefficients.</p>
+<p>If an encoding choice completely smooths out an area of high detail
+(like foliage or film grain), the reconstructed energy drops
+significantly. Psy-RD penalizes this energy loss, forcing the encoder to
+select prediction modes and transform block sizes (such as 8x8 or 4x4
+intra/inter modes) that maintain sharpness and texture, even if doing so
+generates slightly higher mathematical distortion.</p>
+<h3 id="psy-trellis-quantization">Psy-Trellis Quantization</h3>
+<p>Quantization traditionally rounds transform coefficients toward zero
+to save bits, which removes high-frequency details first. x264
+implements Psy-Trellis, an extension of Trellis quantization that
+operates within the psychovisual framework.</p>
+<p>Trellis optimization finds the optimal set of quantized coefficients
+by evaluating different rounding paths across transform blocks.
+Psy-Trellis alters the Trellis error metric to bias the rounding
+decisions toward preserving coefficient patterns that match the original
+block's structure. Instead of dropping high-frequency AC coefficients to
+minimize bit cost, Psy-Trellis keeps non-zero values in places where
+human vision expects complex textures, preventing banding and
+plastic-like surfaces in complex regions.</p>
+<h3 id="objective-metrics-vs-subjective-quality">Objective Metrics vs.
+Subjective Quality</h3>
+<p>A key consequence of psychoacoustic rate-distortion optimization in
+x264 is its effect on traditional quality metrics. Enabling Psy-RD and
+Psy-Trellis almost universally lowers PSNR and SSIM scores because the
+encoder is no longer trying to minimize purely mathematical differences
+against the source frame.</p>
+<p>Instead, x264 distributes bits to regions where the human eye detects
+fidelity loss and preserves visual complexity. The result is an output
+that appears sharper, more natural, and visually closer to the source
+material to human observers, establishing x264's psychovisual tuning as
+one of the most effective H.264 compression implementations
+available.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

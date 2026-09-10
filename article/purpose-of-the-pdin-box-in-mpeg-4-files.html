@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Purpose of the pdin Box in MPEG-4 Files - mpeg-4</title>
+    <meta name="description" content="The Progressive Download Information box, denoted by the four-character code 'pdin', is an optional metadata atom in the MPEG-4 (MP4) container format designed to improve media playback over networks. It provides media players with precise estimates of t">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/purpose-of-the-pdin-box-in-mpeg-4-files">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Purpose of the pdin Box in MPEG-4 Files - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/purpose-of-the-pdin-box-in-mpeg-4-files" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The Progressive Download Information box, denoted by the four-character code 'pdin', is an optional metadata atom in the MPEG-4 (MP4) container format designed to improve media playback over networks. It provides media players with precise estimates of t" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="purpose-of-the-pdin-box-in-mpeg-4-files">Purpose of the pdin Box
+in MPEG-4 Files</h1>
+<p>The Progressive Download Information box, denoted by the
+four-character code <code>'pdin'</code>, is an optional metadata atom in
+the MPEG-4 (MP4) container format designed to improve media playback
+over networks. It provides media players with precise estimates of the
+initial buffering delay required at various download rates to ensure
+continuous, uninterrupted playback. By reading this data, a media player
+can prevent playback stalls and buffering issues before the entire file
+finishes downloading.</p>
+<h3 id="what-is-the-pdin-box">What is the 'pdin' Box?</h3>
+<p>Defined in the ISO Base Media File Format (ISO/IEC 14496-12), the
+<code>'pdin'</code> box is a top-level box typically located near the
+beginning of an MP4 file, often right after the file type box
+(<code>'ftyp'</code>). Its primary role is to assist progressive HTTP
+downloading—a method where a client begins playing media while the
+remaining parts of the file are still being received over the
+network.</p>
+<p>Without the <code>'pdin'</code> box, a media player must either guess
+how much data to buffer before starting playback or calculate the buffer
+duration dynamically based on the total file size, bitrate, and network
+speed. The <code>'pdin'</code> box eliminates guesswork by providing
+pre-calculated guidelines directly from the content encoder or authoring
+tool.</p>
+<h3 id="structure-and-content-of-the-pdin-box">Structure and Content of
+the 'pdin' Box</h3>
+<p>The <code>'pdin'</code> box contains a simple list of paired values
+representing network speeds and corresponding delay requirements:</p>
+<ul>
+<li><strong>Download Rate (<code>rate</code>):</strong> Expressed in
+bytes per second, this value indicates a theoretical network download
+speed.</li>
+<li><strong>Initial Delay (<code>initial_delay</code>):</strong>
+Expressed in milliseconds, this indicates how long the player should
+delay playback (accumulate buffer) if the current download speed matches
+the associated rate.</li>
+</ul>
+<p>A standard <code>'pdin'</code> box contains multiple pairs of these
+values covering a range of common connection speeds, from slow mobile
+connections to fast broadband.</p>
+<h3 id="how-media-players-use-pdin">How Media Players Use 'pdin'</h3>
+<p>When a client initiates playback of an MP4 file over HTTP:</p>
+<ol type="1">
+<li><strong>Reads Metadata:</strong> The player reads the initial file
+headers, locating the <code>'pdin'</code> box.</li>
+<li><strong>Measures Bandwidth:</strong> The player estimates the user's
+current effective download rate during the initial data transfer.</li>
+<li><strong>Matches Delay:</strong> The player checks the
+<code>'pdin'</code> table to find the delay value corresponding to the
+detected bandwidth. If the current bandwidth falls between two defined
+rates, the player interpolates between the delay values.</li>
+<li><strong>Buffers and Plays:</strong> The player buffers the incoming
+stream for the specified delay period before rendering the first video
+and audio frames.</li>
+</ol>
+<h3 id="benefits-of-the-pdin-box">Benefits of the 'pdin' Box</h3>
+<ul>
+<li><strong>Prevents Buffer Underruns:</strong> By setting an accurate
+initial delay, the player ensures that media decoding will never outpace
+the download rate, avoiding mid-playback freezes.</li>
+<li><strong>Reduces Time-to-First-Frame:</strong> For high-speed
+connections, the <code>'pdin'</code> box indicates that little to no
+delay is required, allowing playback to begin almost instantly.</li>
+<li><strong>Optimizes Resource Management:</strong> It enables
+low-powered devices and simpler playback software to make informed
+buffering decisions without performing complex bitrate calculations
+across media tracks.</li>
+</ul></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

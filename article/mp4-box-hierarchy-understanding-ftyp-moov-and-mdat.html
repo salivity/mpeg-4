@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MP4 Box Hierarchy: Understanding ftyp, moov, and mdat - mpeg-4</title>
+    <meta name="description" content="In the MPEG-4 (MP4) container format, defined by the ISO Base Media File Format (ISOBMFF), the ftyp, moov, and mdat boxes are the three fundamental components that define compatibility, metadata, and media payload. Hierarchically, these three atoms exist">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/mp4-box-hierarchy-understanding-ftyp-moov-and-mdat">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MP4 Box Hierarchy: Understanding ftyp, moov, and mdat - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/mp4-box-hierarchy-understanding-ftyp-moov-and-mdat" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="In the MPEG-4 (MP4) container format, defined by the ISO Base Media File Format (ISOBMFF), the ftyp, moov, and mdat boxes are the three fundamental components that define compatibility, metadata, and media payload. Hierarchically, these three atoms exist" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="mp4-box-hierarchy-understanding-ftyp-moov-and-mdat">MP4 Box
+Hierarchy: Understanding ftyp, moov, and mdat</h1>
+<p>In the MPEG-4 (MP4) container format, defined by the ISO Base Media
+File Format (ISOBMFF), the <code>ftyp</code>, <code>moov</code>, and
+<code>mdat</code> boxes are the three fundamental components that define
+compatibility, metadata, and media payload. Hierarchically, these three
+atoms exist as sibling root-level boxes residing directly in the file's
+primary directory rather than being nested within one another. This
+article breaks down the architectural relationship among these boxes,
+explains how their internal data links together, and details why their
+physical ordering dictates media playback behavior.</p>
+<h3 id="sibling-root-level-structure">Sibling Root-Level Structure</h3>
+<p>In an MP4 container, every data block is encapsulated in a structure
+called a "box" (historically known as an "atom"). The <code>ftyp</code>,
+<code>moov</code>, and <code>mdat</code> boxes operate at the exact same
+hierarchical level: the file root.</p>
+<pre><code>[MP4 File Root]
+ ├── ftyp (File Type Box)
+ ├── moov (Movie Box / Metadata)
+ └── mdat (Media Data Box / Raw Payload)</code></pre>
+<p>None of these three boxes is a parent or child of another. Instead,
+they divide the file's duties into identification, indexing, and raw
+data storage.</p>
+<h3 id="individual-box-functions">Individual Box Functions</h3>
+<ul>
+<li><strong><code>ftyp</code> (File Type Box):</strong> Identifies the
+file specification, major brand, minor version, and compatible brands.
+It tells the parser which specifications the file complies with (such as
+<code>isom</code>, <code>mp42</code>, or <code>qt  </code>).</li>
+<li><strong><code>moov</code> (Movie Box):</strong> Acts as the master
+metadata container. It does not contain raw audio or video streams;
+instead, it houses the structural blueprint of the presentation.</li>
+<li><strong><code>mdat</code> (Media Data Box):</strong> Serves as the
+storage payload containing the raw, encoded audio, video, subtitle
+frames, and other stream samples.</li>
+</ul>
+<h3 id="the-internal-hierarchy-of-the-moov-box">The Internal Hierarchy
+of the <code>moov</code> Box</h3>
+<p>While <code>ftyp</code> and <code>mdat</code> are structurally flat,
+the <code>moov</code> box contains an extensive nested hierarchy of
+child and grandchild boxes that map directly to the content inside
+<code>mdat</code>:</p>
+<ul>
+<li><strong><code>mvhd</code> (Movie Header Box):</strong> Defines
+presentation-level details like duration, timescale, and creation
+time.</li>
+<li><strong><code>trak</code> (Track Box):</strong> Contains metadata
+for an individual track (e.g., video or audio). A file typically has one
+<code>trak</code> per stream.
+<ul>
+<li><strong><code>tkhd</code> (Track Header Box):</strong> Specifies
+track dimensions, volume, and track ID.</li>
+<li><strong><code>mdia</code> (Media Box):</strong> Declares information
+about the media data within the track.
+<ul>
+<li><strong><code>minf</code> (Media Information Box):</strong> Houses
+handler-specific information.
+<ul>
+<li><strong><code>stbl</code> (Sample Table Box):</strong> The critical
+indexing structure. It contains sub-boxes like <code>stts</code>
+(time-to-sample), <code>stsz</code> (sample sizes), <code>stsc</code>
+(sample-to-chunk), and <code>stco</code> / <code>co64</code> (chunk
+offsets).</li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+<h3 id="the-logical-relationship-between-moov-and-mdat">The Logical
+Relationship Between <code>moov</code> and <code>mdat</code></h3>
+<p>The primary relationship between <code>moov</code> and
+<code>mdat</code> is referential. The <code>mdat</code> box contains
+raw, unindexed bytes. The sample table (<code>stbl</code>) inside the
+<code>moov</code> hierarchy acts as an index table pointing into the
+<code>mdat</code> payload:</p>
+<ol type="1">
+<li>The <code>stco</code> (or 64-bit <code>co64</code>) box inside
+<code>moov</code> stores exact byte offsets pointing to the start of
+data chunks inside <code>mdat</code>.</li>
+<li>The <code>stsz</code> box specifies the exact byte length of each
+sample within those chunks.</li>
+<li>The media player reads <code>moov</code> to build an index,
+calculates the required byte range, and directly accesses the target
+frames located in <code>mdat</code>.</li>
+</ol>
+<p>Without <code>moov</code>, the contents of <code>mdat</code> cannot
+be decoded or positioned in time. Without <code>mdat</code>, the
+<code>moov</code> box is simply an empty index.</p>
+<h3 id="physical-sequence-and-streaming-implications">Physical Sequence
+and Streaming Implications</h3>
+<p>Although <code>ftyp</code>, <code>moov</code>, and <code>mdat</code>
+are hierarchical peers, their physical order in the byte stream
+determines how the file can be processed:</p>
+<ul>
+<li><strong><code>ftyp</code> First:</strong> By specification, the
+<code>ftyp</code> box must appear at the very beginning of the file so
+media decoders can immediately verify compatibility.</li>
+<li><strong><code>moov</code> Before <code>mdat</code> (Fast-Start / Web
+Optimized):</strong> Placing the metadata (<code>moov</code>) ahead of
+the media payload (<code>mdat</code>) allows web browsers to download
+the index immediately. The player can calculate durations, display the
+first frame, and begin progressive playback without downloading the
+entire file.</li>
+<li><strong><code>mdat</code> Before <code>moov</code> (Standard
+Recording):</strong> When recording live video, the final sizes and
+offsets of chunks are unknown until encoding finishes. Encoders write
+the <code>mdat</code> payload in real time and append the completed
+<code>moov</code> index at the end of the file once recording stops.
+Files formatted this way must be completely downloaded before playback
+can begin unless optimized using post-processing tools.</li>
+</ul></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

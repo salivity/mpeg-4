@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPEG-4 AAC Joint Stereo: Reducing Redundancy - mpeg-4</title>
+    <meta name="description" content="Joint Stereo processing in MPEG-4 Advanced Audio Coding (AAC) is an efficient compression technique designed to eliminate spatial redundancy between audio channels. In standard stereo recordings, the left and right channels frequently share identical or">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/mpeg-4-aac-joint-stereo-reducing-redundancy">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MPEG-4 AAC Joint Stereo: Reducing Redundancy - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/mpeg-4-aac-joint-stereo-reducing-redundancy" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Joint Stereo processing in MPEG-4 Advanced Audio Coding (AAC) is an efficient compression technique designed to eliminate spatial redundancy between audio channels. In standard stereo recordings, the left and right channels frequently share identical or" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="mpeg-4-aac-joint-stereo-reducing-redundancy">MPEG-4 AAC Joint
+Stereo: Reducing Redundancy</h1>
+<p>Joint Stereo processing in MPEG-4 Advanced Audio Coding (AAC) is an
+efficient compression technique designed to eliminate spatial redundancy
+between audio channels. In standard stereo recordings, the left and
+right channels frequently share identical or highly correlated audio
+information. By analyzing and exploiting these inter-channel
+similarities through Mid/Side (M/S) stereo, Intensity Stereo (IS), and
+Parametric Stereo (PS), MPEG-4 AAC significantly reduces the amount of
+data required to encode multi-channel audio without degrading perceptual
+sound quality.</p>
+<h3 id="midside-ms-stereo-coding">Mid/Side (M/S) Stereo Coding</h3>
+<p>Mid/Side stereo coding is a lossless matrixing process applied prior
+to quantization that targets correlated signals between channels.
+Instead of encoding discrete Left (<span
+class="math inline">\(L\)</span>) and Right (<span
+class="math inline">\(R\)</span>) channels independently, AAC transforms
+them into a Mid (<span class="math inline">\(M\)</span>) channel and a
+Side (<span class="math inline">\(S\)</span>) channel using standard
+matrix equations:</p>
+<ul>
+<li><strong>Mid Channel (<span
+class="math inline">\(M\)</span>):</strong> <span
+class="math inline">\((L + R) / 2\)</span> representing the common,
+center-panned audio information.</li>
+<li><strong>Side Channel (<span
+class="math inline">\(S\)</span>):</strong> <span
+class="math inline">\((L - R) / 2\)</span> representing the directional
+differences between channels.</li>
+</ul>
+<p>When audio is centered or strongly correlated, the Side channel
+contains minimal energy. The AAC psychoacoustic model allocates fewer
+bits to the Side channel while reserving more bits for the Mid channel,
+drastically reducing the overall bitrate. In MPEG-4 AAC, M/S coding can
+be switched on or off dynamically on a frame-by-frame and scale-factor
+band basis, preventing artifacts in sections where channels are
+uncorrelated.</p>
+<h3 id="intensity-stereo-is-coding">Intensity Stereo (IS) Coding</h3>
+<p>Intensity Stereo exploits the limitations of human spatial perception
+at higher frequencies. Psychoacoustic research demonstrates that the
+human auditory system localizes high-frequency sounds primarily based on
+energy envelopes (intensity) rather than fine waveform phase
+differences.</p>
+<p>For higher frequency bands:</p>
+<ol type="1">
+<li>The encoder combines the Left and Right channel signals into a
+single shared carrier signal (sum).</li>
+<li>It transmits only this single spectrum along with directional scale
+factors (intensity indicators) for each channel.</li>
+<li>The decoder reconstructs the stereo image by scaling the single
+signal to the appropriate volume in each output channel.</li>
+</ol>
+<p>By transmitting one waveform instead of two for designated frequency
+subbands, Intensity Stereo saves substantial bit budget, particularly in
+low-bitrate scenarios.</p>
+<h3 id="parametric-stereo-ps">Parametric Stereo (PS)</h3>
+<p>Implemented in High-Efficiency AAC (HE-AAC v2), Parametric Stereo
+represents the most aggressive form of spatial redundancy reduction.
+Instead of transmitting two full waveforms, PS encodes the entire audio
+track as a single monophonic downmix combined with a small stream of
+spatial parameters.</p>
+<p>These spatial parameters include:</p>
+<ul>
+<li><strong>Inter-channel Intensity Differences (IID):</strong> Relative
+energy levels between channels across subbands.</li>
+<li><strong>Inter-channel Cross-Correlation (ICC):</strong> Degree of
+similarity or perceived spatial breadth and ambiance.</li>
+<li><strong>Inter-channel Phase Differences (IPD):</strong> Relative
+phase shifts for low-frequency spatial precision.</li>
+</ul>
+<p>The decoder synthesizes a complete stereo field from the mono track
+using these parametric instructions, achieving acceptable stereo
+fidelity at ultra-low bitrates.</p>
+<h3 id="summary-of-benefits">Summary of Benefits</h3>
+<p>By applying these Joint Stereo methods adaptively across frequency
+subbands and time frames, MPEG-4 AAC avoids wasting bits on redundant,
+duplicate channel data. The saved data bandwidth is redirected toward
+improving the fidelity of complex, audible audio components, resulting
+in superior audio quality at lower bitrates.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

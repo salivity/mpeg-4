@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPEG-4 Animated 3D Polygonal Meshes Explained - mpeg-4</title>
+    <meta name="description" content="MPEG-4 integrates synthetic and natural media into a single multimedia architecture, offering dedicated tools for animated 3D polygonal meshes through its Synthetic/Natural Hybrid Coding (SNHC) framework and Binary Format for Scenes (BIFS). By employing">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/mpeg-4-animated-3d-polygonal-meshes-explained">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MPEG-4 Animated 3D Polygonal Meshes Explained - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/mpeg-4-animated-3d-polygonal-meshes-explained" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="MPEG-4 integrates synthetic and natural media into a single multimedia architecture, offering dedicated tools for animated 3D polygonal meshes through its Synthetic/Natural Hybrid Coding (SNHC) framework and Binary Format for Scenes (BIFS). By employing" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="mpeg-4-animated-3d-polygonal-meshes-explained">MPEG-4 Animated
+3D Polygonal Meshes Explained</h1>
+<p>MPEG-4 integrates synthetic and natural media into a single
+multimedia architecture, offering dedicated tools for animated 3D
+polygonal meshes through its Synthetic/Natural Hybrid Coding (SNHC)
+framework and Binary Format for Scenes (BIFS). By employing advanced 3D
+Mesh Coding (3DMC), streaming protocols like BIFS-Anim, and specialized
+parametric deformation nodes, MPEG-4 allows developers to compress,
+stream, and render complex animated 3D geometry in real time across
+bandwidth-constrained networks.</p>
+<h3 id="scene-graph-representation-with-bifs">Scene Graph Representation
+with BIFS</h3>
+<p>MPEG-4 represents 3D polygonal meshes using a hierarchical scene
+graph heavily derived from VRML (Virtual Reality Modeling Language),
+formalized in binary format as BIFS.</p>
+<ul>
+<li><strong>IndexedFaceSet Nodes:</strong> Define the baseline polygonal
+geometry using vertex coordinates, normal vectors, texture coordinates,
+and index arrays that specify polygonal face connectivity.</li>
+<li><strong>Binary Compression:</strong> BIFS parses and converts
+standard text-based VRML nodes into compact binary streams, reducing
+file sizes for real-time delivery.</li>
+</ul>
+<h3 id="3d-mesh-coding-3dmc">3D Mesh Coding (3DMC)</h3>
+<p>To compress static and dynamic 3D geometry, MPEG-4 incorporates 3D
+Mesh Coding standards (ISO/IEC 14496-2):</p>
+<ul>
+<li><strong>Topological Surgery:</strong> Deconstructs a polygonal mesh
+into planar vertex graphs and spanning trees, encoding geometry and
+connectivity separately with minimal redundancy.</li>
+<li><strong>Lossless Connectivity &amp; Quantized Geometry:</strong>
+Preserves exact mesh topology while applying user-defined quantization
+to vertex coordinates, normals, and texture maps.</li>
+<li><strong>Progressive Transmission:</strong> Supports hierarchical
+levels of detail (LoD), enabling a client device to render a coarse mesh
+immediately and refine the mesh resolution as additional data packets
+arrive.</li>
+</ul>
+<h3 id="animation-mechanisms">Animation Mechanisms</h3>
+<p>MPEG-4 synthetic scene tools use several complementary methods to
+animate 3D polygonal meshes:</p>
+<h4 id="1-interpolator-nodes-and-keyframing">1. Interpolator Nodes and
+Keyframing</h4>
+<p>For pre-calculated mesh morphing, MPEG-4 uses interpolator nodes:</p>
+<ul>
+<li><strong>CoordinateInterpolator:</strong> Blends keyframe vertex
+arrays to create smooth shape transitions and facial expressions.</li>
+<li><strong>Orientation and Position Interpolators:</strong> Transform
+object sub-components within the scene hierarchy, allowing rigid-body
+animation of segmented meshes.</li>
+</ul>
+<h4 id="2-bifs-anim-dynamic-streaming">2. BIFS-Anim Dynamic
+Streaming</h4>
+<p>Rather than transmitting full mesh frames continuously, MPEG-4 uses
+<strong>BIFS-Anim</strong> channels. BIFS-Anim provides a low-overhead,
+frame-based stream that directly updates specific fields of the scene
+graph (such as vertex positions in a <code>Coordinate</code> node) at
+defined frame rates. This enables continuous, real-time vertex
+deformation across standard network connections.</p>
+<h4 id="3-face-and-body-animation-fba">3. Face and Body Animation
+(FBA)</h4>
+<p>For humanoid 3D meshes, MPEG-4 defines high-level parametric
+animation tools:</p>
+<ul>
+<li><strong>Facial Animation Parameters (FAPs) and Body Animation
+Parameters (BAPs):</strong> Drive mesh deformation using standardized
+feature points and biomechanical joints.</li>
+<li><strong>Low Bitrate Deformation:</strong> Instead of transmitting
+raw mesh updates, the stream sends normalized movement parameters. The
+client-side MPEG-4 engine translates these parameters into localized
+skin and vertex displacements using predefined deformation tables.</li>
+</ul></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

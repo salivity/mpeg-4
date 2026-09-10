@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How MPEG-4 ALS Achieves Exact Audio Restoration - mpeg-4</title>
+    <meta name="description" content="MPEG-4 Audio Lossless Coding (ALS) achieves exact sample-for-sample waveform restoration by combining forward-adaptive linear prediction, deterministic integer arithmetic, and efficient entropy coding of the prediction residual. Instead of discarding psy">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/how-mpeg-4-als-achieves-exact-audio-restoration">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How MPEG-4 ALS Achieves Exact Audio Restoration - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/how-mpeg-4-als-achieves-exact-audio-restoration" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="MPEG-4 Audio Lossless Coding (ALS) achieves exact sample-for-sample waveform restoration by combining forward-adaptive linear prediction, deterministic integer arithmetic, and efficient entropy coding of the prediction residual. Instead of discarding psy" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="how-mpeg-4-als-achieves-exact-audio-restoration">How MPEG-4 ALS
+Achieves Exact Audio Restoration</h1>
+<p>MPEG-4 Audio Lossless Coding (ALS) achieves exact sample-for-sample
+waveform restoration by combining forward-adaptive linear prediction,
+deterministic integer arithmetic, and efficient entropy coding of the
+prediction residual. Instead of discarding psychoacoustically redundant
+data like lossy codecs, MPEG-4 ALS models the predictable components of
+an audio signal, computes the exact difference between the actual audio
+and the prediction, and losslessly encodes this residual error. During
+playback, the decoder executes the identical mathematical operations in
+reverse to reconstruct the original PCM samples with zero loss of
+data.</p>
+<h3 id="linear-predictive-coding-lpc">Linear Predictive Coding
+(LPC)</h3>
+<p>The core of MPEG-4 ALS is its prediction stage, which removes
+time-domain redundancy from the audio signal. The encoder analyzes
+incoming audio frames and calculates a set of linear prediction
+coefficients using autocorrelation or covariance methods.</p>
+<p>For each sample <span class="math inline">\(x(n)\)</span>, the system
+calculates a predicted value <span
+class="math inline">\(\hat{x}(n)\)</span> based on a linear combination
+of previous samples:</p>
+<p><span class="math display">\[\hat{x}(n) = \sum_{k=1}^{P} a_k \cdot
+x(n-k)\]</span></p>
+<p>Where <span class="math inline">\(P\)</span> represents the
+prediction order (which can range dynamically up to several hundred taps
+for complex signals) and <span class="math inline">\(a_k\)</span>
+represents the quantized filter coefficients. Because the prediction
+filter parameters are calculated and transmitted within the bitstream
+(forward-adaptive prediction), both the encoder and decoder utilize the
+exact same filter state.</p>
+<h3 id="generating-the-residual-error">Generating the Residual
+Error</h3>
+<p>Because continuous audio signals cannot be perfectly predicted by
+linear filters alone, a difference remains between the actual sample
+<span class="math inline">\(x(n)\)</span> and the predicted value <span
+class="math inline">\(\hat{x}(n)\)</span>. This difference is the
+residual signal, or prediction error <span
+class="math inline">\(e(n)\)</span>:</p>
+<p><span class="math display">\[e(n) = x(n) -
+\mathrm{round}(\hat{x}(n))\]</span></p>
+<p>The rounding operation ensures integer arithmetic consistency. The
+residual represents the unpredictable, high-entropy portion of the
+waveform. Because no data is discarded and the prediction error is
+tracked down to the single least significant bit (LSB), saving this
+residual ensures mathematical reversibility.</p>
+<h3 id="entropy-coding-of-the-residual">Entropy Coding of the
+Residual</h3>
+<p>To achieve data compression while retaining full fidelity, the
+residual signal is encoded using lossless entropy coding techniques:</p>
+<ul>
+<li><strong>Golomb-Rice Coding:</strong> Efficiently compresses residual
+values that follow an exponential or Laplacian distribution, mapping
+smaller error values to shorter bit sequences.</li>
+<li><strong>Block-based Generalized Markov Chain (BGMC) Coding:</strong>
+Used in higher-complexity profiles to capture higher-order statistical
+dependencies in the residual data.</li>
+</ul>
+<p>The transmitted bitstream contains the quantized LPC coefficients,
+frame headers, and the entropy-coded residual bitstream.</p>
+<h3 id="perfect-sample-for-sample-reconstruction">Perfect
+Sample-for-Sample Reconstruction</h3>
+<p>At the decoder side, the process is inverted deterministically:</p>
+<ol type="1">
+<li>The decoder reads and unpacks the LPC parameters and decodes the
+entropy-coded residual <span class="math inline">\(e(n)\)</span>.</li>
+<li>The decoder runs the identical linear prediction filter to compute
+<span class="math inline">\(\hat{x}(n)\)</span> from previously decoded
+samples.</li>
+<li>The original sample is reconstructed via simple integer
+addition:</li>
+</ol>
+<p><span class="math display">\[x(n) = \mathrm{round}(\hat{x}(n)) +
+e(n)\]</span></p>
+<p>By strictly standardizing numerical rounding rules and filter
+structures across all compliant decoders, MPEG-4 ALS prevents drift and
+rounding discrepancies. This guarantees that every output PCM sample is
+bit-for-bit identical to the uncompressed input waveform.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

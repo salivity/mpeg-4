@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPEG-4 Temporal Sub-Layering for Variable Frame Rates - mpeg-4</title>
+    <meta name="description" content="Temporal sub-layering in MPEG-4 enables video streams to adapt to variable frame rates (VFR) without re-encoding the source content or breaking the decoding chain. By structuring video frames into hierarchical dependency tiers, the codec allows decoders">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/mpeg-4-temporal-sub-layering-for-variable-frame-rates">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MPEG-4 Temporal Sub-Layering for Variable Frame Rates - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/mpeg-4-temporal-sub-layering-for-variable-frame-rates" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Temporal sub-layering in MPEG-4 enables video streams to adapt to variable frame rates (VFR) without re-encoding the source content or breaking the decoding chain. By structuring video frames into hierarchical dependency tiers, the codec allows decoders" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="mpeg-4-temporal-sub-layering-for-variable-frame-rates">MPEG-4
+Temporal Sub-Layering for Variable Frame Rates</h1>
+<p>Temporal sub-layering in MPEG-4 enables video streams to adapt to
+variable frame rates (VFR) without re-encoding the source content or
+breaking the decoding chain. By structuring video frames into
+hierarchical dependency tiers, the codec allows decoders to discard
+non-essential frames dynamically during network congestion or high
+processing loads. This article explains the underlying mechanisms of
+MPEG-4 temporal sub-layering, including hierarchical reference
+structures, temporal identification signaling, timestamp management, and
+buffer control.</p>
+<h2 id="hierarchical-prediction-structures">Hierarchical Prediction
+Structures</h2>
+<p>The core of temporal sub-layering lies in hierarchical prediction.
+Instead of referencing only the immediately preceding frame, MPEG-4
+organizes frames into layered tiers:</p>
+<ul>
+<li><strong>Base Temporal Layer (<span
+class="math inline">\(T_0\)</span>):</strong> Contains keyframes
+(I-frames) and primary anchor frames (P-frames). This layer represents
+the minimum viable frame rate (e.g., 15 fps) and does not depend on any
+higher temporal layers.</li>
+<li><strong>Enhancement Temporal Layers (<span
+class="math inline">\(T_1, T_2, \dots, T_n\)</span>):</strong> Composed
+primarily of hierarchical B-frames (bi-directional predictive frames) or
+non-reference P-frames. Frames in layer <span
+class="math inline">\(T_1\)</span> only reference frames in <span
+class="math inline">\(T_0\)</span>, frames in <span
+class="math inline">\(T_2\)</span> reference frames in <span
+class="math inline">\(T_1\)</span> or <span
+class="math inline">\(T_0\)</span>, and so on.</li>
+</ul>
+<p>Because dependencies only flow downward, a decoder can drop any
+higher-tier layer without causing decoding artifacts or reference errors
+in the lower-tier layers.</p>
+<h2 id="temporal-identifier-temporalid-signaling">Temporal Identifier
+(TemporalID) Signaling</h2>
+<p>In modern MPEG-4 implementations (such as MPEG-4 Part 10 / AVC and
+its Scalable Video Coding extension), each Network Abstraction Layer
+(NAL) unit header contains a temporal identifier
+(<code>temporal_id</code>).</p>
+<ol type="1">
+<li><strong>Extraction:</strong> Network routers, media servers, or
+decoders inspect the <code>temporal_id</code> without parsing the entire
+video payload.</li>
+<li><strong>Filtering:</strong> To reduce the frame rate from 60 fps to
+30 fps, the system strips all NAL units with a <code>temporal_id</code>
+greater than the target threshold.</li>
+<li><strong>Decodability:</strong> The remaining subset remains a fully
+compliant, decodable bitstream.</li>
+</ol>
+<h2 id="variable-frame-rate-timestamping-dts-and-pts">Variable Frame
+Rate Timestamping: DTS and PTS</h2>
+<p>Variable frame rate playback requires precise time mapping rather
+than a fixed frame duration. MPEG-4 manages variable display timing
+using distinct timestamps embedded in the container and packet
+headers:</p>
+<ul>
+<li><strong>Decoding Time Stamp (DTS):</strong> Instructs the decoder
+when to decode a specific frame. This is crucial because frames encoded
+with bi-directional prediction are transmitted out of temporal display
+order.</li>
+<li><strong>Presentation Time Stamp (PTS) / Composition Time Stamp
+(CTS):</strong> Instructs the rendering pipeline exactly when to present
+the decoded frame on screen.</li>
+</ul>
+<p>Because the interval between consecutive PTS values can vary
+dynamically, the player can pause, speed up, or drop frames while
+maintaining synchronization with audio tracks.</p>
+<h2 id="decoded-picture-buffer-dpb-management">Decoded Picture Buffer
+(DPB) Management</h2>
+<p>For temporal sub-layering to work seamlessly with variable frame
+rates, the Decoded Picture Buffer (DPB) must manage reference memory
+efficiently:</p>
+<ul>
+<li><strong>Marking Reference Frames:</strong> The encoder explicitly
+marks which frames in each sub-layer are used for future reference
+(Short-Term or Long-Term references) using Memory Management Control
+Operations (MMCO).</li>
+<li><strong>Flushing and Eviction:</strong> When higher temporal layers
+are discarded, non-reference frames are immediately evicted from the DPB
+after display, preventing memory overflows and keeping buffer occupancy
+predictable across varying frame rates.</li>
+</ul></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

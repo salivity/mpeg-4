@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPEG-4 Adaptive Quantization in Dark Scenes - mpeg-4</title>
+    <meta name="description" content="Adaptive quantization in MPEG-4 dynamically adjusts the compression rate across different regions of a video frame to maintain visual fidelity where the human eye is most sensitive. In dark visual scenes, standard compression often introduces severe arti">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/mpeg-4-adaptive-quantization-in-dark-scenes">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MPEG-4 Adaptive Quantization in Dark Scenes - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/mpeg-4-adaptive-quantization-in-dark-scenes" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Adaptive quantization in MPEG-4 dynamically adjusts the compression rate across different regions of a video frame to maintain visual fidelity where the human eye is most sensitive. In dark visual scenes, standard compression often introduces severe arti" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="mpeg-4-adaptive-quantization-in-dark-scenes">MPEG-4 Adaptive
+Quantization in Dark Scenes</h1>
+<p>Adaptive quantization in MPEG-4 dynamically adjusts the compression
+rate across different regions of a video frame to maintain visual
+fidelity where the human eye is most sensitive. In dark visual scenes,
+standard compression often introduces severe artifacts like color
+banding, blockiness, and lost shadow detail. By applying lower
+quantization step sizes to macroblocks with low average luminance,
+MPEG-4 selectively increases bit allocation in darker regions,
+effectively preserving fine textures and subtle gradients without
+significantly increasing the overall file size.</p>
+<h3 id="the-challenge-of-dark-scenes-in-video-encoding">The Challenge of
+Dark Scenes in Video Encoding</h3>
+<p>Standard video compression operates by discarding high-frequency
+visual data that the human eye is assumed not to notice. However, dark
+areas often consist of smooth, low-contrast gradients. When a uniform
+Quantization Parameter (QP) is applied across an entire frame, these
+subtle gradients in dark regions are flattened into visible steps,
+resulting in contouring or posterization. Furthermore, because dark
+regions contain less overall light energy, block boundaries created by
+the discrete cosine transform (DCT) become starkly visible against the
+uniform background.</p>
+<h3 id="exploiting-the-human-visual-system-hvs">Exploiting the Human
+Visual System (HVS)</h3>
+<p>MPEG-4 addresses this issue by integrating Human Visual System (HVS)
+models directly into its rate-control mechanisms through luminance
+masking. While the human eye has difficulty detecting noise in highly
+textured or bright areas, it is exceptionally sensitive to distortions
+and artifacts in smooth, dark scenes.</p>
+<p>Adaptive quantization algorithms calculate the average luminance and
+spatial variance of each macroblock. When a macroblock is identified as
+low-luminance with low spatial complexity (a flat dark area), the
+encoder identifies a lower "Just Noticeable Difference" (JND) threshold.
+To compensate, the encoder prioritizes quality over data reduction in
+these specific zones.</p>
+<h3 id="macroblock-level-qp-modulation-delta-qp">Macroblock-Level QP
+Modulation (Delta QP)</h3>
+<p>MPEG-4 implements adaptive quantization at the macroblock level using
+differential quantization values, known as Delta QP (or
+<code>DQUANT</code>). Instead of applying a global QP to the entire
+frame, the encoder follows a targeted process:</p>
+<ol type="1">
+<li><strong>Spatial and Luminance Analysis:</strong> Before encoding,
+the encoder evaluates the luminance intensity and texture variance of
+each 16x16 macroblock.</li>
+<li><strong>QP Calculation:</strong> If a macroblock falls below a
+predefined luminance threshold, the encoder calculates a negative Delta
+QP relative to the frame’s base QP.</li>
+<li><strong>Step-Size Reduction:</strong> A lower QP reduces the
+quantization step size for the DCT coefficients of that macroblock,
+preserving low-amplitude, high-frequency details that would otherwise be
+rounded to zero.</li>
+<li><strong>Bitstream Signaling:</strong> The encoder writes the
+<code>DQUANT</code> value into the macroblock header, signaling the
+decoder to scale the inverse quantization matrix accordingly.</li>
+</ol>
+<h3 id="balancing-bitrate-and-visual-detail">Balancing Bitrate and
+Visual Detail</h3>
+<p>To prevent dark scenes from exhausting the total bit budget, MPEG-4
+pairs adaptive quantization with compensatory bit distribution. Bits
+saved by aggressively quantizing bright, heavily textured regions—where
+visual noise is naturally masked by the scene's complexity—are
+reallocated to dark, low-variance regions. This perceptual bit
+allocation ensures that shadow details, film grain, and subtle lighting
+transitions remain intact in low-light environments while adhering to
+the target bitrate.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

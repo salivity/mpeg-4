@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MDCT Window Switching and Pre-Echo in MPEG-4 Audio - mpeg-4</title>
+    <meta name="description" content="In transient MPEG-4 audio signals, sudden energy spikes can cause quantization noise to spread backward across a transform frame, generating an audible distortion known as pre-echo. MPEG-4 Advanced Audio Coding (AAC) addresses this problem by dynamically">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/mdct-window-switching-and-pre-echo-in-mpeg-4-audio">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MDCT Window Switching and Pre-Echo in MPEG-4 Audio - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/mdct-window-switching-and-pre-echo-in-mpeg-4-audio" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="In transient MPEG-4 audio signals, sudden energy spikes can cause quantization noise to spread backward across a transform frame, generating an audible distortion known as pre-echo. MPEG-4 Advanced Audio Coding (AAC) addresses this problem by dynamically" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="mdct-window-switching-and-pre-echo-in-mpeg-4-audio">MDCT Window
+Switching and Pre-Echo in MPEG-4 Audio</h1>
+<p>In transient MPEG-4 audio signals, sudden energy spikes can cause
+quantization noise to spread backward across a transform frame,
+generating an audible distortion known as pre-echo. MPEG-4 Advanced
+Audio Coding (AAC) addresses this problem by dynamically switching the
+Modified Discrete Cosine Transform (MDCT) window lengths and shapes. By
+replacing long transform windows with sequences of short windows during
+abrupt signal transitions, the codec confines quantization noise to a
+narrow time frame, ensuring the artifact remains masked by the human
+auditory system.</p>
+<h3 id="understanding-the-pre-echo-artifact">Understanding the Pre-Echo
+Artifact</h3>
+<p>Perceptual audio codecs like MPEG-4 transform time-domain audio into
+the frequency domain using MDCT. Under steady-state conditions, the
+codec uses long transform windows (typically 2048 or 1024 samples) to
+achieve high frequency resolution, allowing efficient psychoacoustic
+modeling and data compression.</p>
+<p>However, quantization noise generated during encoding is distributed
+uniformly across the entire duration of the transform block. When a
+sharp transient—such as a castanet strike, snare hit, or percussive
+attack—occurs near the end of a long transform block:</p>
+<ol type="1">
+<li>The high-energy transient requires significant quantization,
+producing high levels of quantization noise.</li>
+<li>This noise is distributed evenly throughout the entire time window,
+including the silent or quiet portion immediately preceding the
+transient.</li>
+<li>The human auditory system provides <strong>pre-masking</strong>
+(backward masking) for only about 1 to 5 milliseconds before a loud
+sound, compared to <strong>post-masking</strong> which lasts up to 100
+milliseconds.</li>
+<li>Because the long MDCT block spans significantly longer than the
+pre-masking threshold (often over 20 milliseconds), the noise prior to
+the attack is clearly audible as a unnatural precursor scratch or
+rustle: the pre-echo.</li>
+</ol>
+<h3 id="the-mechanism-of-dynamic-window-switching">The Mechanism of
+Dynamic Window Switching</h3>
+<p>To prevent pre-echo, the psychoacoustic model continuously analyzes
+the input signal for sudden increases in energy. When an impending
+transient is detected, the codec switches from long analysis windows to
+short analysis windows.</p>
+<ul>
+<li><strong>Long Windows:</strong> Provide fine frequency resolution and
+coarse time resolution. Used for stationary or slowly changing audio
+segments.</li>
+<li><strong>Short Windows:</strong> A single long window is replaced by
+an array of shorter windows (typically eight 256-sample sub-windows).
+These offer fine time resolution at the expense of frequency
+resolution.</li>
+</ul>
+<p>By drastically reducing the frame duration across the transient, the
+quantization noise is confined to a much narrower time interval directly
+surrounding the transient event. Consequently, any preceding noise falls
+well within the auditory system's brief pre-masking window, rendering it
+completely inaudible.</p>
+<h3 id="ensuring-continuity-with-transition-windows">Ensuring Continuity
+with Transition Windows</h3>
+<p>The MDCT relies on Time-Domain Aliasing Cancellation (TDAC) through a
+50% overlap-add process to achieve perfect reconstruction without
+blocking artifacts. Directly jumping between long and short windows
+breaks TDAC conditions.</p>
+<p>To maintain mathematical consistency and prevent boundary
+discontinuities, MPEG-4 introduces specialized transition window
+shapes:</p>
+<ul>
+<li><strong>Long-to-Short (Start Window):</strong> The left half is
+standard long-window shape (for smooth overlap with the preceding long
+window), while the right half tapers down quickly to match the
+short-window length.</li>
+<li><strong>Eight Short Windows:</strong> Symmetrical short windows
+spanning the duration of the transient.</li>
+<li><strong>Short-to-Long (Stop Window):</strong> The left half rises
+rapidly from the short-window length, while the right half extends into
+the standard long-window profile.</li>
+</ul>
+<h3 id="mdct-window-shape-selection-sine-vs-kbd">MDCT Window Shape
+Selection (Sine vs. KBD)</h3>
+<p>In addition to adjusting window <em>length</em>, MPEG-4 codecs can
+switch between two specific window <em>shapes</em>:</p>
+<ol type="1">
+<li><strong>Sine Window:</strong> Offers good stop-band attenuation and
+is optimal for signals with distinct harmonic peaks or stationary
+tones.</li>
+<li><strong>Kaiser-Bessel Derived (KBD) Window:</strong> Provides
+greater attenuation of spectral leakage from strong out-of-band
+components, making it ideal for transient-heavy or complex
+multi-frequency signals.</li>
+</ol>
+<p>By optimizing both the window duration (long vs. short) and the
+window profile (Sine vs. KBD), the MPEG-4 MDCT framework successfully
+limits noise dispersion in the time domain, eliminating pre-echo
+artifacts while preserving high compression efficiency.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

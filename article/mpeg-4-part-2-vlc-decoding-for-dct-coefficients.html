@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPEG-4 Part 2 VLC Decoding for DCT Coefficients - mpeg-4</title>
+    <meta name="description" content="MPEG-4 Part 2 employs structured Variable Length Coding (VLC) tables to decode run-length encoded Discrete Cosine Transform (DCT) coefficients efficiently. By organizing quantized transform data into three-dimensional events combining run lengths, non-ze">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/mpeg-4-part-2-vlc-decoding-for-dct-coefficients">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MPEG-4 Part 2 VLC Decoding for DCT Coefficients - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/mpeg-4-part-2-vlc-decoding-for-dct-coefficients" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="MPEG-4 Part 2 employs structured Variable Length Coding (VLC) tables to decode run-length encoded Discrete Cosine Transform (DCT) coefficients efficiently. By organizing quantized transform data into three-dimensional events combining run lengths, non-ze" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="mpeg-4-part-2-vlc-decoding-for-dct-coefficients">MPEG-4 Part 2
+VLC Decoding for DCT Coefficients</h1>
+<p>MPEG-4 Part 2 employs structured Variable Length Coding (VLC) tables
+to decode run-length encoded Discrete Cosine Transform (DCT)
+coefficients efficiently. By organizing quantized transform data into
+three-dimensional events combining run lengths, non-zero magnitudes, and
+block-end indicators, the standard maps the most frequent coefficient
+patterns to short binary codes while using escape sequences for rare
+values. This article explains the underlying data structures, table
+switching mechanics, escape code handling, and matrix reconstruction
+used in MPEG-4 Part 2 variable length decoding.</p>
+<h3 id="the-3d-event-representation-last-run-level">The 3D Event
+Representation: (LAST, RUN, LEVEL)</h3>
+<p>Unlike older standards that treated run-length and coefficient levels
+as separate coding steps, MPEG-4 Part 2 represents quantized 8x8 DCT
+coefficients as unified three-dimensional events:</p>
+<ul>
+<li><strong>LAST (1 bit):</strong> Indicates whether the current
+non-zero coefficient is the final one in the 8x8 block
+(<code>LAST = 1</code>) or if more coefficients follow
+(<code>LAST = 0</code>).</li>
+<li><strong>RUN (integer):</strong> Represents the count of consecutive
+zero-value coefficients preceding the non-zero coefficient along the
+scan path.</li>
+<li><strong>LEVEL (integer):</strong> Represents the absolute magnitude
+of the non-zero DCT coefficient.</li>
+</ul>
+<p>A trailing <strong>SIGN bit</strong> (<code>0</code> for positive,
+<code>1</code> for negative) immediately follows each variable-length
+code word, separating the magnitude coding from the sign to minimize the
+size of the lookup tables.</p>
+<h3 id="table-architecture-and-selection">Table Architecture and
+Selection</h3>
+<p>MPEG-4 Part 2 defines dedicated VLC tables optimized for the
+statistical distributions of different macroblock types.</p>
+<ol type="1">
+<li><strong>Intra-Block vs. Inter-Block Tables:</strong> Intra-coded
+blocks feature strong low-frequency energy distributions and use
+specialized intra VLC tables (or optional alternative intra tables
+signaled in the bitstream header). Inter-coded (motion-compensated
+residual) blocks use separate inter VLC tables optimized for sparse,
+high-frequency residual errors.</li>
+<li><strong>Short-Code Fast Lookups:</strong> High-probability
+combinations—such as <code>(LAST=0, RUN=0, LEVEL=1)</code>—are assigned
+code words as short as 2 to 3 bits. Decoders generally implement these
+tables using direct-index lookup trees or multi-bit branch tables (e.g.,
+matching the first 6 to 8 bits in a single cycle) to quickly resolve
+<code>(LAST, RUN, LEVEL)</code>.</li>
+</ol>
+<h3 id="escape-coding-for-rare-combinations">Escape Coding for Rare
+Combinations</h3>
+<p>Because pre-defined VLC tables only cover the most statistically
+common <code>(LAST, RUN, LEVEL)</code> combinations, MPEG-4 Part 2
+incorporates an <strong>ESCAPE code</strong> (typically the binary
+prefix <code>0000 01</code>) to handle out-of-table events. The standard
+provides multiple escape coding modes:</p>
+<ul>
+<li><strong>Escape Mode 1 &amp; 2 (Relative Coding):</strong> The ESCAPE
+prefix is followed by a secondary code indicating that the actual
+<code>LEVEL</code> or <code>RUN</code> exceeds the table's standard
+range by a defined offset. The decoder reconstructs the event by adding
+this offset to the standard VLC lookup result.</li>
+<li><strong>Escape Mode 3 (Fixed-Length Coding / Direct Mode):</strong>
+The bitstream transmits an explicit fixed-length representation:
+<ul>
+<li><code>1 bit</code> for <code>LAST</code></li>
+<li><code>6 bits</code> for <code>RUN</code> (values from 0 to 63)</li>
+<li><code>1 bit</code> marker (fixed to <code>1</code> to avoid
+start-code emulation)</li>
+<li><code>12 bits</code> for <code>LEVEL</code> (two's complement signed
+integer)</li>
+</ul></li>
+</ul>
+<p>This fallback ensures that any valid 8x8 block configuration can be
+decoded without unbounded VLC table growth.</p>
+<h3 id="inverse-scan-and-block-reconstruction">Inverse Scan and Block
+Reconstruction</h3>
+<p>Once the variable length decoder resolves the
+<code>(LAST, RUN, LEVEL)</code> tuple, it places the reconstructed value
+into the 8x8 DCT matrix:</p>
+<ol type="1">
+<li><strong>Pointer Progression:</strong> The decoder advances an
+internal matrix index by <code>RUN + 1</code>.</li>
+<li><strong>Scan Direction Mapping:</strong> The 1D index is mapped to
+2D <code>(u, v)</code> frequency coordinates using the selected scan
+order:
+<ul>
+<li><strong>Zig-Zag Scan:</strong> Standard scan pattern used when AC
+prediction is disabled.</li>
+<li><strong>Alternate-Vertical Scan:</strong> Used when horizontal DC/AC
+prediction indicates strong vertical edges.</li>
+<li><strong>Alternate-Horizontal Scan:</strong> Used when vertical DC/AC
+prediction indicates strong horizontal edges.</li>
+</ul></li>
+<li><strong>Coefficient Assignment:</strong> The signed
+<code>LEVEL</code> value is stored at the mapped <code>(u, v)</code>
+position, and all skipped positions remain zero.</li>
+<li><strong>Termination:</strong> If <code>LAST == 1</code>, the decoder
+terminates parsing for the current block and passes the reconstructed
+8x8 array to the inverse quantization and Inverse Discrete Cosine
+Transform (IDCT) stages.</li>
+</ol></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

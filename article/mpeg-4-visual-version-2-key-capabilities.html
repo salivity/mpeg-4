@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPEG 4 Visual Version 2 Key Capabilities - mpeg-4</title>
+    <meta name="description" content="Version 2 of the MPEG-4 Visual standard (ISO/IEC 14496-2) significantly expanded the capabilities of the original 1998 specification by introducing enhanced compression efficiency, robust error resilience tools, advanced scalability, and specialized stud">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/mpeg-4-visual-version-2-key-capabilities">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MPEG 4 Visual Version 2 Key Capabilities - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/mpeg-4-visual-version-2-key-capabilities" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Version 2 of the MPEG-4 Visual standard (ISO/IEC 14496-2) significantly expanded the capabilities of the original 1998 specification by introducing enhanced compression efficiency, robust error resilience tools, advanced scalability, and specialized stud" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="mpeg-4-visual-version-2-key-capabilities">MPEG 4 Visual Version
+2 Key Capabilities</h1>
+<p>Version 2 of the MPEG-4 Visual standard (ISO/IEC 14496-2)
+significantly expanded the capabilities of the original 1998
+specification by introducing enhanced compression efficiency, robust
+error resilience tools, advanced scalability, and specialized studio
+workflows. This update addressed the needs of high-quality professional
+video production, mobile transmission over unreliable networks, and
+interactive synthetic-natural hybrid environments.</p>
+<h3 id="advanced-coding-and-motion-compensation">Advanced Coding and
+Motion Compensation</h3>
+<p>Version 2 introduced more sophisticated motion compensation tools to
+dramatically improve compression efficiency and visual fidelity:</p>
+<ul>
+<li><strong>Quarter-Pel Motion Compensation (q-pel):</strong> Enhanced
+motion vector precision from half-pixel to quarter-pixel resolution,
+allowing for finer motion tracking, reduced residual error, and sharper
+image details at lower bitrates.</li>
+<li><strong>Global Motion Compensation (GMC):</strong> Optimized the
+encoding of camera movements—such as panning, tilting, rotation, and
+zooming—by applying global transformation parameters across entire
+visual frames or objects, drastically reducing the data required for
+complex background motions.</li>
+</ul>
+<h3 id="fine-granularity-scalability-fgs">Fine Granularity Scalability
+(FGS)</h3>
+<p>To better accommodate streaming over networks with dynamic or
+unpredictable bandwidths (such as the early mobile web and internet
+streaming), Version 2 introduced Fine Granularity Scalability (FGS).
+Unlike standard layered scalability, FGS allows video bitstreams to be
+truncated at any point during transmission or decoding, providing
+smooth, continuous adjustments to video quality without dropping
+complete enhancement layers.</p>
+<h3 id="enhanced-error-resilience">Enhanced Error Resilience</h3>
+<p>Version 2 expanded transmission robustness for error-prone
+environments (e.g., wireless and mobile communications) with tools
+designed to recover and parse corrupted bitstreams:</p>
+<ul>
+<li><strong>Reversible Variable-Length Codes (RVLC):</strong> Enabled
+decoders to read corrupted macroblock data both forward and backward,
+salvaging intact data around transmission errors.</li>
+<li><strong>Header Extension Codes (HEC):</strong> Allowed vital header
+information to be repeated inside packet payloads, ensuring decoders
+could maintain synchronization even when primary headers were
+dropped.</li>
+<li><strong>Data Partitioning Enhancements:</strong> Separated motion
+vectors and texture data within packets to prevent macroblock
+desynchronization during transmission packet loss.</li>
+</ul>
+<h3 id="studio-profiles-and-high-fidelity-formats">Studio Profiles and
+High-Fidelity Formats</h3>
+<p>Version 2 added the Studio Profile to cater to professional digital
+production and post-production environments:</p>
+<ul>
+<li><strong>Higher Color Sampling:</strong> Added support for 4:2:2 and
+4:4:4 chroma subsampling formats, moving beyond standard consumer
+4:2:0.</li>
+<li><strong>High Bit Depths:</strong> Permitted 10-bit and 12-bit color
+depths for increased dynamic range and color accuracy.</li>
+<li><strong>Lossless and Near-Lossless Compression:</strong> Introduced
+intra-frame and low-compression modes tailored for multi-generation
+video editing without visible generational loss.</li>
+</ul>
+<h3 id="synthetic-and-hybrid-visual-tools">Synthetic and Hybrid Visual
+Tools</h3>
+<p>The specification expanded tools for synthetic-natural hybrid coding
+(SNHC):</p>
+<ul>
+<li><strong>Face and Body Animation (FBA):</strong> Refined parameters
+for 3D human face and skeletal body modeling and animation.</li>
+<li><strong>3D Mesh Object Coding:</strong> Added dynamic,
+multi-resolution 3D mesh compression tools, enabling animated 3D
+graphical objects to be integrated efficiently alongside natural video
+layers.</li>
+</ul>
+<h3 id="new-standardized-profiles">New Standardized Profiles</h3>
+<p>To organize these new tools into interoperable subsets for hardware
+and software developers, Version 2 defined several new profiles:</p>
+<ul>
+<li><strong>Advanced Simple Profile (ASP):</strong> Combined B-frames,
+quarter-pel motion compensation, and GMC.</li>
+<li><strong>Advanced Real-Time Simple (ARTS) Profile:</strong> Tailored
+for ultra-low-latency, error-resilient communications.</li>
+<li><strong>Fine Granularity Scalability Profile:</strong> Dedicated to
+adaptive, variable-rate streaming deployments.</li>
+<li><strong>Studio Profiles:</strong> Configured specifically for
+broadcast acquisition and post-production archiving.</li>
+</ul></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

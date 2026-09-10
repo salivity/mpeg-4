@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPEG 4 Part 12 vs Part 14 Structural Differences - mpeg-4</title>
+    <meta name="description" content="This article provides a direct comparison of the structural differences between MPEG-4 Part 12 and MPEG-4 Part 14. While these two standards are closely related, they occupy different levels in the media container hierarchy. Understanding their relations">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/mpeg-4-part-12-vs-part-14-structural-differences">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MPEG 4 Part 12 vs Part 14 Structural Differences - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/mpeg-4-part-12-vs-part-14-structural-differences" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article provides a direct comparison of the structural differences between MPEG-4 Part 12 and MPEG-4 Part 14. While these two standards are closely related, they occupy different levels in the media container hierarchy. Understanding their relations" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="mpeg-4-part-12-vs-part-14-structural-differences">MPEG 4 Part 12
+vs Part 14 Structural Differences</h1>
+<p>This article provides a direct comparison of the structural
+differences between MPEG-4 Part 12 and MPEG-4 Part 14. While these two
+standards are closely related, they occupy different levels in the media
+container hierarchy. Understanding their relationship requires looking
+at how MPEG-4 Part 12 acts as a foundational blueprint, whereas MPEG-4
+Part 14 serves as a specific, standardized implementation of that
+blueprint.</p>
+<p><strong>The Foundation: MPEG-4 Part 12 (ISO Base Media File
+Format)</strong></p>
+<p>MPEG-4 Part 12, formally known as the ISO Base Media File Format
+(ISOBMFF), is a purely structural specification. It does not define how
+to encode or compress video and audio. Instead, it defines an
+object-oriented framework for time-based media files.</p>
+<p>The structure of a Part 12 file is built entirely on "boxes"
+(historically called atoms). Each box contains a header (defining its
+size and type) and a payload. Part 12 establishes the core hierarchy of
+these boxes:</p>
+<ul>
+<li><strong>ftyp (File Type Box):</strong> Identifies the specifications
+with which the file complies.</li>
+<li><strong>moov (Movie Box):</strong> Contains all the metadata about
+the media, including timing, structure, and track information.</li>
+<li><strong>mdat (Media Data Box):</strong> Holds the actual raw video,
+audio, or text payloads.</li>
+</ul>
+<p>Because Part 12 is codec-agnostic, its structure is designed to be
+highly generic. It defines how tracks (trak) are synchronized and how
+metadata is indexed, but it does not specify how specific compression
+formats like AAC or H.264 should be packaged inside those tracks.</p>
+<p><strong>The Implementation: MPEG-4 Part 14 (MP4 File
+Format)</strong></p>
+<p>MPEG-4 Part 14 is a specific extension of Part 12. It takes the
+structural layout defined in Part 12 and adds concrete rules, codecs,
+and metadata requirements to create the widely recognized MP4 file
+format.</p>
+<p>While Part 14 inherits the entire box structure of Part 12, it
+introduces several key structural additions and constraints:</p>
+<ul>
+<li><strong>Specific Brand Identifiers:</strong> In the
+<code>ftyp</code> box, Part 14 mandates the use of specific brand
+identifiers (such as <code>mp41</code> or <code>mp42</code>) to declare
+that the file conforms strictly to the MP4 specification.</li>
+<li><strong>Codec Integration:</strong> Part 14 defines the exact
+structural layout for holding MPEG-4 systems content, such as Advanced
+Audio Coding (AAC) and MPEG-4 visual streams (like H.264/AVC). It
+specifies the object descriptors and stream map tables required to
+decode these specific streams.</li>
+<li><strong>Object Descriptors:</strong> Part 14 introduces the Initial
+Object Descriptor (IOD) within the metadata structure, which is not
+present in generic Part 12 files. This descriptor coordinates the
+relationship between multiple elementary streams (audio, video, and
+scene description).</li>
+<li><strong>File Extensions:</strong> Structurally, Part 14 is designed
+to support specific file extensions that signal the type of content to
+players, such as <code>.mp4</code>, <code>.m4a</code> (audio only), and
+<code>.m4v</code> (video only).</li>
+</ul>
+<p><strong>Summary of Key Differences</strong></p>
+<p>The structural difference is ultimately one of inheritance. MPEG-4
+Part 12 is the abstract class; it defines the box-based architecture,
+track layouts, and time-to-sample indexing. MPEG-4 Part 14 is the
+instantiated object; it inherits the entire Part 12 box structure but
+adds the specific structures, descriptor rules, and codec definitions
+necessary to store and play back actual MPEG-4 audio and video
+files.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

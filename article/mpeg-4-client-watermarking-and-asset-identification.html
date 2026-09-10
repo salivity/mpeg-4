@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPEG-4 Client Watermarking and Asset Identification - mpeg-4</title>
+    <meta name="description" content="MPEG-4 provides a standardized, object-based framework that enables secure content distribution, unique asset identification, and client-side forensic watermarking. Through mechanisms like Intellectual Property Management and Protection (IPMP), Object Co">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/mpeg-4-client-watermarking-and-asset-identification">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MPEG-4 Client Watermarking and Asset Identification - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/mpeg-4-client-watermarking-and-asset-identification" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="MPEG-4 provides a standardized, object-based framework that enables secure content distribution, unique asset identification, and client-side forensic watermarking. Through mechanisms like Intellectual Property Management and Protection (IPMP), Object Co" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="mpeg-4-client-watermarking-and-asset-identification">MPEG-4
+Client Watermarking and Asset Identification</h1>
+<p>MPEG-4 provides a standardized, object-based framework that enables
+secure content distribution, unique asset identification, and
+client-side forensic watermarking. Through mechanisms like Intellectual
+Property Management and Protection (IPMP), Object Content Information
+(OCI), and structured elementary stream descriptors, the standard allows
+content owners to tag individual media assets and execute dynamic,
+client-side watermarking tools directly within the terminal
+architecture.</p>
+<h3
+id="intellectual-property-management-and-protection-ipmp">Intellectual
+Property Management and Protection (IPMP)</h3>
+<p>The primary mechanism for managing rights and client-side processing
+in MPEG-4 is the IPMP framework (standardized under ISO/IEC 14496-1 and
+extended in ISO/IEC 14496-13, known as IPMP-X).</p>
+<p>Unlike monolithic media formats, MPEG-4 uses an object-based
+architecture where scenes consist of multiple distinct media streams
+(video, audio, 2D/3D graphics). IPMP operates via standard interfaces
+called IPMP Hooks and IPMP Tools:</p>
+<ul>
+<li><strong>IPMP Hooks:</strong> Entry points placed at various stages
+of the terminal’s decoding pipeline (e.g., pre-demuxing, post-decoding,
+or pre-rendering).</li>
+<li><strong>IPMP Tools:</strong> Dynamic software or hardware modules
+loaded by the client terminal. These tools can perform tasks such as
+decryption, device authentication, and forensic watermarking.</li>
+</ul>
+<p>For client-side watermarking, an IPMP Tool intercepts the decoded raw
+media stream just before rendering. The tool dynamically embeds
+session-specific or user-specific data (such as user IDs, timestamps, or
+IP addresses) as an imperceptible watermark into the decoded audio or
+visual frames.</p>
+<h3 id="object-content-information-oci">Object Content Information
+(OCI)</h3>
+<p>Asset identification in MPEG-4 is handled primarily through Object
+Content Information (OCI) streams and descriptors. OCI provides a
+standardized metadata container that operates alongside the elementary
+media streams.</p>
+<p>Key features of OCI for asset identification include:</p>
+<ul>
+<li><strong>Standardized Identifiers:</strong> Support for universal
+identification schemes such as International Standard Audiovisual
+Numbers (ISAN), International Standard Recording Codes (ISRC), and
+Digital Object Identifiers (DOI).</li>
+<li><strong>Granular Tagging:</strong> Because MPEG-4 treats individual
+visual or audio elements as separate objects, OCI descriptors can
+identify specific components within a scene, not just the complete
+file.</li>
+<li><strong>Content Descriptors:</strong> Metadata fields for authoring
+details, copyright notices, creation dates, genre classifications, and
+licensing terms.</li>
+</ul>
+<h3 id="ipmp-descriptors-and-stream-binding">IPMP Descriptors and Stream
+Binding</h3>
+<p>To link identification and watermarking rules directly to media
+objects, MPEG-4 uses IPMP Descriptors embedded within the media stream's
+Object Descriptors (OD) and Elementary Stream Descriptors
+(ES_Descriptor).</p>
+<ol type="1">
+<li><strong>IPMP_Descriptor:</strong> Carries configuration parameters,
+required tool identifiers, and rights data specific to an individual
+elementary stream.</li>
+<li><strong>IPMP_ToolListDescriptor:</strong> Outlines the specific
+watermarking or DRM tools the client terminal must fetch and initialize
+to decode and present the scene compliant with copyright
+restrictions.</li>
+<li><strong>Stream Association:</strong> By embedding these descriptors
+at the stream level, different watermarking strengths or asset IDs can
+be assigned to different objects within the same visual scene.</li>
+</ol>
+<h3 id="execution-workflow-on-the-client-terminal">Execution Workflow on
+the Client Terminal</h3>
+<ol type="1">
+<li><strong>Stream Parsing:</strong> The client terminal demultiplexes
+the MPEG-4 bitstream and extracts the Object Descriptors containing the
+IPMP and OCI descriptors.</li>
+<li><strong>Identification Resolution:</strong> The client reads the OCI
+data to verify the asset identity and establish playback rights.</li>
+<li><strong>Tool Initialization:</strong> The client queries the IPMP-X
+interface to load the required watermarking IPMP Tool.</li>
+<li><strong>Decoding and Embedding:</strong> The media decoder converts
+the elementary stream into raw samples (e.g., YUV video frames or PCM
+audio).</li>
+<li><strong>Watermark Insertion:</strong> The active IPMP Tool modifies
+the raw samples to embed the client-specific forensic watermark before
+passing the data to the display or audio output buffer.</li>
+</ol></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

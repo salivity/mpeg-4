@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Understanding the stsd Box in MPEG-4 Decoding - mpeg-4</title>
+    <meta name="description" content="The Sample Description box (stsd) is a fundamental structure within the ISO Base Media File Format (ISOBMFF) and MPEG-4 container specification. Located inside the moov/trak/mdia/minf/stbl hierarchy, the stsd box provides the decoding pipeline with essen">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/understanding-the-stsd-box-in-mpeg-4-decoding">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Understanding the stsd Box in MPEG-4 Decoding - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/understanding-the-stsd-box-in-mpeg-4-decoding" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The Sample Description box (stsd) is a fundamental structure within the ISO Base Media File Format (ISOBMFF) and MPEG-4 container specification. Located inside the moov/trak/mdia/minf/stbl hierarchy, the stsd box provides the decoding pipeline with essen" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="understanding-the-stsd-box-in-mpeg-4-decoding">Understanding the
+stsd Box in MPEG-4 Decoding</h1>
+<p>The Sample Description box (<code>stsd</code>) is a fundamental
+structure within the ISO Base Media File Format (ISOBMFF) and MPEG-4
+container specification. Located inside the
+<code>moov/trak/mdia/minf/stbl</code> hierarchy, the <code>stsd</code>
+box provides the decoding pipeline with essential metadata, codec
+configurations, initialization data, and media stream properties.
+Without the data contained in this box, an MPEG-4 demuxer and decoder
+cannot identify the compression format, initialize the decoder hardware
+or software, or properly interpret the raw compressed media samples
+found in the file.</p>
+<h2 id="codec-identification-fourcc">Codec Identification (FourCC)</h2>
+<p>The <code>stsd</code> box contains one or more sample entries, each
+identified by a unique Four-Character Code (FourCC). This code tells the
+decoding pipeline precisely which decompression algorithm is
+required:</p>
+<ul>
+<li><strong>Video Codecs:</strong> Identifiers such as <code>avc1</code>
+(H.264), <code>hvc1</code> or <code>hev1</code> (H.265/HEVC),
+<code>vp09</code> (VP9), <code>av01</code> (AV1), or <code>mp4v</code>
+(MPEG-4 Part 2 Visual).</li>
+<li><strong>Audio Codecs:</strong> Identifiers such as <code>mp4a</code>
+(AAC / MPEG-4 Audio), <code>ac-3</code> (Dolby Digital),
+<code>ec-3</code> (Enhanced AC-3), or <code>Opus</code>.</li>
+</ul>
+<h2 id="decoder-configuration-parameters-extradata">Decoder
+Configuration Parameters (Extradata)</h2>
+<p>Nested directly within the specific sample entry inside the
+<code>stsd</code> box are codec-specific configuration boxes. These
+payload structures supply out-of-band initialization data (often
+referred to as "extradata" or "codec private data") required before
+decoding the first frame:</p>
+<ul>
+<li><strong>H.264 / AVC (<code>avcC</code> Box):</strong> Supplies the
+Sequence Parameter Sets (SPS) and Picture Parameter Sets (PPS), defining
+the decoding profile, constraint flags, level, NAL unit length size, and
+chroma format.</li>
+<li><strong>H.265 / HEVC (<code>hvcC</code> Box):</strong> Supplies
+Video Parameter Sets (VPS), SPS, PPS, and operating tiers.</li>
+<li><strong>MPEG-4 Systems (<code>esds</code> Box):</strong> Supplies
+the Elementary Stream Descriptor, containing the
+<code>DecoderConfigDescriptor</code> and
+<code>AudioSpecificConfig</code> (sample rate indices, channel
+configurations, and profile levels for AAC audio).</li>
+</ul>
+<h2 id="visual-presentation-and-geometry-parameters">Visual Presentation
+and Geometry Parameters</h2>
+<p>For video tracks, the <code>stsd</code> sample entry explicitly
+specifies the spatial properties needed to configure render targets and
+frame buffers:</p>
+<ul>
+<li><strong>Coded Dimensions:</strong> Encoded frame width and height in
+pixels.</li>
+<li><strong>Resolution:</strong> Horizontal and vertical DPI
+settings.</li>
+<li><strong>Pixel Aspect Ratio (<code>pasp</code> Box):</strong> Defines
+non-square pixel ratios for anamorphic video.</li>
+<li><strong>Color Metadata (<code>colr</code> Box):</strong> Specifies
+color primaries, transfer characteristics (such as HDR/SDR curves), and
+matrix coefficients to ensure correct YUV-to-RGB conversion.</li>
+</ul>
+<h2 id="audio-stream-properties">Audio Stream Properties</h2>
+<p>For audio tracks, the <code>stsd</code> sample entry defines standard
+audio hardware output configurations:</p>
+<ul>
+<li><strong>Channel Count:</strong> Number of audio channels (e.g., 1
+for mono, 2 for stereo, 6 for 5.1 surround).</li>
+<li><strong>Sample Rate:</strong> Timebase frequency (e.g., 44.1 kHz, 48
+kHz).</li>
+<li><strong>Sample Size:</strong> Uncompressed bit depth per channel
+(e.g., 16-bit, 24-bit).</li>
+</ul>
+<h2 id="encryption-and-protection-schemes">Encryption and Protection
+Schemes</h2>
+<p>If the media stream is encrypted (such as in Common Encryption / CENC
+workflows), the <code>stsd</code> box replaces standard codec FourCCs
+with encrypted indicators like <code>encv</code> (encrypted video) or
+<code>enca</code> (encrypted audio). Within these entries, it
+provides:</p>
+<ul>
+<li><strong>Protection Scheme Information (<code>sinf</code>
+Box):</strong> Identifies the encryption scheme type (e.g.,
+<code>cenc</code>, <code>cbcs</code>).</li>
+<li><strong>Track Encryption (<code>tenc</code> Box):</strong> Contains
+default Key IDs (KID), initialization vector (IV) sizes, and pattern
+protection settings used to route samples through the decryption
+pipeline prior to decoding.</li>
+</ul>
+<h2 id="data-reference-index">Data Reference Index</h2>
+<p>Each sample entry in the <code>stsd</code> contains a
+<code>data_reference_index</code>. This integer maps media samples to
+specific location descriptors in the Data Reference (<code>dref</code>)
+box, allowing the demuxer to know whether to fetch media data from
+internal <code>mdat</code> boxes or external file resources.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

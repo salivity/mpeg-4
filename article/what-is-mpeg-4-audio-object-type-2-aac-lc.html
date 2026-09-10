@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>What Is MPEG-4 Audio Object Type 2 (AAC-LC)? - mpeg-4</title>
+    <meta name="description" content="This article provides a technical definition of Audio Object Type 2 (AAC-LC) under the MPEG-4 Part 3 (ISO/IEC 14496-3) standard. It outlines the core architectural components, processing pipeline, and structural specifications that make AAC-LC the indust">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/what-is-mpeg-4-audio-object-type-2-aac-lc">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="What Is MPEG-4 Audio Object Type 2 (AAC-LC)? - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/what-is-mpeg-4-audio-object-type-2-aac-lc" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article provides a technical definition of Audio Object Type 2 (AAC-LC) under the MPEG-4 Part 3 (ISO/IEC 14496-3) standard. It outlines the core architectural components, processing pipeline, and structural specifications that make AAC-LC the indust" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="what-is-mpeg-4-audio-object-type-2-aac-lc">What Is MPEG-4 Audio
+Object Type 2 (AAC-LC)?</h1>
+<p>This article provides a technical definition of Audio Object Type 2
+(AAC-LC) under the MPEG-4 Part 3 (ISO/IEC 14496-3) standard. It outlines
+the core architectural components, processing pipeline, and structural
+specifications that make AAC-LC the industry baseline for efficient
+digital audio encoding.</p>
+<h2 id="technical-definition-of-audio-object-type-2">Technical
+Definition of Audio Object Type 2</h2>
+<p>In the MPEG-4 Part 3 standard (ISO/IEC 14496-3 Subpart 4),
+<strong>Audio Object Type 2</strong> designates <strong>AAC Low
+Complexity (AAC-LC)</strong>. It is a psychoacoustic-based, lossy
+perceptual audio coding scheme derived from the earlier MPEG-2 AAC
+standard (ISO/IEC 13818-7), optimized to provide high-fidelity audio
+reproduction with reduced memory requirements and computational
+complexity.</p>
+<p>Within the MPEG-4 bitstream configuration syntax
+(<code>AudioSpecificConfig</code>), the 5-bit
+<code>audioObjectType</code> field with a binary value of
+<code>00010</code> (decimal value 2) signals decoders to instantiate the
+AAC-LC processing pipeline.</p>
+<h2 id="architectural-components-and-toolset">Architectural Components
+and Toolset</h2>
+<p>AAC-LC uses a transform-based coding architecture that analyzes and
+compresses raw audio signals using perceptual psychoacoustic modeling.
+Its core toolset consists of the following components:</p>
+<ul>
+<li><strong>Filterbank (MDCT):</strong> Converts time-domain audio
+samples into frequency-domain spectral coefficients using the Modified
+Discrete Cosine Transform (MDCT). It switches dynamically between a long
+block size (2048 samples, transforming to 1024 frequency coefficients)
+for high spectral resolution during stationary signals, and a short
+block size (256 samples, transforming to 128 coefficients) to prevent
+pre-echo artifacts during transient signals.</li>
+<li><strong>Temporal Noise Shaping (TNS):</strong> Applies linear
+prediction across spectral bins to shape the temporal distribution of
+quantization noise within each transform window, preventing noise from
+spreading outside of localized transient events.</li>
+<li><strong>Psychoacoustic Model:</strong> Evaluates masking thresholds
+(simultaneous and temporal masking) to determine the imperceptible noise
+threshold, guiding the quantization process to discard
+psychoacoustically redundant data.</li>
+<li><strong>Perceptual Noise Substitution (PNS):</strong> Replaces
+noise-like frequency subbands with a single energy parameter and a
+pseudo-random noise generator at the decoder, significantly reducing
+bitrate for ambient or unvoiced content.</li>
+<li><strong>Joint Stereo Coding:</strong> Employs Mid/Side (M/S) stereo
+coding to encode sum and difference signals between paired channels, as
+well as intensity stereo coding for higher frequency bands to optimize
+multichannel correlation.</li>
+<li><strong>Quantization and Entropy Coding:</strong> Applies
+non-uniform scalar quantization based on scale factors per scalefactor
+band, followed by 2D/4D Huffman coding to achieve lossless entropy
+compression of the quantized spectral data.</li>
+</ul>
+<h2 id="distinctions-within-the-mpeg-4-standard">Distinctions Within the
+MPEG-4 Standard</h2>
+<p>Audio Object Type 2 intentionally excludes processing-intensive tools
+found in other MPEG-4 profiles to maintain low computational latency and
+lower hardware resource utilization:</p>
+<ul>
+<li><strong>No Backward Predictors:</strong> Unlike AAC Main (AOT 1),
+AAC-LC removes backward-adaptive linear prediction.</li>
+<li><strong>No Long Term Prediction (LTP):</strong> Unlike AAC LTP (AOT
+4), AAC-LC does not utilize time-domain pitch predictors.</li>
+<li><strong>Foundation for Extended AOTs:</strong> AAC-LC serves as the
+mandatory core foundation for more complex objects, including
+High-Efficiency AAC (HE-AAC v1 / AOT 5), which adds Spectral Band
+Replication (SBR), and HE-AAC v2 (AOT 29), which adds Parametric Stereo
+(PS).</li>
+</ul>
+<h2 id="technical-specifications">Technical Specifications</h2>
+<ul>
+<li><strong>Sampling Frequencies:</strong> Native support from 8 kHz to
+96 kHz.</li>
+<li><strong>Channel Configurations:</strong> Scalable from 1 (mono) up
+to 48 independent audio channels, as well as arbitrary multi-channel
+layouts using Program Config Elements (PCE).</li>
+<li><strong>Bitrate Range:</strong> Typically operated between 64 kbps
+and 320 kbps for stereo streams (with standard transparent fidelity
+achieved around 128 kbps to 192 kbps).</li>
+<li><strong>Frame Size:</strong> 1024 samples per frame per channel (or
+960 samples per frame in specific broadcast modes).</li>
+</ul></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

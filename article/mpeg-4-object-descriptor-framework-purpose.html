@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPEG-4 Object Descriptor Framework Purpose - mpeg-4</title>
+    <meta name="description" content="This article explains the purpose and key functions of the Object Descriptor Framework (ODF) within the MPEG-4 standard. It explores how this framework acts as the vital link between raw media streams and scene descriptions, enabling the delivery of high">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/mpeg-4-object-descriptor-framework-purpose">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MPEG-4 Object Descriptor Framework Purpose - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/mpeg-4-object-descriptor-framework-purpose" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explains the purpose and key functions of the Object Descriptor Framework (ODF) within the MPEG-4 standard. It explores how this framework acts as the vital link between raw media streams and scene descriptions, enabling the delivery of high" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="mpeg-4-object-descriptor-framework-purpose">MPEG-4 Object
+Descriptor Framework Purpose</h1>
+<p>This article explains the purpose and key functions of the Object
+Descriptor Framework (ODF) within the MPEG-4 standard. It explores how
+this framework acts as the vital link between raw media streams and
+scene descriptions, enabling the delivery of highly interactive,
+object-based multimedia experiences. By understanding the ODF, you will
+learn how MPEG-4 manages diverse media components like audio, video, and
+synthetic graphics within a single, cohesive presentation.</p>
+<h2 id="connecting-scene-description-to-media-streams">Connecting Scene
+Description to Media Streams</h2>
+<p>Unlike previous video standards that treated video as a sequence of
+flat, rectangular frames, MPEG-4 adopts an object-based approach. A
+multimedia scene in MPEG-4 is composed of individual "media
+objects"—such as a background video, a talking person, a background
+music track, or interactive 3D text.</p>
+<p>To render this scene, the receiving device needs two main pieces of
+information:</p>
+<ol type="1">
+<li><strong>The Scene Description (BIFS):</strong> This defines the
+spatial and temporal relationships between objects (where and when they
+appear).</li>
+<li><strong>The Elementary Streams (ES):</strong> These are the actual
+coded audio, video, or graphic data streams.</li>
+</ol>
+<p>The primary purpose of the <strong>Object Descriptor
+Framework</strong> is to act as the bridge between these two components.
+It identifies, describes, and links the individual elementary streams to
+the specific media objects defined in the scene description.</p>
+<h2 id="key-functions-of-the-object-descriptor-framework">Key Functions
+of the Object Descriptor Framework</h2>
+<p>The ODF fulfills several critical roles to ensure seamless multimedia
+delivery and rendering:</p>
+<h3 id="1-stream-identification-and-association">1. Stream
+Identification and Association</h3>
+<p>An Object Descriptor (OD) is a collection of pointers called
+Elementary Stream Descriptors (ESDs). Each ESD describes a single raw
+data stream, specifying its encoding format, required decoder resources,
+and stream source. By grouping these descriptors, the ODF tells the
+player which media streams belong to which visual or auditory object in
+the scene.</p>
+<h3 id="2-dynamic-stream-switching-and-adaptation">2. Dynamic Stream
+Switching and Adaptation</h3>
+<p>The ODF allows for highly flexible and dynamic content delivery. For
+example, a single visual object (like a movie screen in a virtual
+environment) might have multiple audio streams associated with it for
+different languages, or multiple video streams for different quality
+levels (scalability). The ODF enables the player to dynamically select
+and switch between these streams based on user preferences, language
+settings, or network bandwidth.</p>
+<h3 id="3-decoupling-of-scene-and-content">3. Decoupling of Scene and
+Content</h3>
+<p>By keeping the scene layout (BIFS) separate from the actual media
+data streams (Elementary Streams), the ODF allows developers to update,
+replace, or modify media content without altering the overall layout of
+the scene. You can change the video file playing on a virtual wall
+without having to rewrite the code that positions that wall in the 3D
+space.</p>
+<h3 id="4-conveying-decoder-configuration">4. Conveying Decoder
+Configuration</h3>
+<p>Before a media stream can be decoded, the player needs to know which
+codec to use and how to configure it. The ODF carries this
+initialization data (Decoder Specific Info) within the Elementary Stream
+Descriptors. This ensures that the receiving device's hardware or
+software decoders are properly configured before the media data packets
+arrive.</p>
+<h3 id="5-intellectual-property-management-and-protection-ipmp">5.
+Intellectual Property Management and Protection (IPMP)</h3>
+<p>The Object Descriptor Framework also supports the integration of
+Digital Rights Management (DRM). It can contain pointers to IPMP
+descriptors, allowing content creators to secure individual media
+objects within a scene. This means one object (like a premium video) can
+be encrypted and require decryption keys, while another object (like a
+free advertisement banner) in the same scene remains unencrypted.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

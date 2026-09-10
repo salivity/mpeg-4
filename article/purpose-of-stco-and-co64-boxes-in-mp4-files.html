@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Purpose of stco and co64 Boxes in MP4 Files - mpeg-4</title>
+    <meta name="description" content="The Chunk Offset box—identified by the four-character codes stco for 32-bit offsets and co64 for 64-bit offsets—is an essential metadata component in the MPEG-4 (ISOBMFF) file structure. Its primary purpose is to provide an index of absolute file off">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/purpose-of-stco-and-co64-boxes-in-mp4-files">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Purpose of stco and co64 Boxes in MP4 Files - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/purpose-of-stco-and-co64-boxes-in-mp4-files" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The Chunk Offset box—identified by the four-character codes stco for 32-bit offsets and co64 for 64-bit offsets—is an essential metadata component in the MPEG-4 (ISOBMFF) file structure. Its primary purpose is to provide an index of absolute file off" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="purpose-of-stco-and-co64-boxes-in-mp4-files">Purpose of stco and
+co64 Boxes in MP4 Files</h1>
+<p>The Chunk Offset box—identified by the four-character codes
+<code>stco</code> for 32-bit offsets and <code>co64</code> for 64-bit
+offsets—is an essential metadata component in the MPEG-4 (ISOBMFF) file
+structure. Its primary purpose is to provide an index of absolute file
+offsets pointing to the beginning of each chunk of raw media data. This
+article explores how these boxes function within the MP4 container
+hierarchy, why they are necessary for media playback and seeking, and
+the differences between the 32-bit and 64-bit implementations.</p>
+<h3 id="role-in-the-iso-base-media-file-format-hierarchy">Role in the
+ISO Base Media File Format Hierarchy</h3>
+<p>In the MPEG-4 container specification, metadata is stored in a
+structured tree of boxes (or "atoms"). The Chunk Offset box resides
+inside the Sample Table box (<code>stbl</code>), which is nested within
+the Media Information (<code>minf</code>), Media (<code>mdia</code>),
+Track (<code>trak</code>), and Movie (<code>moov</code>) boxes:</p>
+<p><code>moov</code> ➔ <code>trak</code> ➔ <code>mdia</code> ➔
+<code>minf</code> ➔ <code>stbl</code> ➔ <code>stco</code> /
+<code>co64</code></p>
+<p>The actual raw audio and video data is stored in the Media Data box
+(<code>mdat</code>). Instead of referencing each individual media sample
+by its file position, the format groups adjacent samples into "chunks"
+to reduce the metadata overhead. The Chunk Offset box records the byte
+position of each chunk relative to the start of the entire file.</p>
+<h3 id="how-chunk-offsets-enable-sample-localization">How Chunk Offsets
+Enable Sample Localization</h3>
+<p>To decode a specific frame or audio packet, a media player uses
+several complementary tables in the <code>stbl</code> box:</p>
+<ol type="1">
+<li><strong>Time-to-Sample (<code>stts</code>):</strong> Determines
+which sample corresponds to a specific timestamp.</li>
+<li><strong>Sample-to-Chunk (<code>stsc</code>):</strong> Identifies
+which chunk contains that specific sample and how many samples are in
+that chunk.</li>
+<li><strong>Chunk Offset (<code>stco</code> /
+<code>co64</code>):</strong> Provides the exact starting byte position
+of the target chunk in the file.</li>
+<li><strong>Sample Size (<code>stsz</code> /
+<code>stz2</code>):</strong> Defines the byte size of each sample within
+the chunk to calculate the precise offset of the individual frame.</li>
+</ol>
+<p>By cross-referencing these tables, the player can compute the exact
+byte range to read from disk or over the network without scanning
+through the entire <code>mdat</code> payload.</p>
+<h3 id="the-difference-between-stco-and-co64">The Difference Between
+<code>stco</code> and <code>co64</code></h3>
+<ul>
+<li><strong><code>stco</code> (Standard Chunk Offset Box):</strong> Uses
+32-bit unsigned integers to store byte offsets. It is the default choice
+for standard MP4 files, but it limits the maximum offset to 4 gigabytes
+(<span class="math inline">\(2^{32} - 1\)</span> bytes).</li>
+<li><strong><code>co64</code> (Chunk Large Offset Box):</strong> Uses
+64-bit unsigned integers to store byte offsets. It was introduced to
+support files larger than 4 GB, allowing media files to scale into
+multi-terabyte sizes without indexing limitations.</li>
+</ul>
+<p>A track can contain either an <code>stco</code> box or a
+<code>co64</code> box, but never both simultaneously.</p>
+<h3 id="importance-in-media-seeking-and-streaming">Importance in Media
+Seeking and Streaming</h3>
+<p>Because the <code>stco</code> and <code>co64</code> boxes contain
+absolute file offsets, any modification that shifts the position of the
+<code>mdat</code> box—such as moving the <code>moov</code> box to the
+beginning of the file for web streaming (known as "Fast Start")—requires
+recalculating and rewriting all offset values in the Chunk Offset table.
+Without accurate chunk offsets, decoders cannot find or parse the media
+streams, resulting in playback failure.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

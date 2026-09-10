@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPEG-4 Structured Audio Real-Time Effect Routing - mpeg-4</title>
+    <meta name="description" content="The MPEG-4 Structured Audio (MP4-SA) standard uses a dynamic routing table architecture to manage, process, and render real-time audio effects efficiently. By leveraging the Structured Audio Orchestra Language (SAOL) alongside runtime event scheduling, t">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/mpeg-4-structured-audio-real-time-effect-routing">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MPEG-4 Structured Audio Real-Time Effect Routing - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/mpeg-4-structured-audio-real-time-effect-routing" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The MPEG-4 Structured Audio (MP4-SA) standard uses a dynamic routing table architecture to manage, process, and render real-time audio effects efficiently. By leveraging the Structured Audio Orchestra Language (SAOL) alongside runtime event scheduling, t" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="mpeg-4-structured-audio-real-time-effect-routing">MPEG-4
+Structured Audio Real-Time Effect Routing</h1>
+<p>The MPEG-4 Structured Audio (MP4-SA) standard uses a dynamic routing
+table architecture to manage, process, and render real-time audio
+effects efficiently. By leveraging the Structured Audio Orchestra
+Language (SAOL) alongside runtime event scheduling, the system
+dynamically interconnects sound generators and effect processing units
+through shared audio buses. This architecture allows dynamic allocation
+of signal paths, arbitrary effect topologies, and runtime parameter
+modulation without requiring static DSP routing configurations.</p>
+<h3 id="audio-buses-and-the-signal-graph">Audio Buses and the Signal
+Graph</h3>
+<p>In MPEG-4 Structured Audio, audio processing networks are defined as
+directed graphs composed of instrument instances and communication
+channels called <strong>buses</strong>.</p>
+<ul>
+<li><strong>Standard and Global Buses:</strong> SAOL defines global
+buses (such as <code>output_bus</code> for master sound generation) and
+user-defined global or local buses.</li>
+<li><strong>Dynamic Interconnection:</strong> Instead of hardwiring
+synthesis algorithms to effects, an instrument writes its output to a
+specified bus. Effect instruments—which are simply SAOL instruments
+designed for signal processing—read from these buses, apply
+modifications (such as reverb, chorus, filtering, or spatialization),
+and either overwrite the bus or write to another bus in the chain.</li>
+</ul>
+<h3 id="dynamic-routing-table-mechanics">Dynamic Routing Table
+Mechanics</h3>
+<p>The dynamic routing table serves as the engine's real-time connection
+registry. When new instrument instances or effect algorithms are
+triggered:</p>
+<ol type="1">
+<li><strong>Node Registration:</strong> When an effect instrument is
+instantiated via Structured Audio Score Language (SASL) events, MIDI
+events, or internal dynamic spawning, the runtime engine registers the
+instance as a processing node in the routing table.</li>
+<li><strong>Channel Mapping:</strong> The table maps input and output
+identifiers to specific memory buffers representing the audio
+buses.</li>
+<li><strong>Dynamic Reconfiguration:</strong> Because instruments can be
+spawned and terminated dynamically during runtime, the routing table
+updates actively. When an effect terminates, its associated routing
+entry is cleared, and downstream inputs are adjusted to prevent broken
+signal paths or uninitialized buffer reads.</li>
+</ol>
+<h3 id="execution-rates-and-processing-order">Execution Rates and
+Processing Order</h3>
+<p>MPEG-4 Structured Audio enforces a strict multi-rate evaluation model
+to execute DSP operations consistently within the dynamic routing
+matrix:</p>
+<ul>
+<li><strong>Initialization Rate (<code>i-rate</code>):</strong>
+Evaluated once when an instrument or effect node is created. The routing
+table allocates memory, clears effect delay lines, and assigns bus
+mappings.</li>
+<li><strong>Control Rate (<code>k-rate</code>):</strong> Evaluated at
+lower sub-sampling frequencies (typically 100 Hz to 1 kHz) to update
+dynamic routing properties, envelope values, and effect parameters
+(e.g., filter cutoff frequencies or wet/dry balances).</li>
+<li><strong>Audio Rate (<code>a-rate</code>):</strong> Evaluated at the
+full audio sample rate (e.g., 44.1 kHz or 48 kHz). The engine traverses
+the active routing table, reads audio samples from source buses, applies
+the mathematical DSP operators defined in SAOL, and outputs processed
+audio to destination buses.</li>
+</ul>
+<h3 id="dependency-resolution-and-graph-traversal">Dependency Resolution
+and Graph Traversal</h3>
+<p>To process effects correctly without introducing unexpected latency
+or feedback issues, the SA engine computes an execution order based on
+bus dependencies:</p>
+<ul>
+<li><strong>Topological Sorting:</strong> The engine analyzes the
+routing table to determine which instruments write to a bus before other
+instruments read from it. Sound generators are computed first, followed
+by sequential stages of effect instruments (e.g., Distortion <span
+class="math inline">\(\rightarrow\)</span> Filter <span
+class="math inline">\(\rightarrow\)</span> Delay <span
+class="math inline">\(\rightarrow\)</span> Master Reverb).</li>
+<li><strong>Feedback Loop Handling:</strong> If cyclic routes (feedback
+loops) are detected in the routing table, the standard resolves the
+cycle by delaying the feedback signal by a single execution cycle or
+buffer block, ensuring stability during real-time synthesis.</li>
+</ul></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sub-Pixel Accuracy in MPEG-4 Bitstream Size - mpeg-4</title>
+    <meta name="description" content="Sub-pixel accuracy in motion vector estimation plays a critical role in determining the final bitstream size in MPEG-4 video encoding. By allowing motion vectors to point to fractional pixel locations—such as half-pixel (half-pel) or quarter-pixel (qua">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/sub-pixel-accuracy-in-mpeg-4-bitstream-size">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Sub-Pixel Accuracy in MPEG-4 Bitstream Size - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/sub-pixel-accuracy-in-mpeg-4-bitstream-size" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Sub-pixel accuracy in motion vector estimation plays a critical role in determining the final bitstream size in MPEG-4 video encoding. By allowing motion vectors to point to fractional pixel locations—such as half-pixel (half-pel) or quarter-pixel (qua" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="sub-pixel-accuracy-in-mpeg-4-bitstream-size">Sub-Pixel Accuracy
+in MPEG-4 Bitstream Size</h1>
+<p>Sub-pixel accuracy in motion vector estimation plays a critical role
+in determining the final bitstream size in MPEG-4 video encoding. By
+allowing motion vectors to point to fractional pixel locations—such as
+half-pixel (half-pel) or quarter-pixel (quarter-pel) positions—encoders
+can produce more accurate motion-compensated predictions. This creates a
+fundamental trade-off: higher precision reduces the amount of residual
+error data that needs to be encoded, but it simultaneously increases the
+number of bits required to signal the motion vectors themselves.</p>
+<h3 id="the-trade-off-residual-error-vs-motion-vector-overhead">The
+Trade-Off: Residual Error vs. Motion Vector Overhead</h3>
+<p>In MPEG-4 inter-frame compression (P-frames and B-frames), the total
+bitstream size for a macroblock is largely composed of two elements:
+motion vector data and residual error data (the difference between the
+predicted block and the actual block).</p>
+<ol type="1">
+<li><p><strong>Residual Error Reduction:</strong> When motion estimation
+is limited to full-pixel (integer) accuracy, the reference block often
+aligns imperfectly with moving objects, resulting in larger residual
+differences. Sub-pixel accuracy uses interpolation (such as bilinear or
+higher-order filtering) to generate virtual pixel values between
+physical pixels. This leads to a much closer visual match, substantially
+lowering the energy of the residual signal. Consequently, fewer Discrete
+Cosine Transform (DCT) coefficients are generated, and less data is
+required to encode the residual texture.</p></li>
+<li><p><strong>Motion Vector Bit Overhead:</strong> Increasing motion
+vector precision increases the resolution of the coordinate system.
+Specifying a vector at half-pixel accuracy requires an additional bit of
+precision per coordinate dimension compared to full-pixel accuracy.
+Moving to quarter-pixel accuracy adds another bit per dimension. For
+complex frames with numerous moving blocks, these additional bits
+accumulate across thousands of motion vectors, increasing the signaling
+overhead in the bitstream.</p></li>
+</ol>
+<h3 id="net-effect-on-total-bitstream-size">Net Effect on Total
+Bitstream Size</h3>
+<p>The net impact on the overall bitstream depends on whether the
+savings in residual data outweigh the cost of the larger motion
+vectors:</p>
+<ul>
+<li><strong>High-Detail and Complex Motion:</strong> In scenes with fine
+textures, organic motion, or non-integer displacements (such as slow
+pans, camera zooms, or rotational movement), sub-pixel accuracy
+drastically reduces high-frequency residual noise. The bits saved on DCT
+coefficients far exceed the extra bits spent on vector precision,
+resulting in a net decrease in total bitstream size for a given quality
+level.</li>
+<li><strong>Low-Detail or Flat Areas:</strong> In scenes with large,
+flat color areas or low contrast, integer-pixel matching may already
+yield very small residuals. In these cases, the extra bits required to
+encode sub-pixel precision can outweigh the minimal residual savings,
+potentially increasing the total bitstream size if sub-pixel vectors are
+forced.</li>
+<li><strong>Quarter-Pel vs. Half-Pel:</strong> While the jump from
+full-pixel to half-pixel precision almost universally reduces bitstream
+size, the transition from half-pixel to quarter-pixel (available in
+MPEG-4 Part 2 Advanced Simple Profile and MPEG-4 Part 10 / H.264) shows
+diminishing returns. It is most effective at high bitrates and
+resolutions, where preserving fine detail is paramount.</li>
+</ul>
+<p>MPEG-4 encoders typically utilize Rate-Distortion Optimization (RDO)
+to evaluate this trade-off on a block-by-block basis, selecting
+sub-pixel motion vectors only when they provide a net gain in coding
+efficiency.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

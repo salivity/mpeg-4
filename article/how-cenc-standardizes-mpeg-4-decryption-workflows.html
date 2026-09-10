@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How CENC Standardizes MPEG-4 Decryption Workflows - mpeg-4</title>
+    <meta name="description" content="Common Encryption (CENC) standardizes decryption workflows across disparate MPEG-4 client platforms by separating the content encryption mechanism from the Digital Rights Management (DRM) key management systems. Defined under ISO/IEC 23001-7, CENC allows">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/how-cenc-standardizes-mpeg-4-decryption-workflows">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How CENC Standardizes MPEG-4 Decryption Workflows - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/how-cenc-standardizes-mpeg-4-decryption-workflows" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Common Encryption (CENC) standardizes decryption workflows across disparate MPEG-4 client platforms by separating the content encryption mechanism from the Digital Rights Management (DRM) key management systems. Defined under ISO/IEC 23001-7, CENC allows" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="how-cenc-standardizes-mpeg-4-decryption-workflows">How CENC
+Standardizes MPEG-4 Decryption Workflows</h1>
+<p>Common Encryption (CENC) standardizes decryption workflows across
+disparate MPEG-4 client platforms by separating the content encryption
+mechanism from the Digital Rights Management (DRM) key management
+systems. Defined under ISO/IEC 23001-7, CENC allows content providers to
+encrypt video and audio tracks once using standard Advanced Encryption
+Standard (AES) ciphers, while enabling multiple native DRM systems—such
+as Google Widevine, Microsoft PlayReady, and Apple FairPlay—to decrypt
+the exact same media files on different operating systems and hardware
+platforms.</p>
+<h3 id="decoupling-encryption-from-drm-systems">Decoupling Encryption
+from DRM Systems</h3>
+<p>Prior to CENC, each proprietary DRM system required its own unique
+encryption algorithm, container format, and packaging pipeline. CENC
+eliminates this fragmentation by establishing a uniform encryption
+layer.</p>
+<p>The standard mandates standard AES 128-bit encryption operating in
+either Counter (CTR) mode (identified as the <code>cenc</code>
+protection scheme) or Cipher Block Chaining (CBC) with 10% pattern
+protection (identified as the <code>cbcs</code> protection scheme).
+Because the encryption algorithm is fixed and universal, the underlying
+media payload is identical regardless of which client platform plays it
+back.</p>
+<h3
+id="standardized-metadata-signaling-in-the-iso-base-media-file-format">Standardized
+Metadata Signaling in the ISO Base Media File Format</h3>
+<p>CENC establishes a standardized set of metadata boxes within the ISO
+Base Media File Format (ISOBMFF / MP4) container to instruct client
+devices how to handle decryption:</p>
+<ul>
+<li><strong>Protection System Specific Header (<code>pssh</code>)
+Box:</strong> Contains DRM-specific metadata required by a client's
+Content Decryption Module (CDM) to request and acquire the decryption
+key. A single MP4 container or manifest can hold multiple
+<code>pssh</code> boxes side by side, each carrying a unique SystemID
+corresponding to a specific DRM vendor (e.g., Widevine, PlayReady).</li>
+<li><strong>Track Encryption (<code>tenc</code>) Box:</strong> Defines
+default encryption parameters for an entire track, such as the default
+Key ID (KID), encryption scheme, and initialization vector (IV)
+size.</li>
+<li><strong>Sample Encryption (<code>senc</code>) and Sample Auxiliary
+Information (<code>saio</code>/<code>saiz</code>) Boxes:</strong>
+Provide sample-specific data, including initialization vectors and
+sub-sample encryption maps that delineate clear (unencrypted) headers
+from encrypted payload bytes.</li>
+</ul>
+<h3 id="the-unified-client-decryption-workflow">The Unified Client
+Decryption Workflow</h3>
+<p>When an MPEG-4 client encounters a CENC-packaged stream, the
+decryption process follows a consistent, platform-independent
+workflow:</p>
+<ol type="1">
+<li><strong>Metadata Parsing:</strong> The client's media demuxer parses
+the container and extracts the standard CENC boxes (<code>tenc</code>,
+<code>senc</code>) along with the <code>pssh</code> box matching the
+platform's supported DRM SystemID.</li>
+<li><strong>License Acquisition:</strong> The demuxer passes the
+DRM-specific initialization data from the selected <code>pssh</code> box
+to the client’s native Content Decryption Module (CDM) via standard APIs
+(such as Encrypted Media Extensions in web browsers). The CDM contacts
+the appropriate DRM license server to retrieve the content encryption
+key associated with the Key ID.</li>
+<li><strong>Key Provisioning to Hardware:</strong> The CDM unwraps the
+license and securely loads the raw content key into the device’s
+hardware-level cryptographic engine or Trusted Execution Environment
+(TEE).</li>
+<li><strong>Standardized Decryption:</strong> The media engine feeds the
+encrypted elementary stream, along with the sample encryption parameters
+(IVs and sub-sample offsets from the <code>senc</code> box), to the
+decryption engine. The engine decrypts the samples using the standard
+AES cipher and routes the uncompressed data directly to the secure video
+pipeline.</li>
+</ol>
+<h3 id="multi-drm-efficiency">Multi-DRM Efficiency</h3>
+<p>By standardizing container signaling, cipher modes, and sample-level
+metadata, CENC allows streaming services to encode, package, and cache a
+single set of MPEG-4 media assets. Disparate client platforms utilize
+their native, hardware-optimized DRM systems solely for key exchange and
+authentication, while relying on a unified cryptographic process to
+decrypt and render the media.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

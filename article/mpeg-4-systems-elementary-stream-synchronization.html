@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPEG-4 Systems Elementary Stream Synchronization - mpeg-4</title>
+    <meta name="description" content="The MPEG-4 Systems specification provides a robust architecture to synchronize multiple distributed elementary streams—including video, audio, 2D/3D graphics, synthetic objects, and text—into a unified, interactive scene. Unlike legacy standards that">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/mpeg-4-systems-elementary-stream-synchronization">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MPEG-4 Systems Elementary Stream Synchronization - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/mpeg-4-systems-elementary-stream-synchronization" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The MPEG-4 Systems specification provides a robust architecture to synchronize multiple distributed elementary streams—including video, audio, 2D/3D graphics, synthetic objects, and text—into a unified, interactive scene. Unlike legacy standards that" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="mpeg-4-systems-elementary-stream-synchronization">MPEG-4 Systems
+Elementary Stream Synchronization</h1>
+<p>The MPEG-4 Systems specification provides a robust architecture to
+synchronize multiple distributed elementary streams—including video,
+audio, 2D/3D graphics, synthetic objects, and text—into a unified,
+interactive scene. Unlike legacy standards that rely on a single
+monolithic system clock, MPEG-4 utilizes a decentralized timing model
+managed by the Synchronization Layer (SL). By employing Object Clock
+References (OCR), Decoding Time Stamps (DTS), Composition Time Stamps
+(CTS), and dynamic buffer control, MPEG-4 allows elementary streams from
+different network sources to maintain temporal alignment regardless of
+transmission jitter, varied latencies, or independent clock drift.</p>
+<h3 id="the-synchronization-layer-sl-architecture">The Synchronization
+Layer (SL) Architecture</h3>
+<p>At the core of the MPEG-4 timing architecture is the Synchronization
+Layer (SL). Elementary Streams (ES)—the raw data channels carrying media
+or scene graph descriptors (BIFS)—are divided into consecutive Access
+Units (AUs). The SL packetizes these AUs into SL packets by prepending a
+configurable header containing timing and synchronization metadata.</p>
+<p>Because MPEG-4 is designed for heterogeneous environments, the SL
+header format is flexible. Stream authors can configure the precision,
+length, and presence of timestamp fields to match the specific
+synchronization requirements of each media type, minimizing transmission
+overhead.</p>
+<h3 id="object-time-bases-and-object-clock-references">Object Time Bases
+and Object Clock References</h3>
+<p>Rather than enforcing a universal Master Clock, MPEG-4 supports
+multiple independent Object Time Bases (OTBs). Each elementary stream
+can associate with its own time base, allowing distributed servers to
+stream content created under different reference clocks without
+requiring upstream clock re-synchronization.</p>
+<p>Synchronization to an OTB is maintained through Object Clock
+Reference (OCR) timestamps embedded within the SL packet headers:</p>
+<ul>
+<li><strong>Clock Recovery:</strong> The receiving terminal uses
+incoming OCR values to synchronize its local Phase-Locked Loop (PLL) or
+software clock to the sender's time base.</li>
+<li><strong>Shared Time Bases:</strong> Multiple related elementary
+streams (e.g., multilingual audio tracks paired with a video stream) can
+share a single OTB by referencing the same OCR channel, reducing
+redundant clock information across the network.</li>
+</ul>
+<h3 id="decoding-and-composition-timestamps">Decoding and Composition
+Timestamps</h3>
+<p>MPEG-4 separates the decoding phase from the presentation phase using
+two distinct timestamp parameters embedded in the SL header:</p>
+<ul>
+<li><strong>Decoding Time Stamp (DTS):</strong> Indicates the exact time
+instant an Access Unit must be extracted from the decoder buffer and
+processed by the media decoder. This is crucial for temporal predictive
+compression formats (such as video with bidirectional predictive frames)
+where decoding order differs from display order.</li>
+<li><strong>Composition Time Stamp (CTS):</strong> Specifies the precise
+time an Access Unit's decoded output (a Composition Unit) must be
+rendered, displayed, or applied within the compositor scene.</li>
+</ul>
+<p>By comparing CTS values across different elementary streams against
+the terminal's recovered local time base, the scene compositor renders
+distinct media elements simultaneously, ensuring lip-sync between audio
+and video as well as real-time coordination with interactive scene
+graphics.</p>
+<h3 id="distributed-delivery-and-buffer-management">Distributed Delivery
+and Buffer Management</h3>
+<p>When elementary streams originate from distributed network nodes,
+network variations such as latency, packet loss, and jitter threaten
+synchronization. MPEG-4 mitigates these issues through structured buffer
+management:</p>
+<ul>
+<li><strong>Delivery Multimedia Integration Framework (DMIF):</strong>
+Decouples the application layer from the transport layer, ensuring
+consistent delivery quality whether streams arrive via RTP/IP, local
+storage, or broadcast networks.</li>
+<li><strong>Decoder and Composition Buffers:</strong> Each elementary
+stream feeds into dedicated buffers at the terminal. Pre-buffering
+thresholds guarantee that data arrives prior to its DTS/CTS
+deadlines.</li>
+<li><strong>Drift Compensation:</strong> If network congestion causes an
+elementary stream buffer to underflow or lag, the terminal's
+synchronization manager can drop non-reference Access Units or
+interpolate timing adjustments to re-align the stream with the rest of
+the composed scene.</li>
+</ul></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

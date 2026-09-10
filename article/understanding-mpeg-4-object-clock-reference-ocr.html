@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Understanding MPEG-4 Object Clock Reference (OCR) - mpeg-4</title>
+    <meta name="description" content="In MPEG-4 multimedia systems, the Object Clock Reference (OCR) plays a critical role in synchronizing diverse, independent media streams such as audio, video, synthetic 3D graphics, and text. Unlike traditional single-stream formats, MPEG-4 treats scenes">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/understanding-mpeg-4-object-clock-reference-ocr">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Understanding MPEG-4 Object Clock Reference (OCR) - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/understanding-mpeg-4-object-clock-reference-ocr" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="In MPEG-4 multimedia systems, the Object Clock Reference (OCR) plays a critical role in synchronizing diverse, independent media streams such as audio, video, synthetic 3D graphics, and text. Unlike traditional single-stream formats, MPEG-4 treats scenes" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="understanding-mpeg-4-object-clock-reference-ocr">Understanding
+MPEG-4 Object Clock Reference (OCR)</h1>
+<p>In MPEG-4 multimedia systems, the Object Clock Reference (OCR) plays
+a critical role in synchronizing diverse, independent media streams such
+as audio, video, synthetic 3D graphics, and text. Unlike traditional
+single-stream formats, MPEG-4 treats scenes as collections of distinct
+objects that may originate from different sources or run on separate
+time bases. This article explains how the Object Clock Reference
+operates within the MPEG-4 Systems architecture, how time bases are
+reconstructed, and the exact mechanisms used to maintain frame-accurate
+synchronization across multiple elementary streams.</p>
+<h2 id="the-mpeg-4-synchronization-architecture">The MPEG-4
+Synchronization Architecture</h2>
+<p>MPEG-4 structures media into individual components called Elementary
+Streams (ES). Because each media object—such as a background video, a
+voiceover track, or an interactive animation—can be encoded
+independently, the decoder must reconcile their timing differences
+before rendering the composite scene.</p>
+<p>To achieve this, the MPEG-4 Systems layer introduces the
+Synchronization Layer (SL). The SL layer encapsulates elementary stream
+data into SL packets, attaching timing metadata that includes:</p>
+<ul>
+<li><strong>Object Clock Reference (OCR):</strong> Periodic time samples
+from the encoder's clock used to synchronize the receiver's time
+base.</li>
+<li><strong>Decoding Time Stamps (DTS):</strong> Explicit instructions
+defining when a specific access unit must be decoded.</li>
+<li><strong>Composition Time Stamps (CTS):</strong> Explicit
+instructions defining when the decoded data must be presented or
+rendered in the scene.</li>
+</ul>
+<h2 id="how-the-ocr-mechanism-operates">How the OCR Mechanism
+Operates</h2>
+<p>The OCR functions similarly to the Program Clock Reference (PCR) in
+MPEG-2, but with greater flexibility to accommodate object-based
+media.</p>
+<h3 id="1-clock-sampling-at-the-encoder">1. Clock Sampling at the
+Encoder</h3>
+<p>When an elementary stream is encoded, the encoder samples its local
+time base—the System Time Clock (STC)—at regular intervals. These
+sampled values are inserted into the SL packet headers as OCR
+fields.</p>
+<h3 id="2-clock-recovery-at-the-decoder">2. Clock Recovery at the
+Decoder</h3>
+<p>Upon receiving the stream, the decoder extracts the OCR values to
+drive a Phase-Locked Loop (PLL) or software-based clock recovery
+algorithm. This reconstructs a continuous local STC that matches the
+encoder's original clock frequency, compensating for network jitter and
+clock drift.</p>
+<h3 id="3-timestamp-comparison">3. Timestamp Comparison</h3>
+<p>Once the local STC is locked to the OCR, the decoder compares the
+running STC against the CTS and DTS values attached to incoming media
+frames. When the STC matches the DTS, the access unit is decoded; when
+it matches the CTS, the frame is displayed.</p>
+<h2 id="synchronizing-multiple-independent-streams">Synchronizing
+Multiple Independent Streams</h2>
+<p>MPEG-4 manages multi-stream synchronization through flexible clock
+domain associations defined in its Object Descriptor (OD) framework:</p>
+<ul>
+<li><strong>Shared Clock References:</strong> Multiple independent
+Elementary Streams can share a single time base. An Object Descriptor
+can configure an audio ES and a video ES to point to the same OCR stream
+ID. Even though the streams carry distinct data payloads, both rely on
+the same reconstructed STC for decoding and composition.</li>
+<li><strong>Multiple Independent Time Bases:</strong> When media objects
+originate from different servers or live sources with unsynchronized
+clocks, MPEG-4 allows each object (or group of objects) to maintain its
+own independent OCR. The decoder runs multiple STCs concurrently,
+allowing objects with different time bases to coexist in the same scene
+without forcing a global re-encoding.</li>
+<li><strong>Scene Graph Integration (BIFS):</strong> The Binary Format
+for Scenes (BIFS) describes the spatial and temporal placement of
+objects. BIFS coordinates how objects referencing different OCR time
+domains interact, ensuring animations, audio cues, and video playback
+trigger at the exact intended relative moments.</li>
+</ul></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

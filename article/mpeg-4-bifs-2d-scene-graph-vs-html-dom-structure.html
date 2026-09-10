@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPEG-4 BIFS 2D Scene Graph vs HTML DOM Structure - mpeg-4</title>
+    <meta name="description" content="This article compares the 2D scene graph model of MPEG-4 Binary Format for Scenes (BIFS) with standard HTML Document Object Model (DOM) structures. While both represent hierarchical tree architectures designed to organize, render, and manipulate visual a">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/mpeg-4-bifs-2d-scene-graph-vs-html-dom-structure">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MPEG-4 BIFS 2D Scene Graph vs HTML DOM Structure - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/mpeg-4-bifs-2d-scene-graph-vs-html-dom-structure" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article compares the 2D scene graph model of MPEG-4 Binary Format for Scenes (BIFS) with standard HTML Document Object Model (DOM) structures. While both represent hierarchical tree architectures designed to organize, render, and manipulate visual a" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="mpeg-4-bifs-2d-scene-graph-vs-html-dom-structure">MPEG-4 BIFS 2D
+Scene Graph vs HTML DOM Structure</h1>
+<p>This article compares the 2D scene graph model of MPEG-4 Binary
+Format for Scenes (BIFS) with standard HTML Document Object Model (DOM)
+structures. While both represent hierarchical tree architectures
+designed to organize, render, and manipulate visual and interactive
+elements, they were created for fundamentally different operating
+environments. BIFS is engineered as a low-bitrate, streamable multimedia
+format derived from VRML, whereas the HTML DOM is a text-based,
+in-memory representation of structured web documents styled with CSS and
+manipulated via JavaScript.</p>
+<h3 id="core-paradigms-and-architectural-origins">Core Paradigms and
+Architectural Origins</h3>
+<p>MPEG-4 BIFS is part of the ISO/IEC 14496-1 standard, designed
+specifically for interactive audiovisual presentations. It adopts a
+scene graph model rooted in the Virtual Reality Modeling Language
+(VRML). Nodes in a BIFS 2D tree directly represent graphical primitives,
+transformations, sound objects, and media streams.</p>
+<p>In contrast, the HTML DOM represents a document hierarchy where
+elements define semantic content (such as headings, paragraphs, and
+containers). The visual appearance and layout of DOM elements are
+decoupled from the tree structure and governed by the Cascading Style
+Sheets (CSS) box model, rather than intrinsic spatial coordinate
+nodes.</p>
+<h3 id="serialization-and-data-encoding">Serialization and Data
+Encoding</h3>
+<p>A major functional difference lies in how scenes are serialized and
+delivered:</p>
+<ul>
+<li><strong>MPEG-4 BIFS:</strong> Uses heavily optimized binary
+encoding. The scene description is compressed to minimize bandwidth,
+making it ideal for broadcast television, mobile streaming, and embedded
+systems with constrained resources.</li>
+<li><strong>HTML DOM:</strong> Transmitted as human-readable plain text
+(HTML). The browser parses this text to build the DOM tree in memory.
+While HTML can be compressed over the wire using algorithms like Gzip or
+Brotli, it lacks the native binary bitstream efficiency of BIFS.</li>
+</ul>
+<h3 id="layout-geometry-and-coordinate-systems">Layout, Geometry, and
+Coordinate Systems</h3>
+<p>The spatial positioning mechanisms differ significantly between the
+two systems:</p>
+<ul>
+<li><strong>BIFS 2D Model:</strong> Operates on an explicit spatial
+coordinate system using explicit transformation nodes (like
+<code>Transform2D</code>). Positions, rotations, and scaling are applied
+directly down the scene graph branches via local matrix transformations,
+similar to vector graphics rendering pipelines like SVG or Canvas.</li>
+<li><strong>HTML DOM:</strong> Uses flow-based layouts (including Block,
+Inline, Flexbox, and Grid) defined by CSS. Elements automatically reflow
+based on viewport size and content dimensions. Explicit matrix
+transformations can be applied via CSS, but they exist on top of an
+underlying document flow rather than replacing it.</li>
+</ul>
+<h3 id="dynamic-updates-and-temporal-synchronization">Dynamic Updates
+and Temporal Synchronization</h3>
+<p>Both models support dynamic interactivity, but their execution models
+reflect their core applications:</p>
+<ul>
+<li><strong>BIFS Scene Updates:</strong> BIFS features built-in support
+for time-aligned commands (BIFS-Updates). Scene modifications—such as
+inserting nodes, replacing attributes, or deleting branches—can be
+multiplexed directly into the elementary media stream and triggered at
+exact media timestamps with frame-level accuracy. Routing of events is
+handled internally using native <code>ROUTE</code> statements connecting
+node fields.</li>
+<li><strong>DOM Updates:</strong> The HTML DOM relies on client-side
+scripting (primarily JavaScript) to listen for asynchronous events and
+modify nodes using the DOM API. Time synchronization with media elements
+requires script-driven polling or event listeners (such as the
+<code>timeupdate</code> event), which is not inherently embedded into
+the stream delivery protocol.</li>
+</ul>
+<h3 id="comparison-summary">Comparison Summary</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Feature</th>
+<th style="text-align: left;">MPEG-4 BIFS 2D</th>
+<th style="text-align: left;">HTML DOM</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Primary Focus</strong></td>
+<td style="text-align: left;">Streamable, timed multimedia
+composition</td>
+<td style="text-align: left;">Structured, accessible hypertext
+documents</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Encoding</strong></td>
+<td style="text-align: left;">Native compact binary representation</td>
+<td style="text-align: left;">Plain text parsed to an in-memory
+tree</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Layout Mechanism</strong></td>
+<td style="text-align: left;">Explicit transformation hierarchies</td>
+<td style="text-align: left;">Flow-based CSS box models</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Time Alignment</strong></td>
+<td style="text-align: left;">Built-in stream-synchronized command
+frames</td>
+<td style="text-align: left;">Script-driven (JavaScript) event
+loops</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Styling Model</strong></td>
+<td style="text-align: left;">Attribute-driven per node</td>
+<td style="text-align: left;">Decoupled style rules (CSS)</td>
+</tr>
+</tbody>
+</table></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

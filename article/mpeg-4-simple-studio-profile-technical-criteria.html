@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPEG-4 Simple Studio Profile Technical Criteria - mpeg-4</title>
+    <meta name="description" content="The MPEG-4 Simple Studio Profile (MPEG-4 Part 2 / ISO/IEC 14496-2) is a specialized video compression standard engineered specifically for studio production, multi-generation editing, and high-fidelity archiving. This article details the exact technical">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/mpeg-4-simple-studio-profile-technical-criteria">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MPEG-4 Simple Studio Profile Technical Criteria - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/mpeg-4-simple-studio-profile-technical-criteria" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The MPEG-4 Simple Studio Profile (MPEG-4 Part 2 / ISO/IEC 14496-2) is a specialized video compression standard engineered specifically for studio production, multi-generation editing, and high-fidelity archiving. This article details the exact technical" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="mpeg-4-simple-studio-profile-technical-criteria">MPEG-4 Simple
+Studio Profile Technical Criteria</h1>
+<p>The MPEG-4 Simple Studio Profile (MPEG-4 Part 2 / ISO/IEC 14496-2) is
+a specialized video compression standard engineered specifically for
+studio production, multi-generation editing, and high-fidelity
+archiving. This article details the exact technical criteria that define
+the Simple Studio Profile, covering its intra-only frame structure,
+extended bit-depth support, multi-format chroma sampling, transform
+specifications, and level constraints.</p>
+<h3 id="pure-intra-frame-coding-architecture">Pure Intra-Frame Coding
+Architecture</h3>
+<p>Unlike distribution-focused profiles that rely heavily on inter-frame
+temporal compression (P-frames and B-frames), the MPEG-4 Simple Studio
+Profile mandates strictly intra-frame coding. Every video frame is
+compressed independently as an Intra Video Object Plane (I-VOP). This
+eliminates temporal motion estimation and compensation entirely,
+enabling deterministic frame-accurate cutting, instantaneous random
+access, and immunity to inter-frame artifact propagation during
+multi-generation re-encoding cycles.</p>
+<h3 id="chroma-subsampling-and-color-spaces">Chroma Subsampling and
+Color Spaces</h3>
+<p>The Simple Studio Profile expands upon standard 4:2:0 consumer color
+sampling to meet high-end broadcast and post-production demands:</p>
+<ul>
+<li><strong>Color Formats:</strong> Supports 4:2:2 and 4:4:4 chroma
+subsampling, as well as native 4:4:4:4 (including auxiliary/alpha
+channels) and RGB/RGBA color representations.</li>
+<li><strong>Color Precision:</strong> Maintains discrete color fidelity
+to facilitate clean chroma keying, color grading, and compositing
+workflows.</li>
+</ul>
+<h3 id="high-bit-depth-processing">High Bit-Depth Processing</h3>
+<p>Standard MPEG-4 profiles restrict pixel data to 8 bits per sample.
+The Simple Studio Profile defines support for extended bit depths to
+prevent banding and dynamic range loss:</p>
+<ul>
+<li><strong>Bit Depths:</strong> 8-bit, 10-bit, and 12-bit sample
+precision per channel.</li>
+<li><strong>Dynamic Range:</strong> Enables high-precision linear and
+non-linear color encoding directly at the transform level.</li>
+</ul>
+<h3 id="transform-and-quantization-specifications">Transform and
+Quantization Specifications</h3>
+<p>The profile utilizes refined discrete cosine transform (DCT) and
+quantization implementations:</p>
+<ul>
+<li><strong>Transform:</strong> 8x8 block-based Discrete Cosine
+Transform (DCT).</li>
+<li><strong>Quantization Matrix:</strong> Supports custom, user-defined
+frequency-weighting quantization matrices alongside standardized default
+matrices to balance compression efficiency with transparent visual
+quality.</li>
+<li><strong>Nonlinear Quantization:</strong> Utilizes specialized
+quantization parameter scales adapted for high bit-depth
+coefficients.</li>
+<li><strong>Entropy Coding:</strong> Employs optimized variable-length
+coding (VLC) tables specifically tuned for high-bitrate, intra-only DCT
+coefficient distributions.</li>
+</ul>
+<h3 id="structural-restrictions-and-auxiliary-data">Structural
+Restrictions and Auxiliary Data</h3>
+<ul>
+<li><strong>Shape Coding:</strong> Disables MPEG-4 arbitrary shape
+coding tools; video objects are strictly rectangular (conventional
+frames).</li>
+<li><strong>Interlaced and Progressive Support:</strong> Supports both
+progressive scanning and interlaced frame/field structures with
+field-based DCT transform coding.</li>
+<li><strong>Alpha Channels:</strong> Supports lossless or lossy
+auxiliary channels for alpha matte transport.</li>
+</ul>
+<h3 id="profile-levels-and-operating-limits">Profile Levels and
+Operating Limits</h3>
+<p>The Simple Studio Profile is categorized across numbered levels that
+dictate upper bounds for resolution, bitrate, and sample rates:</p>
+<ul>
+<li><strong>Level 1:</strong> Targets standard definition (SD) workflows
+up to 720x576 at standard frame rates, constrained to 4:2:2 sampling and
+up to 10-bit precision.</li>
+<li><strong>Level 2:</strong> Expands support to High Definition (HD)
+resolutions (up to 1920x1080 at 30 fps), supporting bitrates scaling up
+to 180 Mbps.</li>
+<li><strong>Level 3 &amp; Level 4:</strong> Accommodates high-frame-rate
+1080p, 2K formats, 4:4:4 sampling, 12-bit precision, and data rates
+exceeding several hundred megabits per second to accommodate
+near-lossless studio operations.</li>
+</ul></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

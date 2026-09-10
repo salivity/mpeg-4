@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How HEVC H.265 Improves Upon MPEG-4 AVC H.264 - mpeg-4</title>
+    <meta name="description" content="This article explores how High Efficiency Video Coding (HEVC/H.265) advances beyond its predecessor, MPEG-4 AVC (H.264). We examine the key technological enhancements—including larger coding tree blocks, expanded intra-prediction modes, and improved pa">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/how-hevc-h-265-improves-upon-mpeg-4-avc-h-264">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How HEVC H.265 Improves Upon MPEG-4 AVC H.264 - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/how-hevc-h-265-improves-upon-mpeg-4-avc-h-264" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explores how High Efficiency Video Coding (HEVC/H.265) advances beyond its predecessor, MPEG-4 AVC (H.264). We examine the key technological enhancements—including larger coding tree blocks, expanded intra-prediction modes, and improved pa" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="how-hevc-h265-improves-upon-mpeg-4-avc-h264">How HEVC H.265
+Improves Upon MPEG-4 AVC H.264</h1>
+<p>This article explores how High Efficiency Video Coding (HEVC/H.265)
+advances beyond its predecessor, MPEG-4 AVC (H.264). We examine the key
+technological enhancements—including larger coding tree blocks, expanded
+intra-prediction modes, and improved parallel processing—that
+collectively allow HEVC to deliver up to 50% better data compression
+while maintaining the same visual quality.</p>
+<h3 id="larger-and-more-flexible-coding-blocks">Larger and More Flexible
+Coding Blocks</h3>
+<p>MPEG-4 AVC relies on "macroblocks" with a fixed maximum size of 16x16
+pixels to analyze and compress video frames. HEVC replaces these with
+Coding Tree Units (CTUs), which can scale up to 64x64 pixels. These
+larger blocks are highly flexible and can be dynamically subdivided into
+smaller coding units based on the detail in the scene. For
+high-resolution video like 4K and 8K, where large portions of the screen
+often contain similar colors or textures (such as a blue sky), these
+larger blocks allow HEVC to compress data far more efficiently than
+AVC.</p>
+<h3 id="enhanced-intra-frame-prediction">Enhanced Intra-Frame
+Prediction</h3>
+<p>Intra-frame prediction reduces spatial redundancy within a single
+frame. While MPEG-4 AVC supports only 9 directional prediction modes,
+HEVC expands this to 33 directional modes, alongside planar and DC
+modes, totaling 35. This dramatic increase in prediction directions
+allows HEVC to more accurately predict pixel trends and edges within a
+frame, resulting in sharper image details and a significant reduction in
+the amount of data needed to represent complex textures.</p>
+<h3 id="advanced-motion-vector-prediction-inter-frame">Advanced Motion
+Vector Prediction (Inter-Frame)</h3>
+<p>To reduce temporal redundancy between consecutive frames, HEVC
+introduces superior motion estimation and compensation techniques. HEVC
+utilizes Advanced Motion Vector Prediction (AMVP) and Merge Mode. These
+tools allow the encoder to reuse motion vectors from neighboring spatial
+blocks or preceding frames, minimizing the metadata required to describe
+movement. This results in smoother motion tracking with far fewer
+bits.</p>
+<h3 id="sample-adaptive-offset-sao-filter">Sample Adaptive Offset (SAO)
+Filter</h3>
+<p>While both standards use a deblocking filter to smooth out pixelated
+edges, HEVC introduces an additional in-loop filter called Sample
+Adaptive Offset (SAO). SAO analyzes the reconstructed video signal and
+applies offset values to better match the original source picture. This
+step reduces ringing artifacts and banding, particularly in areas with
+subtle color gradients, leading to a much cleaner final image.</p>
+<h3 id="built-in-parallel-processing-support">Built-in Parallel
+Processing Support</h3>
+<p>MPEG-4 AVC was not designed with multi-core processors in mind,
+making parallel processing difficult. HEVC addresses this by introducing
+Tiles and Wavefront Parallel Processing (WPP). These features allow a
+single video frame to be divided into independent grid-like regions or
+sequential rows that can be encoded and decoded simultaneously across
+multiple CPU cores. This architecture makes HEVC highly optimized for
+modern hardware, enabling the real-time processing of high-bitrate video
+streams.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

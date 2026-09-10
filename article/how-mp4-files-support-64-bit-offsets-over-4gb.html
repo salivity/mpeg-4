@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How MP4 Files Support 64-Bit Offsets Over 4GB - mpeg-4</title>
+    <meta name="description" content="This article explains how the MPEG-4 file format overcomes the traditional 4-gigabyte file size limit through 64-bit addressing mechanisms. By replacing standard 32-bit chunk offset tables with 64-bit counterparts and utilizing 64-bit box header extensio">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/how-mp4-files-support-64-bit-offsets-over-4gb">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How MP4 Files Support 64-Bit Offsets Over 4GB - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/how-mp4-files-support-64-bit-offsets-over-4gb" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explains how the MPEG-4 file format overcomes the traditional 4-gigabyte file size limit through 64-bit addressing mechanisms. By replacing standard 32-bit chunk offset tables with 64-bit counterparts and utilizing 64-bit box header extensio" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="how-mp4-files-support-64-bit-offsets-over-4gb">How MP4 Files
+Support 64-Bit Offsets Over 4GB</h1>
+<p>This article explains how the MPEG-4 file format overcomes the
+traditional 4-gigabyte file size limit through 64-bit addressing
+mechanisms. By replacing standard 32-bit chunk offset tables with 64-bit
+counterparts and utilizing 64-bit box header extensions, the ISO Base
+Media File Format allows multimedia files to scale seamlessly into
+multi-gigabyte and multi-terabyte sizes.</p>
+<h3 id="the-4-gigabyte-barrier-in-standard-mp4">The 4-Gigabyte Barrier
+in Standard MP4</h3>
+<p>The MPEG-4 Part 14 (MP4) container format is based on the ISO Base
+Media File Format (ISO/IEC 14496-12). In its original specification, the
+format relied on 32-bit unsigned integers for both box (atom) lengths
+and media chunk offsets.</p>
+<p>Because a 32-bit unsigned integer can address a maximum of <span
+class="math inline">\(2^{32} - 1\)</span> bytes (approximately 4.29
+gigabytes), any file exceeding this threshold breaks standard
+parsing:</p>
+<ul>
+<li>The byte offsets pointing to media data wrap around or
+overflow.</li>
+<li>Container boxes, such as the Media Data box (<code>mdat</code>),
+cannot describe a size larger than 4 GB using a 32-bit integer.</li>
+</ul>
+<p>To overcome these constraints, the specification introduced two key
+structural adaptations: 64-bit chunk offset boxes (<code>co64</code>)
+and 64-bit box headers.</p>
+<h3 id="1-the-co64-chunk-large-offset-box">1. The <code>co64</code>
+(Chunk Large Offset) Box</h3>
+<p>In an MP4 file, sample data is stored in the <code>mdat</code> box,
+while timing and location metadata reside in the <code>moov</code> box.
+The sample table (<code>stbl</code>) maps where individual frames or
+samples are located on the disk.</p>
+<p>In standard files under 4 GB:</p>
+<ul>
+<li>The <code>stco</code> (Chunk Offset Box) contains a table of 32-bit
+integers. Each entry defines the absolute byte offset from the beginning
+of the file to a specific chunk of media data.</li>
+</ul>
+<p>For files that exceed 4 GB:</p>
+<ul>
+<li>The <code>stco</code> box is replaced by the <code>co64</code>
+(Chunk Large Offset Box).</li>
+<li>The <code>co64</code> box has the exact same structure as the
+<code>stco</code> box, except each offset entry is an 8-byte (64-bit)
+unsigned integer instead of a 4-byte (32-bit) integer.</li>
+<li>This expands the addressing limit to <span
+class="math inline">\(2^{64} - 1\)</span> bytes (approximately 18.4
+exabytes), allowing media chunks located past the 4 GB mark to be
+indexed accurately.</li>
+</ul>
+<p>A track cannot contain both <code>stco</code> and <code>co64</code>
+simultaneously; an MP4 demuxer checks the four-character code (FourCC)
+within the sample table box hierarchy (<code>moov</code> <span
+class="math inline">\(\rightarrow\)</span> <code>trak</code> <span
+class="math inline">\(\rightarrow\)</span> <code>mdia</code> <span
+class="math inline">\(\rightarrow\)</span> <code>minf</code> <span
+class="math inline">\(\rightarrow\)</span> <code>stbl</code>) to
+determine whether it should read 32-bit or 64-bit offsets.</p>
+<h3 id="2-64-bit-box-headers-largesize">2. 64-Bit Box Headers
+(<code>largesize</code>)</h3>
+<p>In addition to pointing to offsets past 4 GB, individual boxes—most
+notably the <code>mdat</code> box containing the actual video and audio
+payloads—frequently exceed 4 GB themselves.</p>
+<p>Standard MP4 box headers use an 8-byte layout:</p>
+<ul>
+<li><strong>4 bytes</strong>: Box size (<code>uint32</code>)</li>
+<li><strong>4 bytes</strong>: Box type (<code>FourCC</code>, e.g.,
+<code>mdat</code>)</li>
+</ul>
+<p>When a box exceeds <span class="math inline">\(2^{32} - 1\)</span>
+bytes:</p>
+<ol type="1">
+<li>The initial 4-byte <code>size</code> field is set to <code>1</code>
+(which acts as a special flag).</li>
+<li>The 4-byte <code>type</code> follows as usual.</li>
+<li>An additional 8-byte <code>largesize</code> field
+(<code>uint64</code>) is inserted immediately after the type.</li>
+</ol>
+<p>When a parser encounters a box size of <code>1</code>, it reads the
+following 64-bit field to calculate the actual total length of the box,
+accommodating media payloads of virtually unlimited size.</p>
+<h3 id="summary-of-parsing-flow">Summary of Parsing Flow</h3>
+<p>When a media player or demuxer parses an MP4 larger than 4 GB:</p>
+<ol type="1">
+<li>It encounters an <code>mdat</code> box with a 32-bit size value set
+to <code>1</code> and reads the subsequent 64-bit <code>largesize</code>
+value to handle the container boundary.</li>
+<li>It navigates to the metadata index (<code>moov</code>), drills down
+to the sample table (<code>stbl</code>), and identifies the
+<code>co64</code> atom.</li>
+<li>It reads the array of 64-bit absolute offsets from <code>co64</code>
+to retrieve and decode media samples stored beyond the 4 GB
+boundary.</li>
+</ol></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

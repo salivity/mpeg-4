@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How VMHD Box Sets Compositing Modes in MP4 - mpeg-4</title>
+    <meta name="description" content="This article explains how the Video Media Header box (vmhd) defines default compositing modes and rendering behavior in MPEG-4 (MP4) and ISO Base Media File Format (ISOBMFF) containers. It covers the structural hierarchy of the box, the specific role of">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/how-vmhd-box-sets-compositing-modes-in-mp4">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How VMHD Box Sets Compositing Modes in MP4 - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/how-vmhd-box-sets-compositing-modes-in-mp4" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explains how the Video Media Header box (vmhd) defines default compositing modes and rendering behavior in MPEG-4 (MP4) and ISO Base Media File Format (ISOBMFF) containers. It covers the structural hierarchy of the box, the specific role of" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="how-vmhd-box-sets-compositing-modes-in-mp4">How VMHD Box Sets
+Compositing Modes in MP4</h1>
+<p>This article explains how the Video Media Header box
+(<code>vmhd</code>) defines default compositing modes and rendering
+behavior in MPEG-4 (MP4) and ISO Base Media File Format (ISOBMFF)
+containers. It covers the structural hierarchy of the box, the specific
+role of the <code>graphicsmode</code> and <code>opcolor</code> fields in
+visual blending, and how compliant media decoders interpret these
+settings when rendering video tracks.</p>
+<h3 id="location-and-role-in-the-mp4-container">Location and Role in the
+MP4 Container</h3>
+<p>In the ISOBMFF and MPEG-4 file structures, the <code>vmhd</code> box
+resides inside the Media Information box (<code>minf</code>), within the
+Media box (<code>mdia</code>) of a visual track (<code>trak</code>). Its
+primary role is to declare general presentation and rendering
+information specific to video tracks.</p>
+<p>The box hierarchy is: <code>moov</code> → <code>trak</code> →
+<code>mdia</code> → <code>minf</code> → <code>vmhd</code></p>
+<p>While the container stores encoded bitstreams within media data
+samples, the <code>vmhd</code> box defines how the decoded visual frames
+interact with the target display surface or other underlying visual
+tracks.</p>
+<h3 id="structure-of-the-vmhd-box">Structure of the <code>vmhd</code>
+Box</h3>
+<p>The <code>vmhd</code> box is a FullBox, meaning it contains standard
+version and flags fields followed by its specific configuration
+parameters:</p>
+<pre><code>aligned(8) class VideoMediaHeaderBox extends FullBox(‘vmhd’, version = 0, 1) {
+    template int(16) graphicsmode = 0;
+    template unsigned int(16)[3] opcolor = {0, 0, 0};
+}</code></pre>
+<p>The fields function as follows:</p>
+<ul>
+<li><strong>version:</strong> An 8-bit integer specifying the format
+version (typically set to <code>0</code>).</li>
+<li><strong>flags:</strong> A 24-bit field. In standard video tracks,
+the lowest bit is set to <code>1</code> (hexadecimal
+<code>0x000001</code>).</li>
+<li><strong>graphicsmode:</strong> A 16-bit integer defining the
+compositing mode applied to the video track.</li>
+<li><strong>opcolor:</strong> A set of three 16-bit unsigned integers
+representing Red, Green, and Blue color values (ranging from
+<code>0</code> to <code>65535</code>) used as operands for specific
+graphical compositing modes.</li>
+</ul>
+<h3 id="compositing-modes-defined-by-graphicsmode">Compositing Modes
+Defined by <code>graphicsmode</code></h3>
+<p>The <code>graphicsmode</code> field specifies the transfer mode used
+by the rendering engine to paint the video frame. The default and
+standard values derive from the QuickTime and ISOBMFF
+specifications:</p>
+<ul>
+<li><strong>Copy (<code>0x0000</code>):</strong> The default compositing
+mode. The source video frame replaces the target display area entirely,
+ignoring any underlying tracks or background graphics.</li>
+<li><strong>Dither Copy (<code>0x0040</code>):</strong> Replaces the
+target area while applying a dither pattern to adapt to lower
+color-depth displays.</li>
+<li><strong>Blend (<code>0x0020</code>):</strong> Blends the source
+video with the background based on a mix ratio or color calculations
+defined alongside the <code>opcolor</code>.</li>
+<li><strong>Transparent (<code>0x0024</code>):</strong> Treats any
+pixels in the video track that match the RGB values defined in
+<code>opcolor</code> as completely transparent, allowing background
+visual elements to show through (basic chroma keying).</li>
+<li><strong>Straight Alpha (<code>0x0100</code>):</strong> Blends the
+video frame using the embedded alpha channel without
+premultiplication.</li>
+<li><strong>Premul Black Alpha (<code>0x0101</code>) / Premul White
+Alpha (<code>0x0102</code>):</strong> Composites video that includes an
+alpha channel premultiplied against black or white backgrounds.</li>
+</ul>
+<h3 id="the-role-of-opcolor-in-blending">The Role of
+<code>opcolor</code> in Blending</h3>
+<p>The <code>opcolor</code> array acts as a reference or modifier for
+operations specified by <code>graphicsmode</code>.</p>
+<p>For example, when <code>graphicsmode</code> is set to Transparent
+(<code>0x0024</code>), the renderer checks each pixel in the decoded
+frame against the 48-bit RGB value (16 bits per channel) stored in
+<code>opcolor</code>. Pixels matching the <code>opcolor</code> are
+omitted from rendering. In modern MPEG-4 files where standard "Copy"
+mode is used, <code>opcolor</code> is set to <code>{0, 0, 0}</code> and
+ignored by the renderer.</p>
+<h3 id="modern-implementation-and-compatibility">Modern Implementation
+and Compatibility</h3>
+<p>In modern video workflows (such as H.264, H.265, and AV1 video in
+MP4), complex compositing is generally handled at the application,
+canvas, or shader level rather than relying on container-level graphics
+modes. Consequently:</p>
+<ol type="1">
+<li>Most standard MP4 encoders write <code>graphicsmode = 0</code> (Copy
+mode) and <code>opcolor = {0, 0, 0}</code> by default.</li>
+<li>Compliant decoders read the <code>vmhd</code> box to verify that the
+track is a video track and confirm standard overwrite rendering.</li>
+<li>If non-zero legacy transfer modes are encountered, modern media
+players may either execute the requested compositing mode or fall back
+to standard <code>0x0000</code> (Copy) rendering to prioritize native
+playback performance.</li>
+</ol></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

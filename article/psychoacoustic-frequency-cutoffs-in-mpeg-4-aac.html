@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Psychoacoustic Frequency Cutoffs in MPEG-4 AAC - mpeg-4</title>
+    <meta name="description" content="MPEG-4 Advanced Audio Coding (AAC) achieves high compression efficiency without noticeable loss in perceived audio quality by using psychoacoustic modeling to optimize frequency cutoffs. This process analyzes how the human auditory system perceives sound">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/psychoacoustic-frequency-cutoffs-in-mpeg-4-aac">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Psychoacoustic Frequency Cutoffs in MPEG-4 AAC - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/psychoacoustic-frequency-cutoffs-in-mpeg-4-aac" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="MPEG-4 Advanced Audio Coding (AAC) achieves high compression efficiency without noticeable loss in perceived audio quality by using psychoacoustic modeling to optimize frequency cutoffs. This process analyzes how the human auditory system perceives sound" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="psychoacoustic-frequency-cutoffs-in-mpeg-4-aac">Psychoacoustic
+Frequency Cutoffs in MPEG-4 AAC</h1>
+<p>MPEG-4 Advanced Audio Coding (AAC) achieves high compression
+efficiency without noticeable loss in perceived audio quality by using
+psychoacoustic modeling to optimize frequency cutoffs. This process
+analyzes how the human auditory system perceives sound, identifying
+inaudible spectral components and dynamically removing or reducing data
+in those frequency bands. By calculating masking thresholds and the
+limits of human hearing, the AAC encoder determines precisely where to
+apply low-pass or band-specific cutoffs, ensuring bits are allocated
+only to the sounds that the human ear can actually perceive.</p>
+<h3 id="the-absolute-threshold-of-hearing">The Absolute Threshold of
+Hearing</h3>
+<p>The human ear does not perceive all frequencies with equal
+sensitivity. The absolute threshold of hearing (ATH) defines the minimum
+sound pressure level required for an average human ear to detect a pure
+tone in a quiet environment. Frequencies below 20 Hz and above 20 kHz
+are entirely inaudible, but sensitivity also drops significantly between
+15 kHz and 20 kHz. The psychoacoustic model uses the ATH curve as a
+baseline to determine a static or semi-static high-frequency cutoff,
+discarding high-frequency spectral data that falls below the hearing
+threshold to conserve bandwidth.</p>
+<h3 id="simultaneous-spectral-masking">Simultaneous (Spectral)
+Masking</h3>
+<p>When a strong, prominent frequency is present, it reduces the ear's
+ability to detect softer, neighboring frequencies occurring at the same
+time. The psychoacoustic model divides the frequency spectrum into
+critical bands (approximating human ear frequency selectivity) and
+calculates the Signal-to-Mask Ratio (SMR) for each band.</p>
+<p>If high frequencies are adjacent to a dominant lower-frequency sound,
+the masking curve generated by the louder sound often covers those
+higher frequencies. The encoder recognizes that these masked components
+are completely inaudible and applies a localized frequency cutoff or
+scales down the quantization precision to zero in those specific
+bands.</p>
+<h3 id="temporal-masking">Temporal Masking</h3>
+<p>Psychoacoustic modeling also accounts for temporal masking, which
+occurs when a loud transient sound masks softer sounds immediately
+preceding (pre-masking) or following (post-masking) it. During sudden
+sonic transients—such as a drum strike—the human ear cannot resolve
+subtle high-frequency details for a few milliseconds. The AAC encoder
+switches to shorter transform window sizes (128-sample Modified Discrete
+Cosine Transform, or MDCT) and dynamically drops or limits
+high-frequency bands during these transient intervals to avoid wasting
+bits on masked content.</p>
+<h3 id="dynamic-bit-allocation-and-scale-factor-bands">Dynamic Bit
+Allocation and Scale Factor Bands</h3>
+<p>In MPEG-4 AAC, the frequency spectrum is grouped into scale factor
+bands (SFBs). The psychoacoustic model continuously estimates the
+masking threshold for each SFB and calculates the permissible level of
+quantization noise.</p>
+<p>When the target bitrate is constrained:</p>
+<ol type="1">
+<li>The model identifies high-frequency SFBs with the lowest perceptual
+significance (often the highest octaves where masking thresholds or ATH
+are high).</li>
+<li>The encoder aggressively applies a dynamic low-pass cutoff, zeroing
+out high-frequency coefficients entirely.</li>
+<li>Bits saved from eliminating these high frequencies are redirected to
+preserve the fidelity of critical mid- and low-frequency ranges where
+human hearing is most sensitive.</li>
+</ol>
+<p>Through the combined analysis of absolute hearing thresholds,
+spectral masking, and temporal masking, the MPEG-4 AAC psychoacoustic
+model ensures that frequency cutoffs are never arbitrary. Instead,
+cutoffs dynamically shift in real-time, removing only the spectral
+information that the human brain would naturally fail to perceive.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

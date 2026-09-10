@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPEG-4 Part 28 Composite Vision Profile Guide - mpeg-4</title>
+    <meta name="description" content="MPEG-4 Part 28 (ISO/IEC 14496-28) standardizes the Composite Vision Profile (CVP), providing a unified framework for combining synthetic computer graphics with natural video streams into a single, cohesive interactive scene. This article explains how the">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/mpeg-4-part-28-composite-vision-profile-guide">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MPEG-4 Part 28 Composite Vision Profile Guide - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/mpeg-4-part-28-composite-vision-profile-guide" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="MPEG-4 Part 28 (ISO/IEC 14496-28) standardizes the Composite Vision Profile (CVP), providing a unified framework for combining synthetic computer graphics with natural video streams into a single, cohesive interactive scene. This article explains how the" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="mpeg-4-part-28-composite-vision-profile-guide">MPEG-4 Part 28
+Composite Vision Profile Guide</h1>
+<p>MPEG-4 Part 28 (ISO/IEC 14496-28) standardizes the Composite Vision
+Profile (CVP), providing a unified framework for combining synthetic
+computer graphics with natural video streams into a single, cohesive
+interactive scene. This article explains how the standard structures
+scene graphs, manages real-time synchronization, and processes visual
+blending to enable rich hybrid rendering across diverse hardware
+platforms.</p>
+<h3 id="core-architecture-and-scene-representation">Core Architecture
+and Scene Representation</h3>
+<p>The Composite Vision Profile specifies how 2D and 3D synthetic visual
+elements interface directly with captured, natural video content. It
+utilizes a structured scene graph architecture derived from lightweight
+MPEG-4 graphic specifications (such as BIFS and Lightweight Application
+Scene Representation). In this architecture, synthetic geometries,
+vector graphics, text, and conventional natural video streams exist as
+distinct, addressable nodes within the same temporal and spatial
+framework.</p>
+<p>By standardizing these node definitions, the profile eliminates the
+need for proprietary compositing engines, allowing standard-compliant
+players to parse, place, and animate natural and synthetic media
+simultaneously.</p>
+<h3 id="spatial-and-depth-integration">Spatial and Depth
+Integration</h3>
+<p>To achieve realistic composition between real and virtual assets,
+MPEG-4 Part 28 defines precise coordinate mapping and layering
+rules:</p>
+<ul>
+<li><strong>Z-Ordering and Depth Buffering:</strong> Synthetic objects
+can be rendered in front of, behind, or interleaved with natural video
+planes using standard z-buffer techniques and explicit layer
+ordering.</li>
+<li><strong>Alpha Channel and Transparency:</strong> The profile defines
+uniform methods for handling alpha masks, transparency keys (such as
+chroma keying), and blending modes. This allows natural video subjects
+to be seamlessly isolated and embedded into synthetic 3D environments,
+or conversely, synthetic overlays to be realistically blended over live
+video feeds.</li>
+<li><strong>Coordinate Systems:</strong> It aligns camera projection
+models between 3D virtual coordinate spaces and 2D pixel spaces of the
+incoming video stream, ensuring geometric consistency during zoom, pan,
+and perspective transformations.</li>
+</ul>
+<h3 id="synchronization-and-timing-mechanisms">Synchronization and
+Timing Mechanisms</h3>
+<p>A foundational aspect of MPEG-4 Part 28 is maintaining strict
+synchronization between independent media streams:</p>
+<ul>
+<li><strong>Object Clock References (OCR):</strong> Synthetic
+animations, timeline events, and decoded video frames are tied to common
+clock references, preventing drift between visual layers.</li>
+<li><strong>Dynamic Event Handling:</strong> Synthetic elements can
+react to real-time metadata embedded in the natural video stream or user
+inputs, triggering rendering adjustments without interrupting continuous
+video playback.</li>
+</ul>
+<h3 id="hardware-adaptability-and-profiles">Hardware Adaptability and
+Profiles</h3>
+<p>The Composite Vision Profile is engineered for computational
+efficiency. It defines specific capability levels that scale from
+resource-constrained mobile hardware to high-performance rendering
+systems. By specifying exact subsets of geometric transformations,
+lighting models, and texture blending operations, the standard ensures
+deterministic rendering performance and visual fidelity regardless of
+the underlying platform.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

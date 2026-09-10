@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why Older DVD Players Fail to Play MPEG-4 ASP Files - mpeg-4</title>
+    <meta name="description" content="Many older standalone DVD players that advertise MPEG-4 compatibility often fail to play specific MPEG-4 Advanced Simple Profile (ASP) files, such as those encoded with DivX or Xvid. This article explains the technical reasons behind these playback failu">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/why-older-dvd-players-fail-to-play-mpeg-4-asp-files">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Why Older DVD Players Fail to Play MPEG-4 ASP Files - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/why-older-dvd-players-fail-to-play-mpeg-4-asp-files" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Many older standalone DVD players that advertise MPEG-4 compatibility often fail to play specific MPEG-4 Advanced Simple Profile (ASP) files, such as those encoded with DivX or Xvid. This article explains the technical reasons behind these playback failu" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="why-older-dvd-players-fail-to-play-mpeg-4-asp-files">Why Older
+DVD Players Fail to Play MPEG-4 ASP Files</h1>
+<p>Many older standalone DVD players that advertise MPEG-4 compatibility
+often fail to play specific MPEG-4 Advanced Simple Profile (ASP) files,
+such as those encoded with DivX or Xvid. This article explains the
+technical reasons behind these playback failures, focusing on hardware
+limitations, unsupported encoding features like Quarter-pixel (Qpel) and
+Global Motion Compensation (GMC), packet bitstream issues, and strict
+resolution constraints.</p>
+<h2 id="hardware-decoder-limitations">Hardware Decoder Limitations</h2>
+<p>Standalone DVD players rely on dedicated hardware chips (ASICs)
+rather than general-purpose CPUs to decode video. Because these chips
+were designed with limited processing power and memory to keep
+manufacturing costs low, they can only decode video profiles that
+strictly adhere to the chip's hardwired specifications. If an MPEG-4 ASP
+file uses features that exceed the chipset's processing limits, the
+player will fail to render the video.</p>
+<h2
+id="quarter-pixel-qpel-and-global-motion-compensation-gmc">Quarter-Pixel
+(Qpel) and Global Motion Compensation (GMC)</h2>
+<p>MPEG-4 ASP allows for advanced encoding tools that improve
+compression efficiency, most notably Quarter-Pixel (Qpel) motion
+estimation and Global Motion Compensation (GMC).</p>
+<ul>
+<li><strong>Qpel</strong> increases the precision of motion vectors,
+requiring significantly more CPU cycles to decode.</li>
+<li><strong>GMC</strong> calculates motion across the entire frame (like
+panning or zooming) using a single set of parameters.</li>
+</ul>
+<p>While computer software decoders handle these features easily, the
+hardware chips in older DVD players lack the memory bandwidth to process
+them in real-time. If a file was encoded with Qpel or 3-point GMC
+(commonly used in Xvid), the DVD player will typically display a black
+screen, crash, or suffer from severe macroblocking and stuttering.</p>
+<h2 id="packed-bitstream-issues">Packed Bitstream Issues</h2>
+<p>"Packed bitstream" is a technique used during encoding to wrap
+B-frames (bi-directional frames) in a way that helps older software
+players decode them without lag. However, this non-standard arrangement
+often confuses the hardware decoders inside standalone DVD players. When
+a player encounters a packed bitstream, it can result in jerky,
+stuttering playback, or a complete failure to recognize the video
+stream.</p>
+<h2 id="resolution-and-bitrate-thresholds">Resolution and Bitrate
+Thresholds</h2>
+<p>Older DVD players are strictly standard-definition (SD) devices. They
+are designed to decode resolutions up to 720x480 (NTSC) or 720x576
+(PAL). If an MPEG-4 ASP file is encoded at a higher resolution—such as
+1280x720 (720p) or even non-standard widescreen resolutions that exceed
+the maximum vertical or horizontal limits—the hardware decoder will
+reject the file. Furthermore, if the video’s peak bitrate exceeds the
+maximum reading speed of the DVD drive or the buffer capacity of the
+chipset, the playback will freeze or fail entirely.</p>
+<h2 id="audio-codec-and-container-incompatibility">Audio Codec and
+Container Incompatibility</h2>
+<p>Sometimes the issue lies not with the MPEG-4 ASP video itself, but
+with how it is packaged. MPEG-4 ASP video is commonly placed in AVI or
+MP4 containers. Older DVD players often have limited container support
+and may fail to split the audio and video tracks properly. Additionally,
+if the audio track is encoded in a format the player does not support
+(such as AAC, OGG, or variable bitrate MP3), the player may refuse to
+play the file or play the video without any sound.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

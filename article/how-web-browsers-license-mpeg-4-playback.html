@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How Web Browsers License MPEG-4 Playback - mpeg-4</title>
+    <meta name="description" content="This article explores how major web browsers navigate the complex legal and financial landscape of MPEG-4 licensing. While the MPEG-4 format—specifically the H.264 video and AAC audio codecs—is universally used across the web, it is patent-encumbered">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/how-web-browsers-license-mpeg-4-playback">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How Web Browsers License MPEG-4 Playback - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/how-web-browsers-license-mpeg-4-playback" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explores how major web browsers navigate the complex legal and financial landscape of MPEG-4 licensing. While the MPEG-4 format—specifically the H.264 video and AAC audio codecs—is universally used across the web, it is patent-encumbered" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="how-web-browsers-license-mpeg-4-playback">How Web Browsers
+License MPEG-4 Playback</h1>
+<p>This article explores how major web browsers navigate the complex
+legal and financial landscape of MPEG-4 licensing. While the MPEG-4
+format—specifically the H.264 video and AAC audio codecs—is universally
+used across the web, it is patent-encumbered, requiring royalty payments
+to the Via Licensing Alliance (formerly MPEG LA). Web browsers must
+resolve these licensing requirements to provide native media playback
+without passing direct costs or legal liabilities onto their users.</p>
+<h2 id="the-mpeg-4-licensing-challenge">The MPEG-4 Licensing
+Challenge</h2>
+<p>The MPEG-4 standard, particularly its AVC (H.264) video component, is
+protected by thousands of patents. Anyone distributing software capable
+of decoding H.264 video must pay royalty fees once certain distribution
+thresholds are met. Because web browsers are distributed to hundreds of
+millions of users for free, managing these licensing costs is a massive
+financial and legal hurdle.</p>
+<p>Mainstream web browsers use three primary strategies to handle these
+commercial licensing requirements.</p>
+<hr />
+<h2 id="1-direct-licensing-google-chrome-and-microsoft-edge">1. Direct
+Licensing (Google Chrome and Microsoft Edge)</h2>
+<p>Commercial tech giants like Google and Microsoft handle MPEG-4
+licensing through direct payment.</p>
+<ul>
+<li><strong>Google Chrome:</strong> Google pays the necessary royalty
+fees to the licensing consortium for every installation of Chrome.
+Because Chrome is a proprietary browser built on top of the open-source
+Chromium project, Google can legally bundle the licensed, closed-source
+H.264 decoders directly into the Chrome binary.</li>
+<li><strong>Microsoft Edge:</strong> Similarly, Microsoft covers the
+licensing fees for Edge. Because Edge is tightly integrated with the
+Windows operating system, it can also leverage Windows' native,
+system-wide media pipeline, which Microsoft has already licensed.</li>
+</ul>
+<p><em>Note: The open-source Chromium browser does not include these
+licensed codecs by default because open-source distributors cannot pay
+royalties on behalf of anonymous downstream users.</em></p>
+<hr />
+<h2 id="2-operating-system-integration-apple-safari">2. Operating System
+Integration (Apple Safari)</h2>
+<p>Apple handles MPEG-4 licensing by shifting the decoding
+responsibility from the browser to the hardware and operating
+system.</p>
+<ul>
+<li><strong>Safari:</strong> Apple is a founding member of the MPEG LA
+consortium and holds many of the patents. Safari does not decode MPEG-4
+content independently; instead, it delegates decoding to the underlying
+macOS or iOS operating system.</li>
+<li>Because the licensing fees for MPEG-4 are already baked into the
+purchase price of Apple hardware (iPads, iPhones, and Macs), Safari can
+play MPEG-4 content natively without requiring separate browser-specific
+licenses.</li>
+</ul>
+<hr />
+<h2 id="3-third-party-and-os-delegation-mozilla-firefox">3. Third-Party
+and OS Delegation (Mozilla Firefox)</h2>
+<p>As a non-profit organization dedicated to open-source software,
+Mozilla cannot afford the multi-million dollar annual licensing fees
+required to bundle H.264 decoders directly inside Firefox. To provide
+native MPEG-4 playback, Firefox uses two alternative methods:</p>
+<h3 id="system-level-decoders-platform-decoding">System-Level Decoders
+(Platform Decoding)</h3>
+<p>Firefox bypasses licensing fees by refusing to ship the decoder code
+within its browser. Instead, when Firefox encounters an MPEG-4 video, it
+utilizes the host operating system's built-in, pre-licensed
+decoders:</p>
+<ul>
+<li>On <strong>Windows</strong>, Firefox calls the Windows Media
+Foundation APIs.</li>
+<li>On <strong>macOS</strong>, it calls Apple’s native AVFoundation
+APIs.</li>
+<li>On <strong>Android</strong>, it utilizes the mobile operating
+system's media framework.</li>
+</ul>
+<h3 id="the-cisco-openh264-partnership">The Cisco OpenH264
+Partnership</h3>
+<p>For platforms like Linux, which often do not come with pre-licensed
+commercial codecs, Mozilla partners with Cisco.</p>
+<p>Cisco created an open-source H.264 codec project called
+<strong>OpenH264</strong> and agreed to pay the MPEG LA patent licensing
+fees for any software that downloads their pre-compiled binary module.
+When a user installs Firefox, the browser automatically downloads a
+compiled OpenH264 binary module directly from Cisco's servers. Because
+the binary comes from Cisco, Cisco covers the royalty fees, allowing
+Firefox users to play H.264 legally and for free.</p>
+<hr />
+<h2 id="summary-of-browser-approaches">Summary of Browser
+Approaches</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Browser</th>
+<th style="text-align: left;">Developer</th>
+<th style="text-align: left;">Licensing Strategy</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Google Chrome</strong></td>
+<td style="text-align: left;">Google</td>
+<td style="text-align: left;">Pays direct royalties; bundles proprietary
+codecs.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Microsoft Edge</strong></td>
+<td style="text-align: left;">Microsoft</td>
+<td style="text-align: left;">Pays direct royalties; leverages Windows
+OS decoders.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Apple Safari</strong></td>
+<td style="text-align: left;">Apple</td>
+<td style="text-align: left;">Leverages pre-licensed hardware and
+macOS/iOS decoders.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Mozilla Firefox</strong></td>
+<td style="text-align: left;">Mozilla</td>
+<td style="text-align: left;">Delegates decoding to host OS APIs or
+Cisco's OpenH264 binary.</td>
+</tr>
+</tbody>
+</table></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

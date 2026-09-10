@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Role of the stsz Box in MPEG-4 Buffer Allocation - mpeg-4</title>
+    <meta name="description" content="The Sample Size Box (stsz) is a fundamental metadata atom in MPEG-4 (MP4) and ISO Base Media File Format containers that defines the exact byte size of every individual media sample in a track. This article examines how media players, demuxers, and decod">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/role-of-the-stsz-box-in-mpeg-4-buffer-allocation">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Role of the stsz Box in MPEG-4 Buffer Allocation - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/role-of-the-stsz-box-in-mpeg-4-buffer-allocation" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The Sample Size Box (stsz) is a fundamental metadata atom in MPEG-4 (MP4) and ISO Base Media File Format containers that defines the exact byte size of every individual media sample in a track. This article examines how media players, demuxers, and decod" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="role-of-the-stsz-box-in-mpeg-4-buffer-allocation">Role of the
+stsz Box in MPEG-4 Buffer Allocation</h1>
+<p>The Sample Size Box (<code>stsz</code>) is a fundamental metadata
+atom in MPEG-4 (MP4) and ISO Base Media File Format containers that
+defines the exact byte size of every individual media sample in a track.
+This article examines how media players, demuxers, and decoders utilize
+the <code>stsz</code> atom to determine precise memory requirements,
+calculate peak frame sizes, and pre-allocate total buffer space to
+ensure smooth, overflow-free playback.</p>
+<h3 id="anatomy-of-the-stsz-box">Anatomy of the <code>stsz</code>
+Box</h3>
+<p>The <code>stsz</code> box resides inside the Sample Table Box
+(<code>stbl</code>), which is nested within the Track Box
+(<code>trak</code>). It carries two primary structural modes:</p>
+<ol type="1">
+<li><strong>Uniform Sample Size:</strong> A global
+<code>sample_size</code> field defined at the header. If this value is
+non-zero, every sample in the track shares this exact byte size,
+followed by a <code>sample_count</code> field.</li>
+<li><strong>Variable Sample Size:</strong> If <code>sample_size</code>
+is set to <code>0</code>, it indicates variable frame sizes (common in
+video codecs like H.264/AVC and H.265/HEVC). This is followed by a
+<code>sample_count</code> and an explicit table listing the exact byte
+size of every individual sample sequentially.</li>
+</ol>
+<h3 id="determining-maximum-buffer-size">Determining Maximum Buffer
+Size</h3>
+<p>For decoders to process video or audio frames without encountering
+buffer overflows or relying on costly dynamic memory reallocations, they
+must pre-allocate an input buffer large enough to hold the single
+largest compressed frame.</p>
+<p>By scanning the entries in the <code>stsz</code> table during file
+parsing:</p>
+<ul>
+<li>The demuxer identifies <code>max(sample_size)</code>, the largest
+single sample in the stream.</li>
+<li>The system allocates an input elementary stream buffer that matches
+or exceeds this peak value, ensuring any frame can be loaded into
+contiguous memory prior to decoding.</li>
+</ul>
+<h3 id="calculating-chunk-and-read-buffer-allocation">Calculating Chunk
+and Read Buffer Allocation</h3>
+<p>In MP4 containers, media data is grouped into chunks. The
+<code>stsz</code> table works directly alongside the Sample-to-Chunk Box
+(<code>stsc</code>) and Chunk Offset Box
+(<code>stco</code>/<code>co64</code>) to calculate the size of these
+data chunks:</p>
+<ol type="1">
+<li>The <code>stsc</code> atom defines how many samples belong to a
+given chunk.</li>
+<li>The demuxer sums the byte sizes of those specific samples using the
+values stored in the <code>stsz</code> table.</li>
+<li>This calculation provides the exact byte length of the chunk,
+allowing I/O layers to allocate fixed-size I/O read buffers when pulling
+continuous data blocks from storage or network streams.</li>
+</ol>
+<h3 id="bitrate-calculation-and-streaming-buffer-sizing">Bitrate
+Calculation and Streaming Buffer Sizing</h3>
+<p>The <code>stsz</code> box provides the total byte count of the entire
+track by summing all entries in the table. When combined with the
+Time-to-Sample Box (<code>stts</code>), playback engines can:</p>
+<ul>
+<li>Compute the average and instantaneous bitrates across any time
+segment.</li>
+<li>Calculate the required size of jitter and pre-roll buffers (often
+coupled with the <code>bufferSizeDB</code> parameter found in the
+track's DecoderConfigDescriptor).</li>
+<li>Ensure that sliding window buffers maintained during network
+streaming (such as DASH or HLS fragmented playback) allocate sufficient
+capacity to hold intended playback duration windows without memory
+exhaustion.</li>
+</ul>
+<h3 id="preventing-dynamic-memory-overhead">Preventing Dynamic Memory
+Overhead</h3>
+<p>Without the <code>stsz</code> atom, a parser would have to discover
+frame boundaries on-the-fly via elementary stream markers (such as NAL
+unit start codes), leading to unpredictable memory allocations. By
+reading <code>stsz</code> upfront, systems can allocate all necessary
+decoder input buffers, demuxing queues, and I/O staging areas statically
+at initialization time.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

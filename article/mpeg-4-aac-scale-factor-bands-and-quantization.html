@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPEG-4 AAC Scale Factor Bands and Quantization - mpeg-4</title>
+    <meta name="description" content="Scale factor bands in MPEG-4 Advanced Audio Coding (AAC) serve as the primary mechanism for perceptual noise shaping during lossy audio compression. By partitioning the frequency spectrum into groups that align with human auditory perception, scale facto">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/mpeg-4-aac-scale-factor-bands-and-quantization">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MPEG-4 AAC Scale Factor Bands and Quantization - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/mpeg-4-aac-scale-factor-bands-and-quantization" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Scale factor bands in MPEG-4 Advanced Audio Coding (AAC) serve as the primary mechanism for perceptual noise shaping during lossy audio compression. By partitioning the frequency spectrum into groups that align with human auditory perception, scale facto" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="mpeg-4-aac-scale-factor-bands-and-quantization">MPEG-4 AAC Scale
+Factor Bands and Quantization</h1>
+<p>Scale factor bands in MPEG-4 Advanced Audio Coding (AAC) serve as the
+primary mechanism for perceptual noise shaping during lossy audio
+compression. By partitioning the frequency spectrum into groups that
+align with human auditory perception, scale factor bands allow the
+encoder to control quantization step sizes locally. This ensures that
+quantization distortion (noise) is dynamically distributed and kept
+below the psychoacoustic masking threshold across all frequencies,
+maximizing audio fidelity while minimizing bitrate.</p>
+<h3 id="the-role-of-critical-bands-in-psychoacoustics">The Role of
+Critical Bands in Psychoacoustics</h3>
+<p>Human hearing perceives frequencies non-linearly, resolving spectral
+details through "critical bands" that are narrower at low frequencies
+and wider at high frequencies. MPEG-4 AAC models this behavior by
+grouping Modified Discrete Cosine Transform (MDCT) spectral coefficients
+into scale factor bands (SFBs). Each SFB approximates a critical band of
+the human auditory system (typically following the Bark or Equivalent
+Rectangular Bandwidth scale).</p>
+<h3 id="mechanism-of-quantization-distortion-control">Mechanism of
+Quantization Distortion Control</h3>
+<p>Quantization is the process where continuous MDCT coefficients are
+rounded to discrete values, which introduces quantization
+error—perceived as noise or distortion. Scale factor bands control this
+distortion through the following mechanisms:</p>
+<ol type="1">
+<li><strong>Independent Step-Size Control:</strong> Instead of applying
+a single uniform quantization step size across the entire frequency
+spectrum, AAC assigns an independent amplification factor (a scale
+factor) to each SFB. Modifying the scale factor scales the MDCT
+coefficients within that band prior to non-linear quantization.</li>
+<li><strong>Noise Shaping:</strong> Adjusting a band's scale factor
+directly changes the quantization step size for that specific frequency
+region. A smaller step size reduces quantization noise in that band (at
+the cost of consuming more bits), while a larger step size increases
+quantization noise (saving bits).</li>
+<li><strong>Auditory Masking Integration:</strong> The AAC
+psychoacoustic model calculates a masking threshold for each SFB—the
+maximum noise level that remains inaudible due to simultaneous masking
+by louder adjacent tones or noise components. The encoder adjusts the
+scale factor for each SFB so that the quantization distortion remains
+strictly below this computed threshold.</li>
+</ol>
+<h3 id="the-two-loop-bit-allocation-process">The Two-Loop Bit Allocation
+Process</h3>
+<p>MPEG-4 AAC uses a dual-loop optimization algorithm to balance bitrate
+constraints and distortion control using scale factor bands:</p>
+<ul>
+<li><strong>Inner Loop (Rate Control):</strong> Adjusts a global gain
+parameter across all bands to ensure the total number of bits required
+to encode the quantized coefficients matches the target bit budget.</li>
+<li><strong>Outer Loop (Distortion Control):</strong> Measures the
+resulting quantization error in each scale factor band against the
+psychoacoustic masking threshold. If the distortion in a specific band
+exceeds the audible threshold, the outer loop decreases the scale factor
+for that band to reduce the noise, iteratively redistributing the
+available bits until distortion is imperceptible or minimized
+uniformly.</li>
+</ul>
+<p>Through this localized control, scale factor bands prevent
+high-frequency or high-energy components from dictating the noise floor
+of quieter, sensitive frequency regions, ensuring optimal perceptual
+audio quality.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>H.264 RTP Packetization Requirements in RFC 3984 - mpeg-4</title>
+    <meta name="description" content="RFC 3984 defines the payload format for encapsulating MPEG-4 Advanced Video Coding (AVC), commonly known as H.264, into the Real-time Transport Protocol (RTP). This specification dictates how Network Abstraction Layer (NAL) units are structured, fragment">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/h-264-rtp-packetization-requirements-in-rfc-3984">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="H.264 RTP Packetization Requirements in RFC 3984 - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/h-264-rtp-packetization-requirements-in-rfc-3984" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="RFC 3984 defines the payload format for encapsulating MPEG-4 Advanced Video Coding (AVC), commonly known as H.264, into the Real-time Transport Protocol (RTP). This specification dictates how Network Abstraction Layer (NAL) units are structured, fragment" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="h264-rtp-packetization-requirements-in-rfc-3984">H.264 RTP
+Packetization Requirements in RFC 3984</h1>
+<p>RFC 3984 defines the payload format for encapsulating MPEG-4 Advanced
+Video Coding (AVC), commonly known as H.264, into the Real-time
+Transport Protocol (RTP). This specification dictates how Network
+Abstraction Layer (NAL) units are structured, fragmented, and aggregated
+within RTP packets to ensure efficient delivery over IP networks. By
+establishing three distinct packetization modes and specific packet
+structures, the standard allows senders to adapt video transport to
+varying network Maximum Transmission Unit (MTU) limits, latency
+requirements, and receiver capabilities.</p>
+<h3 id="network-abstraction-layer-nal-encapsulation">Network Abstraction
+Layer (NAL) Encapsulation</h3>
+<p>MPEG-4 AVC structures video data into NAL units, which consist of a
+one-byte header followed by the payload (containing video coding layer
+data or parameter sets). RFC 3984 maps these NAL units directly into the
+RTP payload.</p>
+<p>The standard mandates specific handling of standard RTP header
+fields:</p>
+<ul>
+<li><strong>Payload Type (PT):</strong> Dynamically allocated to
+identify the MPEG-4 AVC stream.</li>
+<li><strong>Timestamp:</strong> Represents the sampling instant of the
+video frame. All NAL units belonging to the same access unit (frame)
+must carry the exact same RTP timestamp.</li>
+<li><strong>Marker Bit (M):</strong> Set to <code>1</code> on the final
+RTP packet of an access unit to assist the receiver in identifying frame
+boundaries without parsing internal NAL structures. Set to
+<code>0</code> for all other packets.</li>
+<li><strong>Sequence Number:</strong> Increments by one for each RTP
+packet sent, enabling packet loss detection and packet reordering.</li>
+</ul>
+<h3 id="the-three-packetization-modes">The Three Packetization
+Modes</h3>
+<p>RFC 3984 defines three operational modes signaled during session
+setup via the Session Description Protocol (SDP) using the
+<code>packetization-mode</code> parameter:</p>
+<ol type="1">
+<li><p><strong>Single NAL Unit Mode
+(<code>packetization-mode=0</code>):</strong></p>
+<ul>
+<li>Designed for legacy applications and low-overhead systems.</li>
+<li>Only one single NAL unit is permitted per RTP packet.</li>
+<li>Aggregation packets and fragmentation units are strictly
+forbidden.</li>
+<li>The RTP payload header is identical to the NAL unit header.</li>
+</ul></li>
+<li><p><strong>Non-Interleaved Mode
+(<code>packetization-mode=1</code>):</strong></p>
+<ul>
+<li>The most common mode for general IP streaming.</li>
+<li>Packets must be transmitted in sequential NAL unit decoding
+order.</li>
+<li>Supports Single NAL Unit Packets, Single-Time Aggregation Packets
+(STAP-A), and Fragmentation Units (FU-A).</li>
+<li>Interleaved packets (STAP-B, MTAP, FU-B) are prohibited.</li>
+</ul></li>
+<li><p><strong>Interleaved Mode
+(<code>packetization-mode=2</code>):</strong></p>
+<ul>
+<li>Designed for networks prone to burst packet loss.</li>
+<li>Allows out-of-order packet transmission to facilitate
+interleaving.</li>
+<li>Supports all packet types, including STAP-B, MTAP16, MTAP24, and
+FU-B.</li>
+<li>Requires the inclusion of a Decoding Order Number (DON) in packet
+payloads to reconstruct the correct decoding sequence at the
+receiver.</li>
+</ul></li>
+</ol>
+<h3 id="packet-types-defined-in-rfc-3984">Packet Types Defined in RFC
+3984</h3>
+<p>RFC 3984 specifies three primary categories of RTP payload structures
+based on the NAL unit type field in the payload header:</p>
+<h4 id="1-single-nal-unit-packets">1. Single NAL Unit Packets</h4>
+<p>Used when a single NAL unit fits comfortably within the network MTU.
+The RTP payload consists solely of the standard H.264 NAL unit (1-byte
+header + NAL payload).</p>
+<h4 id="2-aggregation-packets">2. Aggregation Packets</h4>
+<p>Used to group multiple small NAL units (such as Sequence Parameter
+Sets, Picture Parameter Sets, or small slices) into a single RTP packet
+to reduce transport header overhead.</p>
+<ul>
+<li><strong>STAP-A (Single-Time Aggregation Packet Type A):</strong>
+Combines NAL units that share the same timestamp. Contains 16-bit size
+fields preceding each aggregated NAL unit.</li>
+<li><strong>STAP-B:</strong> Similar to STAP-A, but includes a 16-bit
+DON field for interleaved transport.</li>
+<li><strong>MTAP16 / MTAP24 (Multi-Time Aggregation Packets):</strong>
+Encapsulates NAL units from different access units with distinct
+timestamps. Includes timestamp offset values (16-bit or 24-bit) for each
+aggregated NAL unit.</li>
+</ul>
+<h4 id="3-fragmentation-units-fus">3. Fragmentation Units (FUs)</h4>
+<p>Used to split a NAL unit that exceeds the path MTU across multiple
+RTP packets, avoiding IP-level fragmentation.</p>
+<ul>
+<li><strong>FU-A:</strong> Used in Non-Interleaved Mode. It consists of
+an FU indicator byte, an FU header byte containing Start (S) and End (E)
+bits, and the fragment payload. The receiver uses the S and E bits to
+reassemble the original NAL unit.</li>
+<li><strong>FU-B:</strong> Used in Interleaved Mode. It includes the
+same structure as FU-A with an additional 16-bit DON field.</li>
+</ul>
+<h3 id="sdp-signaling-requirements">SDP Signaling Requirements</h3>
+<p>To establish an RFC 3984 stream, the MIME subtype <code>H264</code>
+must be used in the SDP media description. Key parameters include:</p>
+<ul>
+<li><code>packetization-mode</code>: Specifies mode <code>0</code>,
+<code>1</code>, or <code>2</code> (defaults to <code>0</code> if
+omitted).</li>
+<li><code>sprop-parameter-sets</code>: Conveys out-of-band Sequence and
+Picture Parameter Sets (SPS/PPS) in Base64 encoding.</li>
+<li><code>profile-level-id</code>: Indicates the baseline, main, or high
+profile and level constraints of the video stream.</li>
+</ul></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

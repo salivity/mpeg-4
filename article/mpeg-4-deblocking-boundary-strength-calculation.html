@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPEG-4 Deblocking Boundary Strength Calculation - mpeg-4</title>
+    <meta name="description" content="The in-loop deblocking filter in MPEG-4 (specifically MPEG-4 Part 10 / H.264 AVC) eliminates blocking artifacts across $4\times4$ block boundaries using an adaptive filtering algorithm. This article details the specific computational mechanism and condit">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/mpeg-4-deblocking-boundary-strength-calculation">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MPEG-4 Deblocking Boundary Strength Calculation - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/mpeg-4-deblocking-boundary-strength-calculation" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The in-loop deblocking filter in MPEG-4 (specifically MPEG-4 Part 10 / H.264 AVC) eliminates blocking artifacts across $4\times4$ block boundaries using an adaptive filtering algorithm. This article details the specific computational mechanism and condit" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="mpeg-4-deblocking-boundary-strength-calculation">MPEG-4
+Deblocking Boundary Strength Calculation</h1>
+<p>The in-loop deblocking filter in MPEG-4 (specifically MPEG-4 Part 10
+/ H.264 AVC) eliminates blocking artifacts across <span
+class="math inline">\(4\times4\)</span> block boundaries using an
+adaptive filtering algorithm. This article details the specific
+computational mechanism and conditional decision tree used to derive the
+Boundary Strength parameter, which governs the intensity of the
+filtering applied to horizontal and vertical block edges.</p>
+<h3 id="the-role-of-boundary-strength">The Role of Boundary
+Strength</h3>
+<p>The Boundary Strength, denoted as <span
+class="math inline">\(bS\)</span>, is an integer value ranging from
+<span class="math inline">\(0\)</span> to <span
+class="math inline">\(4\)</span> assigned to every edge separating two
+adjacent <span class="math inline">\(4\times4\)</span> sample blocks,
+denoted as block <span class="math inline">\(p\)</span> (left/upper) and
+block <span class="math inline">\(q\)</span> (right/lower). The value of
+<span class="math inline">\(bS\)</span> determines whether filtering is
+bypassed (<span class="math inline">\(bS = 0\)</span>), weakly applied
+(<span class="math inline">\(bS \in \{1, 2, 3\}\)</span>), or strongly
+applied (<span class="math inline">\(bS = 4\)</span>).</p>
+<h3 id="computational-decision-hierarchy">Computational Decision
+Hierarchy</h3>
+<p>The calculation of <span class="math inline">\(bS\)</span> executes
+through a prioritized conditional evaluation tree based on block
+prediction modes, transform coefficient presence, reference frame
+indices, and motion vector differentials.</p>
+<pre><code>                    Is p or q Intra-coded?
+                         /         \
+                      Yes           No
+                      /               \
+       Is the edge a Macroblock    Does p or q have
+              boundary?            non-zero coefficients?
+              /       \                 /         \
+           Yes         No             Yes          No
+          (bS=4)      (bS=3)         (bS=2)         \
+                                           Are reference frames different
+                                           OR |ΔMV| &gt;= 1 sample (4 units)?
+                                                    /         \
+                                                  Yes          No
+                                                 (bS=1)       (bS=0)</code></pre>
+<h4 id="1-intra-prediction-evaluation-bs--4-and-bs--3">1.
+Intra-Prediction Evaluation (<span class="math inline">\(bS = 4\)</span>
+and <span class="math inline">\(bS = 3\)</span>)</h4>
+<p>The computational engine first checks the macroblock coding mode for
+both adjacent blocks <span class="math inline">\(p\)</span> and <span
+class="math inline">\(q\)</span>:</p>
+<ul>
+<li><strong><span class="math inline">\(bS = 4\)</span>:</strong>
+Assigned if either block <span class="math inline">\(p\)</span> or block
+<span class="math inline">\(q\)</span> is Intra-coded
+<strong>and</strong> the edge between them coincides with a macroblock
+boundary. This invokes the strongest non-linear filtering profile.</li>
+<li><strong><span class="math inline">\(bS = 3\)</span>:</strong>
+Assigned if either block <span class="math inline">\(p\)</span> or block
+<span class="math inline">\(q\)</span> is Intra-coded, but the edge is
+internal to the macroblock.</li>
+</ul>
+<h4 id="2-residual-transform-coefficients-bs--2">2. Residual Transform
+Coefficients (<span class="math inline">\(bS = 2\)</span>)</h4>
+<p>If neither block is Intra-coded, the mechanism checks for the
+presence of non-zero transform coefficients:</p>
+<ul>
+<li><strong><span class="math inline">\(bS = 2\)</span>:</strong>
+Assigned if either block <span class="math inline">\(p\)</span> or block
+<span class="math inline">\(q\)</span> contains at least one non-zero
+transform coefficient (<span class="math inline">\(TotalCoeff &gt;
+0\)</span>). This accounts for high-frequency residual quantization
+artifacts introduced during discrete cosine/integer transformation.</li>
+</ul>
+<h4 id="3-motion-vector-and-reference-index-differential-bs--1">3.
+Motion Vector and Reference Index Differential (<span
+class="math inline">\(bS = 1\)</span>)</h4>
+<p>If both blocks are Inter-coded and neither contains residual
+transform coefficients, filtering necessity is derived from spatial
+motion discontinuities:</p>
+<ul>
+<li><strong><span class="math inline">\(bS = 1\)</span>:</strong>
+Assigned if any of the following conditions evaluate to true:
+<ul>
+<li><strong>Reference Frame Mismatch:</strong> Block <span
+class="math inline">\(p\)</span> and block <span
+class="math inline">\(q\)</span> use different reference frames, or a
+different total count of motion vectors (e.g., one block uses
+uni-directional prediction while the other uses bi-directional
+prediction).</li>
+<li><strong>Motion Vector Displacement:</strong> Both blocks use the
+same single reference picture, but the absolute difference between their
+motion vector components equals or exceeds one full luma sample. Because
+motion vectors are represented in quarter-pixel precision, the condition
+evaluates: <span class="math display">\[\max(|MV_{p,x} - MV_{q,x}|,
+|MV_{p,y} - MV_{q,y}|) \ge 4\]</span></li>
+<li><strong>Dual Motion Vector Divergence:</strong> For bi-directionally
+predicted blocks with matching reference lists, motion vectors
+associated with the same reference picture pair diverge by <span
+class="math inline">\(\ge 4\)</span> quarter-pixel units in either the
+horizontal or vertical axis.</li>
+</ul></li>
+</ul>
+<h4 id="4-redundant-edge-bypass-bs--0">4. Redundant Edge Bypass (<span
+class="math inline">\(bS = 0\)</span>)</h4>
+<ul>
+<li><strong><span class="math inline">\(bS = 0\)</span>:</strong>
+Assigned when neither block has residual coefficients, both share
+identical reference frames, and their motion vector difference is
+strictly below the one-sample threshold (<span
+class="math inline">\(|\Delta MV| &lt; 4\)</span>). Under this
+condition, no true physical edge artifact exists, and the filtering
+process is completely bypassed for that boundary segment.</li>
+</ul>
+<h3 id="pipeline-integration">Pipeline Integration</h3>
+<p>Once <span class="math inline">\(bS\)</span> is computed, it serves
+as an index alongside the average Quantization Parameter (<span
+class="math inline">\(QP_{av} = (QP_p + QP_q + 1) \gg 1\)</span>) to
+retrieve threshold variables <span
+class="math inline">\(\alpha(QP)\)</span> and <span
+class="math inline">\(\beta(QP)\)</span> from lookup tables. These
+thresholds, along with the determined <span
+class="math inline">\(bS\)</span> value, establish the gradient
+thresholds required to differentiate between genuine image edges and
+blocking artifacts prior to sample modification.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How MPEG-4 CELP Encodes Speech Signals - mpeg-4</title>
+    <meta name="description" content="MPEG-4 Code Excited Linear Prediction (CELP) encodes speech signals by modeling the physical human vocal mechanism to achieve high-quality audio at low bitrates. It separates the speech production process into two primary components: a Linear Prediction">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/how-mpeg-4-celp-encodes-speech-signals">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How MPEG-4 CELP Encodes Speech Signals - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/how-mpeg-4-celp-encodes-speech-signals" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="MPEG-4 Code Excited Linear Prediction (CELP) encodes speech signals by modeling the physical human vocal mechanism to achieve high-quality audio at low bitrates. It separates the speech production process into two primary components: a Linear Prediction" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="how-mpeg-4-celp-encodes-speech-signals">How MPEG-4 CELP Encodes
+Speech Signals</h1>
+<p>MPEG-4 Code Excited Linear Prediction (CELP) encodes speech signals
+by modeling the physical human vocal mechanism to achieve high-quality
+audio at low bitrates. It separates the speech production process into
+two primary components: a Linear Prediction (LP) synthesis filter that
+represents the short-term spectral envelope of the vocal tract, and an
+excitation signal derived from adaptive and fixed codebooks that
+represents the vocal cord vibrations. Through an analysis-by-synthesis
+optimization loop, the encoder determines the optimal filter
+coefficients and codebook vectors that produce a synthesized sound
+closest to the original speech.</p>
+<h2 id="linear-prediction-analysis">Linear Prediction Analysis</h2>
+<p>The encoding process begins by dividing the input speech signal into
+short frames, typically 10 to 30 milliseconds in length, where speech
+characteristics remain relatively stationary.</p>
+<ol type="1">
+<li><strong>Calculating LPC Coefficients:</strong> The encoder performs
+Linear Predictive Coding (LPC) analysis on each frame using methods such
+as the autocorrelation method and the Levinson-Durbin algorithm. This
+calculates the short-term correlation between adjacent audio samples,
+producing Linear Prediction coefficients that model the resonances
+(formants) of the vocal tract.</li>
+<li><strong>Quantization and Stability:</strong> To ensure filter
+stability during transmission and interpolation, the LPC coefficients
+are transformed into Line Spectral Pairs (LSP) or Line Spectral
+Frequencies (LSF). These representations are vector-quantized and
+transmitted to the decoder.</li>
+</ol>
+<h2 id="excitation-signal-decomposition">Excitation Signal
+Decomposition</h2>
+<p>The excitation signal that drives the LP synthesis filter is modeled
+as the combination of two distinct codebooks: the adaptive codebook and
+the fixed (stochastic) codebook.</p>
+<h3 id="1-adaptive-codebook-pitch-modeling">1. Adaptive Codebook (Pitch
+Modeling)</h3>
+<p>The adaptive codebook models the long-term periodicity of speech,
+such as voiced vowels produced by vibrating vocal cords.</p>
+<ul>
+<li>It consists of delayed versions of previously generated excitation
+signals.</li>
+<li>The encoder searches for a pitch delay (lag) and an associated pitch
+gain that best predict the harmonic structure of the current
+subframe.</li>
+</ul>
+<h3 id="2-fixed-algebraic-codebook-residual-modeling">2. Fixed Algebraic
+Codebook (Residual Modeling)</h3>
+<p>After removing the periodic component via the adaptive codebook, a
+residual error signal remains. The fixed codebook models this
+non-periodic or noise-like component, which is crucial for unvoiced
+consonants and transient sounds.</p>
+<ul>
+<li>MPEG-4 CELP typically uses an Algebraic CELP (ACELP) structure.</li>
+<li>Instead of storing vast lookup tables, the algebraic codebook uses a
+mathematical framework of a few interleaved pulse positions with
+predetermined amplitudes (+1 or -1).</li>
+<li>This allows the encoder to rapidly compute and represent complex
+residual waveforms with minimal bit overhead.</li>
+</ul>
+<h2 id="analysis-by-synthesis-optimization">Analysis-by-Synthesis
+Optimization</h2>
+<p>MPEG-4 CELP uses a closed-loop "analysis-by-synthesis" (AbS) method
+to select the best excitation vectors:</p>
+<ol type="1">
+<li><strong>Candidate Synthesis:</strong> The encoder combines candidate
+vectors from the adaptive and fixed codebooks, scales them by their
+respective gain parameters, and passes the resulting excitation through
+the LP synthesis filter to generate candidate speech waveforms.</li>
+<li><strong>Perceptual Weighting:</strong> The generated speech and the
+original speech are passed through a perceptual weighting filter. This
+filter reshapes the error spectrum according to human psychoacoustic
+masking properties, ensuring that quantization noise is concentrated in
+frequency regions where the speech energy is high and human hearing is
+least sensitive.</li>
+<li><strong>Minimizing Mean Squared Error (MSE):</strong> The encoder
+calculates the perceptually weighted error between the synthesized
+speech and the original speech. It systematically searches the codebook
+parameters to find the combination of pitch lag, algebraic pulse
+positions, and gain factors that minimizes this error.</li>
+</ol>
+<h2 id="bitstream-generation">Bitstream Generation</h2>
+<p>Once the optimal parameters are found for each frame and its
+constituent subframes, they are packed into the bitstream. The
+transmitted data consists of:</p>
+<ul>
+<li>Quantized LSP/LSF indices (vocal tract filter shape)</li>
+<li>Pitch lag and adaptive codebook gain (pitch and periodicity)</li>
+<li>Algebraic codebook pulse positions, signs, and fixed codebook gain
+(residual excitation)</li>
+</ul>
+<p>The decoder unpacks these parameters, reconstructs the excitation
+signal, and runs it through the LP synthesis filter to reconstruct the
+speech signal.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

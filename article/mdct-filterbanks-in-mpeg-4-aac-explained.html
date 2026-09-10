@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MDCT Filterbanks in MPEG-4 AAC Explained - mpeg-4</title>
+    <meta name="description" content="The MPEG-4 Advanced Audio Coding (AAC) standard relies on the Modified Discrete Cosine Transform (MDCT) filterbank as its core time-to-frequency transformation engine. By converting continuous time-domain audio signals into discrete frequency-domain subb">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/mdct-filterbanks-in-mpeg-4-aac-explained">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MDCT Filterbanks in MPEG-4 AAC Explained - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/mdct-filterbanks-in-mpeg-4-aac-explained" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The MPEG-4 Advanced Audio Coding (AAC) standard relies on the Modified Discrete Cosine Transform (MDCT) filterbank as its core time-to-frequency transformation engine. By converting continuous time-domain audio signals into discrete frequency-domain subb" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="mdct-filterbanks-in-mpeg-4-aac-explained">MDCT Filterbanks in
+MPEG-4 AAC Explained</h1>
+<p>The MPEG-4 Advanced Audio Coding (AAC) standard relies on the
+Modified Discrete Cosine Transform (MDCT) filterbank as its core
+time-to-frequency transformation engine. By converting continuous
+time-domain audio signals into discrete frequency-domain subbands, the
+MDCT enables AAC to apply sophisticated psychoacoustic models, eliminate
+redundant data, and achieve high-fidelity audio compression. This
+article explains the technical mechanics of the MDCT filterbank in
+MPEG-4 AAC, including overlapping windowing, dynamic block switching,
+and its role in perceptual coding.</p>
+<h3 id="the-role-of-mdct-in-aac-compression">The Role of MDCT in AAC
+Compression</h3>
+<p>MPEG-4 AAC is a transform-based perceptual audio codec. Before any
+psychoacoustic compression or quantization can occur, the input audio
+waveform must be decomposed into its constituent spectral components.
+AAC employs an MDCT filterbank for this operation because it provides
+high energy compaction, critical sampling, and robust frequency
+selectivity, making it far superior to standard Discrete Cosine
+Transforms (DCT) or Discrete Fourier Transforms (DFT) for audio
+signals.</p>
+<h3
+id="overlapping-and-time-domain-aliasing-cancellation-tdac">Overlapping
+and Time-Domain Aliasing Cancellation (TDAC)</h3>
+<p>A standard block transform introduces severe discontinuities at block
+boundaries, heard as audible clicking or blocking artifacts. The MDCT
+solves this through a 50% overlap-add architecture coupled with
+Time-Domain Aliasing Cancellation (TDAC).</p>
+<ol type="1">
+<li><strong>50% Overlap:</strong> Each transform window overlaps the
+previous window by half its length.</li>
+<li><strong>Aliasing Introduction and Cancellation:</strong> The forward
+MDCT deliberately introduces time-domain aliasing into the transform
+coefficients to maintain critical sampling without increasing the data
+rate. When the inverse MDCT (IMDCT) is computed at the decoder, this
+aliasing is mirrored symmetrically.</li>
+<li><strong>Overlap-Add Reconstruction:</strong> Adding the overlapping
+halves of adjacent reconstructed frames perfectly cancels out the
+aliasing components, yielding a seamless, artifact-free output
+signal.</li>
+</ol>
+<h3 id="dynamic-block-switching">Dynamic Block Switching</h3>
+<p>Audio signals constantly vary between stationary tones (like
+sustained strings) and sharp transients (like drum hits). To handle both
+efficiently, MPEG-4 AAC dynamically alternates between two primary MDCT
+window sizes:</p>
+<ul>
+<li><strong>Long Blocks (2048 samples):</strong> Yields 1024 spectral
+coefficients. Long windows provide high frequency resolution, allowing
+the psychoacoustic model to identify closely spaced tonal components and
+maximize coding efficiency during stationary audio passages.</li>
+<li><strong>Short Blocks (256 samples):</strong> Yields 128 spectral
+coefficients, processed in sequences of eight sub-blocks to cover the
+same time span as a long block. Short windows provide high temporal
+resolution, preventing "pre-echo" artifacts where quantization noise
+from a sharp transient smears backward in time.</li>
+<li><strong>Transition Blocks (Long-to-Short and
+Short-to-Long):</strong> Asymmetric transition windows ensure smooth
+mathematical handoffs between long and short window modes without
+breaking the TDAC condition.</li>
+</ul>
+<h3 id="window-shape-selection">Window Shape Selection</h3>
+<p>MPEG-4 AAC enhances the MDCT filterbank by supporting two distinct
+window shapes:</p>
+<ul>
+<li><strong>Sine Window:</strong> The default window, offering excellent
+frequency selectivity and energy separation for general audio signals
+and harmonic content.</li>
+<li><strong>Kaiser-Bessel Derived (KBD) Window:</strong> A specialized
+window with adjustable stopband attenuation, used to provide better
+rejection of out-of-band noise for complex signals with strong transient
+behavior.</li>
+</ul>
+<p>AAC can switch between Sine and KBD windows on a frame-by-frame basis
+to optimize the transform for the specific characteristics of the
+incoming audio.</p>
+<h3 id="integration-with-psychoacoustic-quantization">Integration with
+Psychoacoustic Quantization</h3>
+<p>Once the MDCT converts the time-domain signal into spectral
+coefficients, AAC groups these coefficients into scalefactor bands that
+emulate the human ear's critical bands (Bark scale). The psychoacoustic
+model evaluates the signal's masking thresholds across these bands,
+determining the maximum allowable quantization distortion that remains
+completely inaudible to human listeners. Quantization and Huffman coding
+are then applied directly to the MDCT spectral values, achieving
+substantial file size reduction while preserving perceptual audio
+quality.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NAL Unit Types in MPEG-4 AVC Explained - mpeg-4</title>
+    <meta name="description" content="In MPEG-4 Part 10 (H.264/AVC), the Network Abstraction Layer (NAL) encapsulates video data into self-contained units. The NAL unit distinguishes between parameter sets, video slices, and Supplemental Enhancement Information (SEI) using a dedicated 5-bit">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/nal-unit-types-in-mpeg-4-avc-explained">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="NAL Unit Types in MPEG-4 AVC Explained - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/nal-unit-types-in-mpeg-4-avc-explained" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="In MPEG-4 Part 10 (H.264/AVC), the Network Abstraction Layer (NAL) encapsulates video data into self-contained units. The NAL unit distinguishes between parameter sets, video slices, and Supplemental Enhancement Information (SEI) using a dedicated 5-bit" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="nal-unit-types-in-mpeg-4-avc-explained">NAL Unit Types in MPEG-4
+AVC Explained</h1>
+<p>In MPEG-4 Part 10 (H.264/AVC), the Network Abstraction Layer (NAL)
+encapsulates video data into self-contained units. The NAL unit
+distinguishes between parameter sets, video slices, and Supplemental
+Enhancement Information (SEI) using a dedicated 5-bit identifier located
+in the NAL unit header. This mechanism allows decoders and network
+devices to quickly categorize incoming packets as configuration
+metadata, timing/enhancement information, or raw video content without
+needing to parse the full payload.</p>
+<h3 id="the-nal-unit-header-structure">The NAL Unit Header
+Structure</h3>
+<p>Every NAL unit begins with a 1-byte (8-bit) header defined by the
+standard. This byte is divided into three distinct syntax elements:</p>
+<ol type="1">
+<li><strong>forbidden_zero_bit (1 bit):</strong> Must always be
+<code>0</code>. A value of <code>1</code> indicates a syntax violation
+or bit error.</li>
+<li><strong>nal_ref_idc (2 bits):</strong> Indicates the priority and
+whether the unit is referenced by other frames (values greater than
+<code>0</code> mark reference data, while <code>00</code> marks
+non-reference data).</li>
+<li><strong>nal_unit_type (5 bits):</strong> Specifies the exact type of
+payload contained in the NAL unit.</li>
+</ol>
+<p>By evaluating the lower 5 bits
+(<code>nal_unit_type = byte &amp; 0x1F</code>), the decoder determines
+the data classification, covering integer values from 0 to 31.</p>
+<h3 id="categorizing-payloads-by-nal-unit-type">Categorizing Payloads by
+NAL Unit Type</h3>
+<p>The standard groups these 5-bit integer values into Video Coding
+Layer (VCL) data, parameter sets, and non-VCL metadata.</p>
+<h4 id="1-parameter-sets-types-7-and-8">1. Parameter Sets (Types 7 and
+8)</h4>
+<p>Parameter sets carry global configuration settings that rarely change
+across frames. Rather than repeating configuration parameters in every
+slice, slices reference these sets by an ID.</p>
+<ul>
+<li><strong>Type 7 (Sequence Parameter Set - SPS):</strong> Contains
+stream-level parameters applicable to an entire video sequence, such as
+profile, level, frame dimensions, aspect ratio, and video format.</li>
+<li><strong>Type 8 (Picture Parameter Set - PPS):</strong> Contains
+picture-level parameters applicable to one or more frames, such as
+entropy coding mode (CABAC/CAVLC), slice group definitions, and
+quantization parameters.</li>
+</ul>
+<h4 id="2-coded-slices-types-1-through-5">2. Coded Slices (Types 1
+through 5)</h4>
+<p>Slices represent the actual compressed macroblock data (VCL data)
+used to reconstruct the video image.</p>
+<ul>
+<li><strong>Type 1 (Non-IDR Slice):</strong> Contains slice data for
+predicted frames (P-frames, B-frames, or non-instantaneous refresh
+I-frames).</li>
+<li><strong>Types 2, 3, and 4 (Data Partitioning A, B, and C):</strong>
+Used when slice data partitioning is enabled to separate header data
+from intra and inter texture coefficients.</li>
+<li><strong>Type 5 (IDR Slice):</strong> Represents an Instantaneous
+Decoding Refresh frame. Decoding an IDR slice completely clears the
+reference picture buffer, ensuring no subsequent frames depend on frames
+prior to the IDR.</li>
+</ul>
+<h4 id="3-sei-data-type-6">3. SEI Data (Type 6)</h4>
+<p>Supplemental Enhancement Information provides optional metadata that
+assists with decoding, display, or timing without being necessary to
+reconstruct the basic video samples.</p>
+<ul>
+<li><strong>Type 6 (SEI):</strong> Carries timecodes, picture structure
+details, mastering display color volume (HDR data), closed captions, and
+buffer management messages. If a decoder does not support or require a
+specific SEI message, it can safely discard Type 6 units.</li>
+</ul>
+<h3 id="decoder-handling-workflow">Decoder Handling Workflow</h3>
+<p>When an MPEG-4 stream is processed:</p>
+<ol type="1">
+<li><strong>Parsing:</strong> The transport layer extracts the 1-byte
+header of the incoming NAL unit.</li>
+<li><strong>Filtering:</strong> Network routers or decoders evaluate
+<code>nal_unit_type</code>. Non-critical data (like Type 6 SEI) or
+low-priority units (<code>nal_ref_idc == 0</code>) can be dropped during
+network congestion without breaking core video decoding.</li>
+<li><strong>State Configuration:</strong> If Types 7 (SPS) or 8 (PPS)
+arrive, the decoder stores the configurations in memory.</li>
+<li><strong>Reconstruction:</strong> When Types 1 or 5 arrive, the
+decoder fetches the referenced PPS/SPS settings and decodes the pixel
+data for the active frame.</li>
+</ol></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

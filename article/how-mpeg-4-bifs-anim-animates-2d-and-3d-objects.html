@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How MPEG-4 BIFS Anim Animates 2D and 3D Objects - mpeg-4</title>
+    <meta name="description" content="MPEG-4 Binary Format for Scenes (BIFS) includes a specialized streaming protocol known as BIFS-Anim, specifically engineered to stream continuous, low-bandwidth animation data to 2D and 3D objects over time. By separating continuous numerical modificatio">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/how-mpeg-4-bifs-anim-animates-2d-and-3d-objects">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How MPEG-4 BIFS Anim Animates 2D and 3D Objects - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/how-mpeg-4-bifs-anim-animates-2d-and-3d-objects" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="MPEG-4 Binary Format for Scenes (BIFS) includes a specialized streaming protocol known as BIFS-Anim, specifically engineered to stream continuous, low-bandwidth animation data to 2D and 3D objects over time. By separating continuous numerical modificatio" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="how-mpeg-4-bifs-anim-animates-2d-and-3d-objects">How MPEG-4 BIFS
+Anim Animates 2D and 3D Objects</h1>
+<p>MPEG-4 Binary Format for Scenes (BIFS) includes a specialized
+streaming protocol known as BIFS-Anim, specifically engineered to stream
+continuous, low-bandwidth animation data to 2D and 3D objects over time.
+By separating continuous numerical modifications from structural scene
+updates, BIFS-Anim allows rich, synchronized graphics to be animated
+smoothly alongside traditional audio and video streams in MPEG-4
+multimedia presentations.</p>
+<h3 id="the-role-of-bifs-anim-in-mpeg-4-systems">The Role of BIFS-Anim
+in MPEG-4 Systems</h3>
+<p>In an MPEG-4 presentation, the initial visual composition is defined
+by a BIFS scene graph, which describes the spatial arrangement and
+hierarchical properties of 2D and 3D objects. While standard
+BIFS-Command streams are used to add, delete, or replace scene nodes,
+BIFS-Anim is designed exclusively for animating continuous numerical
+values of existing nodes—such as positions, rotations, scale factors,
+vertex coordinates, and color intensities.</p>
+<h3 id="structure-of-bifs-anim-streams-and-frames">Structure of
+BIFS-Anim Streams and Frames</h3>
+<p>BIFS-Anim operates as a dedicated MPEG-4 Elementary Stream (ES).
+Instead of sending complete node definitions repeatedly, the stream
+sends discrete animation frames containing only the changed values for
+specific fields in the scene graph.</p>
+<ol type="1">
+<li><strong>Animation Masks and Target Routing:</strong> When an
+animation stream initializes, it establishes an Animation Mask that
+specifies which target node fields (such as a 3D <code>Transform</code>
+translation or a 2D <code>Coordinate2D</code> array) will receive
+continuous updates. Subsequent animation frames only contain data mapped
+directly to these predefined routes, minimizing overhead.</li>
+<li><strong>Intra and Predictive Frames:</strong> Similar to digital
+video encoding, BIFS-Anim utilizes intra-animation frames (I-frames) and
+predictive animation frames (P-frames). I-frames transmit absolute field
+values to provide random-access points and recover from transmission
+errors. P-frames transmit differential, delta-encoded values relative to
+the previous frame, significantly reducing data bandwidth.</li>
+<li><strong>Quantization and Compression:</strong> Field data—including
+floating-point numbers for 3D translations, Euler angles, or
+quaternions—is quantized into compact bit representations. The encoder
+maps continuous real-world values into narrow numerical ranges tailored
+to the minimum precision needed for visual smoothness.</li>
+</ol>
+<h3 id="animating-2d-and-3d-objects-over-time">Animating 2D and 3D
+Objects Over Time</h3>
+<p>During playback, the MPEG-4 terminal receives BIFS-Anim frames
+synchronized by Composition Time Stamps (CTS). The decoding process
+applies modifications to the visual presentation across several
+levels:</p>
+<ul>
+<li><strong>Rigid Transformations:</strong> Moving, rotating, or scaling
+2D shapes and 3D meshes by modifying the translation, rotation, and
+scale fields of <code>Transform2D</code> and <code>Transform</code>
+nodes.</li>
+<li><strong>Deformation and Morphing:</strong> Modifying arrays within
+<code>Coordinate</code> (3D) or <code>Coordinate2D</code> (2D) nodes to
+alter vertex positions dynamically, enabling mesh deformation, facial
+animations, or path-based shape morphing.</li>
+<li><strong>Material and Appearance Changes:</strong> Modifying
+attributes in <code>Material</code> or <code>Material2D</code> nodes to
+dynamically shift transparency, diffuse colors, and emissive
+lighting.</li>
+</ul>
+<p>Through this quantized, frame-based predictive model, BIFS-Anim
+enables high-framerate 2D and 3D interactive graphics to render
+precisely in sync with other timed media in MPEG-4 environments.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

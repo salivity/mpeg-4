@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPEG-4 SL Packet Sequence Numbers and Loss Detection - mpeg-4</title>
+    <meta name="description" content="The MPEG-4 Synchronization Layer (SL) provides a standardized framework for packetizing elementary streams and synchronizing audio, video, and metadata. To detect lost or out-of-order data during transmission, the MPEG-4 SL packet header uses configurabl">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/mpeg-4-sl-packet-sequence-numbers-and-loss-detection">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MPEG-4 SL Packet Sequence Numbers and Loss Detection - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/mpeg-4-sl-packet-sequence-numbers-and-loss-detection" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The MPEG-4 Synchronization Layer (SL) provides a standardized framework for packetizing elementary streams and synchronizing audio, video, and metadata. To detect lost or out-of-order data during transmission, the MPEG-4 SL packet header uses configurabl" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="mpeg-4-sl-packet-sequence-numbers-and-loss-detection">MPEG-4 SL
+Packet Sequence Numbers and Loss Detection</h1>
+<p>The MPEG-4 Synchronization Layer (SL) provides a standardized
+framework for packetizing elementary streams and synchronizing audio,
+video, and metadata. To detect lost or out-of-order data during
+transmission, the MPEG-4 SL packet header uses configurable sequence
+number fields. This article explains how these sequence numbers are
+configured, formatted in the header, and evaluated by receiving decoders
+to identify missing packets.</p>
+<h3 id="configuration-via-the-slconfigdescriptor">Configuration via the
+SLConfigDescriptor</h3>
+<p>Unlike fixed-header transport protocols, the MPEG-4 SL packet header
+is highly customizable to minimize bandwidth overhead across diverse
+network environments. The structure and presence of header fields are
+established out-of-band or in metadata using the
+<code>SLConfigDescriptor</code>.</p>
+<p>To enable packet sequence numbering, the descriptor defines:</p>
+<ul>
+<li><strong><code>usePacketSequenceNumber</code></strong>: A 1-bit flag
+indicating whether the packet sequence number field is present in the SL
+header.</li>
+<li><strong><code>packetSeqNumLength</code></strong>: A field specifying
+the exact bit-length (ranging from 0 to 32 bits) of the sequence number
+field.</li>
+</ul>
+<p>If <code>usePacketSequenceNumber</code> is set to 1 and
+<code>packetSeqNumLength</code> is greater than 0, every SL packet
+generated for that elementary stream must include the sequence number
+field in its header.</p>
+<h3 id="the-packetsequencenumber-header-field">The
+<code>packetSequenceNumber</code> Header Field</h3>
+<p>When enabled, the encoder inserts the
+<code>packetSequenceNumber</code> syntax element into the SL packet
+header.</p>
+<p>Key characteristics of this field include:</p>
+<ul>
+<li><strong>Monotonic Incrementing</strong>: The encoder increments the
+sequence number by 1 for each successive SL packet belonging to the same
+elementary stream.</li>
+<li><strong>Modulo Arithmetic</strong>: The sequence number increments
+sequentially up to <span
+class="math inline">\((2^{\text{packetSeqNumLength}} - 1)\)</span> and
+then rolls over to 0. For example, an 8-bit field increments from 0 to
+255 before wrapping around.</li>
+<li><strong>Stream-Specific Scope</strong>: Sequence numbering is
+maintained independently for each elementary stream, ensuring that
+multiplexed audio, video, and control streams do not interfere with one
+another's continuity checks.</li>
+</ul>
+<h3 id="identifying-missing-packets-at-the-receiver">Identifying Missing
+Packets at the Receiver</h3>
+<p>The receiving terminal or decoder uses the
+<code>packetSequenceNumber</code> to verify the continuity of the
+incoming stream and detect loss through the following steps:</p>
+<ol type="1">
+<li><strong>State Tracking</strong>: The decoder maintains an internal
+counter of the expected sequence number, which is initialized by the
+sequence number of the first received packet.</li>
+<li><strong>Gap Detection</strong>: Upon arrival of a new SL packet, the
+decoder compares the received <code>packetSequenceNumber</code> (<span
+class="math inline">\(S_{\text{received}}\)</span>) against the expected
+value (<span class="math inline">\(S_{\text{expected}} =
+S_{\text{previous}} + 1\)</span>).</li>
+<li><strong>Loss Identification</strong>: If <span
+class="math inline">\(S_{\text{received}} &gt;
+S_{\text{expected}}\)</span> (accounting for bit-length modulo
+wrap-around), a discontinuity is detected. The difference indicates the
+exact number of missing SL packets: <span
+class="math display">\[\text{Missing Packets} = (S_{\text{received}} -
+S_{\text{expected}}) \pmod{2^{\text{packetSeqNumLength}}}\]</span></li>
+<li><strong>Error Handling</strong>: Once missing packets are
+identified, the decoder can initiate transport-level retransmission
+requests, apply error concealment algorithms, or discard damaged Access
+Units to prevent decoding artifacts.</li>
+</ol>
+<h3 id="access-unit-sequence-numbers">Access Unit Sequence Numbers</h3>
+<p>In addition to packet-level tracking, the MPEG-4 SL specification
+supports an optional <code>AUSequenceNumber</code> field, configured via
+<code>AUSeqNumLength</code>. While <code>packetSequenceNumber</code>
+tracks individual SL packets (which may contain partial or fragmented
+data), the <code>AUSequenceNumber</code> tracks complete Access Units
+(such as entire video frames). This dual-level numbering enables
+decoders to differentiate between the loss of a single packet fragment
+and the loss of an entire structural frame.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

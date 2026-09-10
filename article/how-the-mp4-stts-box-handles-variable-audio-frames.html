@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How the MP4 stts Box Handles Variable Audio Frames - mpeg-4</title>
+    <meta name="description" content="The MPEG-4 (ISO Base Media File Format) Time-to-Sample box, identified by the four-character code stts, provides a compact table that maps media samples to their exact decoding time deltas. By utilizing run-length encoded entries containing sample counts">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/how-the-mp4-stts-box-handles-variable-audio-frames">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How the MP4 stts Box Handles Variable Audio Frames - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/how-the-mp4-stts-box-handles-variable-audio-frames" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The MPEG-4 (ISO Base Media File Format) Time-to-Sample box, identified by the four-character code stts, provides a compact table that maps media samples to their exact decoding time deltas. By utilizing run-length encoded entries containing sample counts" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="how-the-mp4-stts-box-handles-variable-audio-frames">How the MP4
+stts Box Handles Variable Audio Frames</h1>
+<p>The MPEG-4 (ISO Base Media File Format) Time-to-Sample box,
+identified by the four-character code <code>stts</code>, provides a
+compact table that maps media samples to their exact decoding time
+deltas. By utilizing run-length encoded entries containing sample counts
+and time durations, the <code>stts</code> box allows the container to
+dynamically allocate different playback durations to individual audio
+frames, providing full support for audio tracks with variable frame
+lengths while maintaining precise synchronization.</p>
+<h3 id="structure-of-the-stts-box">Structure of the <code>stts</code>
+Box</h3>
+<p>The <code>stts</code> atom resides within the Sample Table box
+(<code>moov -&gt; trak -&gt; mdia -&gt; minf -&gt; stbl -&gt; stts</code>).
+It defines the decode time for every sample in a media track through a
+compact lookup structure.</p>
+<p>The binary payload of the <code>stts</code> box consists of:</p>
+<ul>
+<li><strong>Entry Count:</strong> A 32-bit integer indicating the total
+number of table rows.</li>
+<li><strong>Table Entries:</strong> An array of paired values:
+<ul>
+<li><code>sample_count</code>: A 32-bit integer specifying the number of
+consecutive consecutive samples that share the exact same duration.</li>
+<li><code>sample_delta</code>: A 32-bit integer defining the duration of
+each sample in the group, measured in the track’s specific time scale
+units (defined in the <code>mdhd</code> box).</li>
+</ul></li>
+</ul>
+<h3 id="mechanism-for-supporting-variable-frame-lengths">Mechanism for
+Supporting Variable Frame Lengths</h3>
+<p>In fixed-frame audio formats, an <code>stts</code> table often
+contains a single entry where <code>sample_count</code> equals the total
+number of frames in the file and <code>sample_delta</code> is a constant
+value (such as 1024 timescale units for standard AAC).</p>
+<p>When dealing with audio streams that feature variable frame sizes or
+durations—such as codecs with adaptive packet sizes, voice codecs (e.g.,
+AMR), or tracks with dynamic sample rates—the <code>stts</code> box
+handles variation by defining multiple table entries:</p>
+<ol type="1">
+<li><strong>Run-Length Segmentation:</strong> Every time the duration of
+an audio frame changes, a new entry is appended to the table. If a
+series of 5 frames has a duration of 960 units, followed by a partial
+frame of 480 units, and then 10 frames of 1024 units, the
+<code>stts</code> box records three distinct rows:
+<ul>
+<li>Entry 1: <code>sample_count = 5</code>,
+<code>sample_delta = 960</code></li>
+<li>Entry 2: <code>sample_count = 1</code>,
+<code>sample_delta = 480</code></li>
+<li>Entry 3: <code>sample_count = 10</code>,
+<code>sample_delta = 1024</code></li>
+</ul></li>
+<li><strong>Cumulative Decode Timing:</strong> Media parsers calculate
+the Decode Time Stamp (DTS) of any given sample by summing the products
+of the preceding <code>sample_count</code> and <code>sample_delta</code>
+pairs: <span class="math display">\[\text{DTS}(n) = \sum_{i=1}^{n-1}
+\text{delta}(i)\]</span> This calculation allows the demuxer to pinpoint
+the exact start and end time of every frame, regardless of how
+drastically frame sizes vary across the timeline.</li>
+</ol>
+<h3 id="practical-applications-in-audio">Practical Applications in
+Audio</h3>
+<ul>
+<li><strong>Codec Priming and Padding Removal:</strong> Many modern
+audio encoders (such as AAC and Opus) introduce encoder delay (priming
+samples) at the start and padding samples at the end. The
+<code>stts</code> box can assign shorter durations to the final partial
+frame so that playback terminates precisely on the final audio
+sample.</li>
+<li><strong>Variable Sample Rate Codecs:</strong> Codecs that
+dynamically change temporal resolution based on content complexity
+(switching between different transform window sizes) rely on
+<code>stts</code> entries to maintain continuous audio playback without
+pitch distortion or buffer underruns.</li>
+<li><strong>Audio-Video Synchronization:</strong> Because each audio
+frame's exact duration is mapped to the master timeline timescale, the
+player's synchronization engine can align audio packets with video
+keyframes, preventing drift across long-duration files.</li>
+</ul></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

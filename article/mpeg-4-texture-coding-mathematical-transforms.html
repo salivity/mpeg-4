@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPEG-4 Texture Coding Mathematical Transforms - mpeg-4</title>
+    <meta name="description" content="This article provides an overview of the mathematical transforms utilized for texture coding in MPEG-4 visual objects. MPEG-4 Visual supports both traditional frame-based video and content-based, arbitrarily shaped visual objects. To compress the spatial">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/mpeg-4-texture-coding-mathematical-transforms">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MPEG-4 Texture Coding Mathematical Transforms - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/mpeg-4-texture-coding-mathematical-transforms" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article provides an overview of the mathematical transforms utilized for texture coding in MPEG-4 visual objects. MPEG-4 Visual supports both traditional frame-based video and content-based, arbitrarily shaped visual objects. To compress the spatial" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="mpeg-4-texture-coding-mathematical-transforms">MPEG-4 Texture
+Coding Mathematical Transforms</h1>
+<p>This article provides an overview of the mathematical transforms
+utilized for texture coding in MPEG-4 visual objects. MPEG-4 Visual
+supports both traditional frame-based video and content-based,
+arbitrarily shaped visual objects. To compress the spatial texture and
+luminance/chrominance data of these objects efficiently, the standard
+primarily relies on three mathematical transforms: the standard Discrete
+Cosine Transform (DCT), the Shape-Adaptive Discrete Cosine Transform
+(SA-DCT), and the Discrete Wavelet Transform (DWT).</p>
+<h3 id="1-the-8x8-discrete-cosine-transform-dct">1. The 8x8 Discrete
+Cosine Transform (DCT)</h3>
+<p>The standard two-dimensional 8x8 Discrete Cosine Transform (2D-DCT)
+is the primary tool used for encoding rectangular video frames and fully
+opaque interior blocks within arbitrarily shaped visual objects.</p>
+<ul>
+<li><strong>Mechanism:</strong> It converts <span
+class="math inline">\(8 \times 8\)</span> blocks of spatial-domain pixel
+data into frequency-domain coefficients.</li>
+<li><strong>Function:</strong> The 2D-DCT compacts the energy of the
+image into a few low-frequency coefficients located at the top-left of
+the transform matrix, allowing higher-frequency details to be heavily
+quantized and discarded without significant perceived loss in visual
+quality.</li>
+<li><strong>Usage:</strong> Applied to standard macroblocks in
+frame-based profiles and interior blocks of Video Object Planes (VOPs)
+that do not cross object boundaries.</li>
+</ul>
+<h3 id="2-shape-adaptive-discrete-cosine-transform-sa-dct">2.
+Shape-Adaptive Discrete Cosine Transform (SA-DCT)</h3>
+<p>For arbitrarily shaped visual objects, boundary blocks contain both
+active object pixels and empty background areas. The Shape-Adaptive DCT
+is specifically designed to transform only the active pixels within
+these boundary blocks.</p>
+<ul>
+<li><strong>Mechanism:</strong> SA-DCT is computed using a sequence of
+variable-length 1D-DCT operations:
+<ol type="1">
+<li><strong>Vertical 1D-DCT:</strong> Object pixels within each column
+of an <span class="math inline">\(8 \times 8\)</span> block are shifted
+to the top and transformed using a 1D-DCT whose length matches the
+number of active pixels in that column.</li>
+<li><strong>Horizontal 1D-DCT:</strong> The resulting vertical DC and AC
+coefficients are shifted to the left of each row and transformed using a
+horizontal 1D-DCT whose length matches the number of transformed
+coefficients in that row.</li>
+</ol></li>
+<li><strong>Function:</strong> It preserves the energy compaction
+properties of the DCT along arbitrary boundaries without requiring
+artificial pixel padding techniques, minimizing bitrate overhead at
+object edges.</li>
+</ul>
+<h3 id="3-discrete-wavelet-transform-dwt">3. Discrete Wavelet Transform
+(DWT)</h3>
+<p>The Discrete Wavelet Transform is utilized in the MPEG-4 Still
+Texture profile to encode static textures, mapped surfaces for 3D
+meshes, and still visual objects with spatial and quality
+scalability.</p>
+<ul>
+<li><strong>Mechanism:</strong> The DWT decomposes an input image into
+multi-resolution subbands (low-low, low-high, high-low, and high-high
+frequency bands) using filter banks, typically employing biorthogonal
+wavelets (such as the 9/3 or 5/3 filters).</li>
+<li><strong>Function:</strong> Unlike block-based DCT transforms, the
+DWT operates on entire visual regions or arbitrary segments without
+blocking artifacts. It allows bitstreams to be progressively decoded
+across multiple levels of detail and resolution.</li>
+</ul></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

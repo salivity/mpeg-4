@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How MPEG-4 Stores Burst Photography Sequences - mpeg-4</title>
+    <meta name="description" content="MPEG-4 technology enables the efficient storage of high-density burst photography sequences by combining advanced video-compression algorithms with flexible container architecture. By treating continuous, rapid-fire photo sequences as high-resolution ima">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/how-mpeg-4-stores-burst-photography-sequences">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How MPEG-4 Stores Burst Photography Sequences - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/how-mpeg-4-stores-burst-photography-sequences" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="MPEG-4 technology enables the efficient storage of high-density burst photography sequences by combining advanced video-compression algorithms with flexible container architecture. By treating continuous, rapid-fire photo sequences as high-resolution ima" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="how-mpeg-4-stores-burst-photography-sequences">How MPEG-4 Stores
+Burst Photography Sequences</h1>
+<p>MPEG-4 technology enables the efficient storage of high-density burst
+photography sequences by combining advanced video-compression algorithms
+with flexible container architecture. By treating continuous, rapid-fire
+photo sequences as high-resolution image streams, MPEG-4 eliminates
+redundant visual data, minimizes storage footprints, and maintains full
+image fidelity through specialized inter-frame prediction, efficient
+metadata indexing, and flexible structural tracks.</p>
+<h3 id="inter-frame-prediction-and-temporal-redundancy">Inter-Frame
+Prediction and Temporal Redundancy</h3>
+<p>Burst photography captures dozens of full-resolution images within
+fractions of a second, resulting in immense visual overlap between
+consecutive frames. MPEG-4 leverages temporal redundancy mechanisms to
+compress these sequences:</p>
+<ul>
+<li><strong>Intra-Coded Frames (I-Frames):</strong> A primary baseline
+image is stored with full spatial compression, serving as the visual
+anchor for the sequence.</li>
+<li><strong>Predicted Frames (P-Frames):</strong> Subsequent shots in
+the burst record only the changes relative to the preceding anchor
+frame.</li>
+<li><strong>Bi-directional Predictive Frames (B-Frames):</strong>
+Extremely rapid burst sequences use data from both past and future
+frames to interpolate motion, drastically reducing file size without
+sacrificing edge detail or color depth.</li>
+</ul>
+<p>Because the camera sensor position and background lighting remain
+virtually identical across millisecond intervals, inter-frame prediction
+eliminates up to 90% of repetitive data compared to saving standalone
+raw or JPEG files.</p>
+<h3 id="iso-base-media-file-format-isobmff-structure">ISO Base Media
+File Format (ISOBMFF) Structure</h3>
+<p>MPEG-4 is built upon the ISO Base Media File Format (ISOBMFF), which
+provides a box-oriented, hierarchical file structure ideal for managing
+high-volume image bursts.</p>
+<ul>
+<li><strong>Sample Tables (<code>stbl</code>):</strong> The container
+maintains precise index tables that define the exact byte offsets,
+decoding timestamps, and frame sizes for every individual shot in the
+burst.</li>
+<li><strong>Track Separation:</strong> Visual payload data is stored in
+the media data box (<code>mdat</code>), while timing, orientation, and
+focus metadata reside separately in the movie box (<code>moov</code>).
+This allows applications to index, navigate, and display thumbnails
+instantly without loading the entire payload into memory.</li>
+<li><strong>Edit Lists (<code>elst</code>):</strong> Edit lists map
+specific subsets of frames, enabling cameras to non-destructively flag
+the "best shot" or create looped previews without duplicating image
+data.</li>
+</ul>
+<h3 id="motion-vector-estimation">Motion Vector Estimation</h3>
+<p>High-speed burst sequences often capture fast-moving subjects. MPEG-4
+utilizes motion estimation algorithms to track moving pixel blocks
+across the frame grid. Rather than re-encoding a moving subject in every
+frame, the encoder calculates motion vectors that describe the
+displacement of pixel blocks from one frame to the next. The file only
+stores these directional vectors and the residual error, allowing
+high-density continuous action to be reconstructed cleanly upon
+playback.</p>
+<h3 id="high-efficiency-intra-block-spatial-compression">High-Efficiency
+Intra-Block Spatial Compression</h3>
+<p>For burst images that do require independent reconstruction, MPEG-4
+uses spatial block-level compression:</p>
+<ul>
+<li><strong>Variable Block Partitioning:</strong> Encoders segment
+images into dynamic macroblocks (or Coding Tree Units in MPEG-4 Part
+10/AVC and HEVC derivatives) ranging from large smooth regions to tiny,
+detailed blocks around complex textures.</li>
+<li><strong>Directional Intra-Prediction:</strong> Neighboring pixels
+within the same frame are used to predict adjacent pixel values,
+compressing static structural elements before temporal compression is
+applied.</li>
+</ul>
+<h3 id="non-destructive-frame-extraction">Non-Destructive Frame
+Extraction</h3>
+<p>MPEG-4 architecture enables discrete frame extraction directly from
+the compressed sequence. Applications can parse the sample description
+and reference tables to extract a single high-resolution still image as
+a standalone file without needing to decode or rewrite the remaining
+burst sequence.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPEG-4 AVC Integer Transform vs Floating-Point DCT - mpeg-4</title>
+    <meta name="description" content="This article examines how MPEG-4 AVC (H.264) departs from traditional floating-point Discrete Cosine Transforms (DCT) in favor of an exact integer transform. By mathematically separating the orthogonal transform into an integer core matrix and a diagonal">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/mpeg-4-avc-integer-transform-vs-floating-point-dct">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MPEG-4 AVC Integer Transform vs Floating-Point DCT - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/mpeg-4-avc-integer-transform-vs-floating-point-dct" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article examines how MPEG-4 AVC (H.264) departs from traditional floating-point Discrete Cosine Transforms (DCT) in favor of an exact integer transform. By mathematically separating the orthogonal transform into an integer core matrix and a diagonal" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="mpeg-4-avc-integer-transform-vs-floating-point-dct">MPEG-4 AVC
+Integer Transform vs Floating-Point DCT</h1>
+<p>This article examines how MPEG-4 AVC (H.264) departs from traditional
+floating-point Discrete Cosine Transforms (DCT) in favor of an exact
+integer transform. By mathematically separating the orthogonal transform
+into an integer core matrix and a diagonal scaling factor matrix, MPEG-4
+AVC eliminates inverse transform mismatch, minimizes computational
+complexity through simple shift-and-add operations, and seamlessly
+absorbs floating-point scaling into its quantization stages.</p>
+<h3 id="the-limitations-of-floating-point-dct">The Limitations of
+Floating-Point DCT</h3>
+<p>Prior video coding standards, such as MPEG-2 and H.263, utilized the
+classical <span class="math inline">\(8 \times 8\)</span> Discrete
+Cosine Transform. The standard one-dimensional DCT of a sequence <span
+class="math inline">\(x(n)\)</span> is defined as:</p>
+<p><span class="math display">\[X(k) = \alpha(k) \sum_{n=0}^{N-1} x(n)
+\cos\left( \frac{\pi (2n+1)k}{2N} \right)\]</span></p>
+<p>Because the basis functions involve irrational cosine values (such as
+<span class="math inline">\(\cos(\pi/8)\)</span> and <span
+class="math inline">\(\cos(3\pi/8)\)</span>), direct implementation
+requires floating-point arithmetic or fixed-point approximations with
+high fractional precision.</p>
+<p>In distributed video decoding environments, different hardware
+architectures implement floating-point rounding and precision
+differently. Over long sequences of inter-predicted frames, minor
+rounding discrepancies accumulate between the encoder's reconstructed
+reference frame and the decoder's reconstructed reference frame. This
+phenomenon, known as <strong>inverse transform drift</strong> or
+<strong>mismatch error</strong>, degrades video quality over time.</p>
+<h3 id="mathematical-matrix-factorization-in-mpeg-4-avc">Mathematical
+Matrix Factorization in MPEG-4 AVC</h3>
+<p>To resolve floating-point drift, MPEG-4 AVC uses an approximation of
+the DCT based on exact integer matrix arithmetic. The standard <span
+class="math inline">\(4 \times 4\)</span> DCT matrix <span
+class="math inline">\(A\)</span> is given by:</p>
+<p><span class="math display">\[A = \begin{bmatrix} a &amp; a &amp; a
+&amp; a \\ b &amp; c &amp; -c &amp; -b \\ a &amp; -a &amp; -a &amp; a \\
+c &amp; -b &amp; b &amp; -c \end{bmatrix}\]</span></p>
+<p>where <span class="math inline">\(a = \frac{1}{2}\)</span>, <span
+class="math inline">\(b = \sqrt{\frac{1}{2}}\cos(\pi/8) \approx
+0.6533\)</span>, and <span class="math inline">\(c =
+\sqrt{\frac{1}{2}}\cos(3\pi/8) \approx 0.2706\)</span>.</p>
+<p>The ratio between the elements is roughly <span
+class="math inline">\(c/b \approx 0.4142 \approx 0.5\)</span>. MPEG-4
+AVC scales the rows to approximate this ratio with integers, setting
+<span class="math inline">\(b = 1\)</span> and <span
+class="math inline">\(c = 0.5\)</span>, then scaling the entire matrix
+to avoid fractional values. This allows the DCT matrix <span
+class="math inline">\(A\)</span> to be factored into the product of a
+diagonal scaling matrix <span class="math inline">\(S\)</span> and an
+integer core transform matrix <span
+class="math inline">\(C\)</span>:</p>
+<p><span class="math display">\[A = S \cdot C = \begin{bmatrix} a &amp;
+0 &amp; 0 &amp; 0 \\ 0 &amp; b &amp; 0 &amp; 0 \\ 0 &amp; 0 &amp; a
+&amp; 0 \\ 0 &amp; 0 &amp; 0 &amp; b \end{bmatrix} \begin{bmatrix} 1
+&amp; 1 &amp; 1 &amp; 1 \\ 2 &amp; 1 &amp; -1 &amp; -2 \\ 1 &amp; -1
+&amp; -1 &amp; 1 \\ 1 &amp; -2 &amp; 2 &amp; -1
+\end{bmatrix}\]</span></p>
+<p>For a <span class="math inline">\(4 \times 4\)</span> input block
+<span class="math inline">\(X\)</span>, the forward 2D transform is
+derived as:</p>
+<p><span class="math display">\[Y = A X A^T = (S \cdot C) X (S \cdot
+C)^T = S (C X C^T) S\]</span></p>
+<h3 id="core-integer-transform-and-quantization-absorption">Core Integer
+Transform and Quantization Absorption</h3>
+<p>The mathematical operation is split into two distinct stages:</p>
+<ol type="1">
+<li><p><strong>Core Integer Transform (<span class="math inline">\(W = C
+X C^T\)</span>):</strong> The core transform matrix <span
+class="math inline">\(C\)</span> contains only elements from the set
+<span class="math inline">\(\{\pm 1, \pm 2\}\)</span>. Multiplying an
+input block by <span class="math inline">\(C\)</span> requires only
+additions, subtractions, and 1-bit binary arithmetic left-shifts (<span
+class="math inline">\(x \ll 1\)</span>). This operation can be executed
+entirely in 16-bit integer registers without loss of precision.</p></li>
+<li><p><strong>Scaling Matrix Integration (<span class="math inline">\(Y
+= S W S\)</span>):</strong> The post-scaling operations defined by <span
+class="math inline">\(S\)</span> contain the irrational scale factors.
+Rather than performing these floating-point multiplications separately,
+the matrix multiplication <span class="math inline">\(S W S\)</span> is
+directly integrated into the quantization process:</p></li>
+</ol>
+<p><span class="math display">\[Z_{ij} = \text{round}\left( W_{ij} \cdot
+\frac{S_{ii} S_{jj}}{Q_{\text{step}}} \right)\]</span></p>
+<p>MPEG-4 AVC maps the quantization parameter (<span
+class="math inline">\(QP\)</span>) to a scalar multiplier table. The
+combined multiplier incorporates both the quantization step size and the
+scaling constants <span class="math inline">\(S_{ii} S_{jj}\)</span>,
+allowing the decoder to use integer arithmetic throughout both the
+inverse quantization and inverse transform steps.</p>
+<h3 id="secondary-hadamard-transforms">Secondary Hadamard
+Transforms</h3>
+<p>For smooth regions where low-frequency correlation remains high,
+MPEG-4 AVC applies a secondary Hadamard transform to the DC coefficients
+of the <span class="math inline">\(4 \times 4\)</span> blocks:</p>
+<ul>
+<li><strong><span class="math inline">\(16 \times 16\)</span>
+Intra-macroblock Luma:</strong> A <span class="math inline">\(4 \times
+4\)</span> Hadamard transform is applied to the 16 DC coefficients.</li>
+<li><strong>Chroma Components:</strong> A <span class="math inline">\(2
+\times 2\)</span> Hadamard transform is applied to the 4 DC
+coefficients.</li>
+</ul>
+<p>The <span class="math inline">\(4 \times 4\)</span> Hadamard matrix
+<span class="math inline">\(H_4\)</span> uses only values of <span
+class="math inline">\(+1\)</span> and <span
+class="math inline">\(-1\)</span>:</p>
+<p><span class="math display">\[H_4 = \begin{bmatrix} 1 &amp; 1 &amp; 1
+&amp; 1 \\ 1 &amp; 1 &amp; -1 &amp; -1 \\ 1 &amp; -1 &amp; -1 &amp; 1 \\
+1 &amp; -1 &amp; 1 &amp; -1 \end{bmatrix}\]</span></p>
+<p>This secondary stage further compacts energy into fewer coefficients
+using strictly integer addition and subtraction, with normalization
+applied during final quantization.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

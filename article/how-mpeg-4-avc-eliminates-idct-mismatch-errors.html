@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How MPEG-4 AVC Eliminates IDCT Mismatch Errors - mpeg-4</title>
+    <meta name="description" content="The MPEG-4 AVC (H.264) video coding standard eliminates Inverse Discrete Cosine Transform (IDCT) mismatch errors by replacing traditional floating-point transform algorithms with an exact, integer-based transform. In earlier standards, subtle mathematica">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/how-mpeg-4-avc-eliminates-idct-mismatch-errors">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How MPEG-4 AVC Eliminates IDCT Mismatch Errors - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/how-mpeg-4-avc-eliminates-idct-mismatch-errors" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The MPEG-4 AVC (H.264) video coding standard eliminates Inverse Discrete Cosine Transform (IDCT) mismatch errors by replacing traditional floating-point transform algorithms with an exact, integer-based transform. In earlier standards, subtle mathematica" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="how-mpeg-4-avc-eliminates-idct-mismatch-errors">How MPEG-4 AVC
+Eliminates IDCT Mismatch Errors</h1>
+<p>The MPEG-4 AVC (H.264) video coding standard eliminates Inverse
+Discrete Cosine Transform (IDCT) mismatch errors by replacing
+traditional floating-point transform algorithms with an exact,
+integer-based transform. In earlier standards, subtle mathematical
+rounding variations between different encoder and decoder hardware
+implementations caused reconstructed video frames to drift out of
+alignment over time. MPEG-4 AVC solves this by specifying fixed-point,
+16-bit integer arithmetic with exact bit-shift operations and
+integrating the transform's scaling factors directly into the
+quantization process, ensuring bit-identical output across all
+conforming decoders.</p>
+<h3 id="the-problem-of-idct-mismatch-in-earlier-standards">The Problem
+of IDCT Mismatch in Earlier Standards</h3>
+<p>In legacy video codecs like MPEG-2 and H.263, spatial compression
+relied on the classical Discrete Cosine Transform. The standard DCT
+involves continuous trigonometric functions and irrational numbers.
+Because earlier specifications only defined the mathematical formula of
+the inverse transform rather than its precise arithmetic implementation,
+manufacturers used varying floating-point precisions, rounding rules,
+and truncation methods.</p>
+<p>Even a difference of <span class="math inline">\(\pm 1\)</span> in
+the least significant bit between the encoder's internal reconstruction
+loop and the decoder's output leads to errors. Because inter-frame
+prediction references previously decoded frames, this discrepancy
+compounds frame-by-frame—a phenomenon known as IDCT drift or mismatch
+error. To mitigate this, older standards required periodic transmission
+of full intra-frames (I-frames) or forced intra-block updates to reset
+the drift.</p>
+<h3 id="the-mpeg-4-avc-integer-transform-approach">The MPEG-4 AVC
+Integer Transform Approach</h3>
+<p>MPEG-4 AVC eliminates this variance by defining an integer transform
+derived from the standard DCT. Instead of processing 8x8 blocks with
+real-valued matrices, AVC primarily uses a 4x4 core integer transform
+(along with an optional 8x8 integer transform in High Profiles).</p>
+<p>The 4x4 transform matrix is composed solely of small, predefined
+integer coefficients:</p>
+<p><span class="math display">\[
+H = \begin{pmatrix}
+1 &amp; 1 &amp; 1 &amp; 1 \\
+2 &amp; 1 &amp; -1 &amp; -2 \\
+1 &amp; -1 &amp; -1 &amp; 1 \\
+1 &amp; -2 &amp; 2 &amp; -1
+\end{pmatrix}
+\]</span></p>
+<p>Because these coefficients are basic integers, the forward and
+inverse transforms can be computed entirely using exact integer
+additions, subtractions, and 1-bit shifts (equivalent to multiplying or
+dividing by 2). There is no floating-point arithmetic involved in the
+core transform stage.</p>
+<h3 id="factoring-scale-factors-into-quantization">Factoring Scale
+Factors into Quantization</h3>
+<p>In a standard DCT, the transform matrix must be orthogonal and
+normalized, which normally introduces floating-point scaling factors.
+MPEG-4 AVC circumvents this by mathematically separating the transform
+into two distinct operations:</p>
+<ol type="1">
+<li><strong>The Core Integer Transform:</strong> Applied using the
+integer matrix <span class="math inline">\(H\)</span> with integer-only
+operations.</li>
+<li><strong>Scaling and Normalization:</strong> The remaining scaling
+factors are combined directly into the quantization and dequantization
+processes.</li>
+</ol>
+<p>The standard pre-calculates these scaling values and embeds them into
+a fixed set of lookup tables for the Quantization Parameter (QP). The
+inverse quantization process multiplies the integer-transformed
+coefficients by these table values and uses an exact, standardized
+right-shift operation to produce the final values.</p>
+<h3 id="bit-exact-reconstructions">Bit-Exact Reconstructions</h3>
+<p>Because the MPEG-4 AVC specification dictates the exact sequence of
+integer operations, additions, multiplications, and bit-shifts:</p>
+<ul>
+<li>Every conforming decoder executes identical mathematical operations
+down to the individual bit.</li>
+<li>The encoder's reference picture buffer matches the decoder's
+reference picture buffer with 100% precision.</li>
+<li>The accumulation of mismatch drift across long sequences of P-frames
+and B-frames is completely eliminated, removing the need for frequent
+intra-refresh cycles solely to correct arithmetic drift.</li>
+</ul></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

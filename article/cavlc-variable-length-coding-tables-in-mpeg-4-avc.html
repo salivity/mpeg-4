@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CAVLC Variable Length Coding Tables in MPEG-4 AVC - mpeg-4</title>
+    <meta name="description" content="Context-Adaptive Variable-Length Coding (CAVLC) is an entropy coding scheme in the MPEG-4 AVC (H.264) video compression standard designed to efficiently compress quantized transform coefficients. This article explains how CAVLC dynamically utilizes multi">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/cavlc-variable-length-coding-tables-in-mpeg-4-avc">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="CAVLC Variable Length Coding Tables in MPEG-4 AVC - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/cavlc-variable-length-coding-tables-in-mpeg-4-avc" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Context-Adaptive Variable-Length Coding (CAVLC) is an entropy coding scheme in the MPEG-4 AVC (H.264) video compression standard designed to efficiently compress quantized transform coefficients. This article explains how CAVLC dynamically utilizes multi" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="cavlc-variable-length-coding-tables-in-mpeg-4-avc">CAVLC
+Variable Length Coding Tables in MPEG-4 AVC</h1>
+<p>Context-Adaptive Variable-Length Coding (CAVLC) is an entropy coding
+scheme in the MPEG-4 AVC (H.264) video compression standard designed to
+efficiently compress quantized transform coefficients. This article
+explains how CAVLC dynamically utilizes multiple Variable-Length Coding
+(VLC) tables, detailing how the detection of "Trailing Ones" and
+surrounding block statistics govern table selection to maximize
+compression efficiency.</p>
+<h3 id="understanding-trailing-ones-in-cavlc">Understanding Trailing
+Ones in CAVLC</h3>
+<p>After transformation and quantization, coefficients are ordered using
+a zig-zag scan. Because higher-frequency coefficients are typically
+quantized to zero or small values, the end of the non-zero coefficient
+sequence often consists of a series of <span class="math inline">\(\pm
+1\)</span> values. CAVLC defines these as <strong>Trailing Ones</strong>
+(<span class="math inline">\(T1s\)</span>).</p>
+<p>CAVLC caps the maximum number of recognized Trailing Ones at three
+(<span class="math inline">\(0 \le T1s \le 3\)</span>). Any additional
+<span class="math inline">\(\pm 1\)</span> coefficients occurring
+earlier in the scan sequence are treated as general non-zero coefficient
+levels rather than trailing ones.</p>
+<h3 id="the-role-of-trailing-ones-in-coeff_token-coding">The Role of
+Trailing Ones in <code>coeff_token</code> Coding</h3>
+<p>The first syntax element transmitted for a block of coefficients is
+the <code>coeff_token</code>. This single element jointly encodes two
+pieces of information:</p>
+<ol type="1">
+<li><strong>TotalCoeff</strong>: The total count of non-zero
+coefficients in the block (ranging from 0 to 16 for a <span
+class="math inline">\(4\times4\)</span> block).</li>
+<li><strong>TrailingOnes</strong>: The number of trailing <span
+class="math inline">\(\pm 1\)</span> values (ranging from 0 to 3).</li>
+</ol>
+<p>CAVLC provides four separate VLC tables for encoding
+<code>coeff_token</code> (Num-VLC0, Num-VLC1, Num-VLC2, and a 6-bit
+fixed-length code table). The table is adaptively selected based on a
+context parameter, <span class="math inline">\(nC\)</span>, derived from
+the number of non-zero coefficients in the already-coded left and upper
+neighboring blocks:</p>
+<p><span class="math display">\[nC =
+\frac{\text{TotalCoeff}_{\text{Left}} + \text{TotalCoeff}_{\text{Top}} +
+1}{2}\]</span></p>
+<ul>
+<li><strong><span class="math inline">\(0 \le nC &lt;
+2\)</span></strong>: Uses Num-VLC0 (favors low coefficient counts and
+low <span class="math inline">\(T1s\)</span>).</li>
+<li><strong><span class="math inline">\(2 \le nC &lt;
+4\)</span></strong>: Uses Num-VLC1.</li>
+<li><strong><span class="math inline">\(4 \le nC &lt;
+8\)</span></strong>: Uses Num-VLC2.</li>
+<li><strong><span class="math inline">\(nC \ge 8\)</span></strong>: Uses
+the 6-bit Fixed-Length Coding table.</li>
+</ul>
+<p>Because the <code>coeff_token</code> represents the combined state of
+<code>TotalCoeff</code> and <code>TrailingOnes</code>, higher numbers of
+trailing ones produce shorter code lengths within the chosen table,
+reflecting their high statistical probability.</p>
+<h3 id="sign-coding-for-trailing-ones">Sign Coding for Trailing
+Ones</h3>
+<p>Because the magnitudes of trailing ones are already known to be <span
+class="math inline">\(1\)</span>, CAVLC encodes them with minimal
+overhead. Immediately following the <code>coeff_token</code>, only the
+sign of each trailing one is transmitted in reverse scan order using a
+single bit:</p>
+<ul>
+<li><code>0</code> indicates a positive sign (<span
+class="math inline">\(+1\)</span>).</li>
+<li><code>1</code> indicates a negative sign (<span
+class="math inline">\(-1\)</span>).</li>
+</ul>
+<p>By using 1-bit sign flags, CAVLC bypasses full magnitude coding for
+up to three coefficients.</p>
+<h3 id="vlc-table-selection-for-remaining-levels">VLC Table Selection
+for Remaining Levels</h3>
+<p>Once the trailing ones are coded, the remaining non-zero coefficients
+(referred to as <em>levels</em>) are coded in reverse zig-zag scan
+order. CAVLC uses seven distinct variable-length tables for levels:
+<code>VLC0</code> through <code>VLC6</code> (where <code>VLC0</code> to
+<code>VLC5</code> use prefix/suffix Exp-Golomb-style codes, and
+<code>VLC6</code> uses a fixed-length suffix).</p>
+<p>The presence and count of Trailing Ones directly determine the
+initial VLC table used for the first remaining level:</p>
+<ol type="1">
+<li><p><strong>Initial Table Selection:</strong></p>
+<ul>
+<li>If <span class="math inline">\(\text{TotalCoeff} &gt; 10\)</span>
+and <span class="math inline">\(\text{TrailingOnes} &lt; 3\)</span>,
+coding begins with <strong><code>VLC1</code></strong>.</li>
+<li>In all other cases, coding begins with
+<strong><code>VLC0</code></strong>.</li>
+<li>If <span class="math inline">\(\text{TrailingOnes} = 3\)</span>, the
+first non-zero level to be coded is guaranteed to have an absolute
+magnitude greater than 1. To account for this, CAVLC subtracts 1 from
+the magnitude before encoding, allowing smaller code words in
+<code>VLC0</code>.</li>
+</ul></li>
+<li><p><strong>Adaptive Table Switching:</strong></p>
+<ul>
+<li>As levels are decoded from right to left, coefficient magnitudes
+typically increase. CAVLC adapts to this by switching to higher-indexed
+VLC tables (e.g., <code>VLC0</code> <span
+class="math inline">\(\rightarrow\)</span> <code>VLC1</code> <span
+class="math inline">\(\rightarrow\)</span> <code>VLC2</code>) when an
+encoded coefficient exceeds predefined thresholds for the current
+table.</li>
+<li>The table index never decreases within a single block, maintaining
+optimal code allocation for the larger low-frequency coefficients coded
+last.</li>
+</ul></li>
+</ol></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

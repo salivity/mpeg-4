@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How MPEG-4 Script Nodes Execute ECMAScript Dynamically - mpeg-4</title>
+    <meta name="description" content="This article explains how the MPEG-4 Binary Format for Scenes (BIFS) utilizes the Script node and ECMAScript engine to dynamically alter scene graph properties. It covers the node's architectural interface, event-driven execution lifecycle, property mani">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/how-mpeg-4-script-nodes-execute-ecmascript-dynamically">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How MPEG-4 Script Nodes Execute ECMAScript Dynamically - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/how-mpeg-4-script-nodes-execute-ecmascript-dynamically" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explains how the MPEG-4 Binary Format for Scenes (BIFS) utilizes the Script node and ECMAScript engine to dynamically alter scene graph properties. It covers the node's architectural interface, event-driven execution lifecycle, property mani" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="how-mpeg-4-script-nodes-execute-ecmascript-dynamically">How
+MPEG-4 Script Nodes Execute ECMAScript Dynamically</h1>
+<p>This article explains how the MPEG-4 Binary Format for Scenes (BIFS)
+utilizes the <code>Script</code> node and ECMAScript engine to
+dynamically alter scene graph properties. It covers the node's
+architectural interface, event-driven execution lifecycle, property
+manipulation mechanisms, and the downstream routing process that updates
+multimedia objects in real time.</p>
+<h3 id="the-architecture-of-the-mpeg-4-script-node">The Architecture of
+the MPEG-4 Script Node</h3>
+<p>The MPEG-4 <code>Script</code> node bridges declarative scene graph
+structures with procedural logic. Modeled after VRML/X3D concepts, the
+node acts as a container for ECMAScript (JavaScript) functions and
+defines custom interface declarations.</p>
+<p>A <code>Script</code> node contains three types of interface
+declarations:</p>
+<ul>
+<li><strong><code>eventIn</code></strong>: Input fields that receive
+incoming signals and data payloads from other nodes.</li>
+<li><strong><code>eventOut</code></strong>: Output fields that dispatch
+updated data back to target nodes in the scene.</li>
+<li><strong><code>field</code></strong>: Persistent local variables that
+store state information between execution cycles.</li>
+<li><strong><code>url</code></strong>: The field that embeds or links
+directly to the ECMAScript source code.</li>
+</ul>
+<h3 id="event-driven-execution-lifecycle">Event-Driven Execution
+Lifecycle</h3>
+<p>Execution within the MPEG-4 <code>Script</code> node is completely
+event-driven. The ECMAScript runtime executes code through a structured
+pipeline:</p>
+<ol type="1">
+<li><strong>Event Reception via ROUTE Statements</strong>: An
+interactive or temporal node (such as a <code>TouchSensor</code> or
+<code>TimeSensor</code>) fires an event. A <code>ROUTE</code> statement
+transmits this value to a specific <code>eventIn</code> field of the
+<code>Script</code> node.</li>
+<li><strong>Function Invocation</strong>: When an <code>eventIn</code>
+receives data, the MPEG-4 execution environment looks for an ECMAScript
+function matching the <code>eventIn</code> field name. For instance, an
+input named <code>set_translation</code> automatically triggers a
+function declared as
+<code>function set_translation(value, timestamp)</code>.</li>
+<li><strong>Execution Context</strong>: The script engine executes the
+function logic, utilizing incoming parameters alongside the current
+state stored in local <code>field</code> variables.</li>
+</ol>
+<h3 id="modifying-scene-graph-properties">Modifying Scene Graph
+Properties</h3>
+<p>The ECMAScript code modifies scene graph elements through two primary
+techniques:</p>
+<h4 id="1-dispatching-output-events">1. Dispatching Output Events</h4>
+<p>Inside the script, assigning a value to an <code>eventOut</code>
+identifier queues an event.</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">set_fraction</span>(value<span class="op">,</span> time) {</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Calculate new position based on input fraction</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> newPosition <span class="op">=</span> <span class="kw">new</span> <span class="fu">SFVec3f</span>(value <span class="op">*</span> <span class="dv">10</span><span class="op">,</span> <span class="dv">0</span><span class="op">,</span> <span class="dv">0</span>)<span class="op">;</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Assign to eventOut</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    position_changed <span class="op">=</span> newPosition<span class="op">;</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>A downstream <code>ROUTE</code> statement connects
+<code>position_changed</code> to a target node property, such as a
+<code>Transform</code> node's <code>translation</code> field. Once the
+function finishes execution, the player dispatches these values to the
+target nodes, recalculating the scene geometry for the next frame.</p>
+<h4 id="2-direct-node-reference-manipulation">2. Direct Node Reference
+Manipulation</h4>
+<p>In extended MPEG-4 profiles supporting direct scene references (often
+utilizing the Scene Access Interface or typed node fields), scripts can
+hold direct references to scene nodes (<code>SFNode</code> or
+<code>MFNode</code>). The script can read or assign values directly to
+exposed fields of those nodes, bypassing manual route
+configurations.</p>
+<h3 id="lifecycle-functions">Lifecycle Functions</h3>
+<p>The MPEG-4 script runtime provides standard built-in functions for
+initialization and teardown:</p>
+<ul>
+<li><strong><code>initialize()</code></strong>: Executed immediately
+after the node is loaded and bound to the scene graph, allowing initial
+setup of properties.</li>
+<li><strong><code>eventsProcessed()</code></strong>: Invoked after all
+pending <code>eventIn</code> handlers have executed during a single
+timestamp cycle, enabling batch updates to avoid redundant
+computations.</li>
+<li><strong><code>shutdown()</code></strong>: Runs when the node is
+deleted or the scene terminates, handling cleanup tasks.</li>
+</ul>
+<p>Through this structured event-passing and execution model, the MPEG-4
+<code>Script</code> node enables complex animations, user interaction
+handling, and algorithmic scene modifications without requiring a
+complete re-transmission of the scene graph stream.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

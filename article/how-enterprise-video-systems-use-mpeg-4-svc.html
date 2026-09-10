@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How Enterprise Video Systems Use MPEG-4 SVC - mpeg-4</title>
+    <meta name="description" content="Enterprise video conferencing systems rely on MPEG-4 Scalable Video Coding (SVC) to deliver high-quality video across diverse client devices and fluctuating network connections. By structuring a single video stream into a foundational base layer and mult">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/how-enterprise-video-systems-use-mpeg-4-svc">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How Enterprise Video Systems Use MPEG-4 SVC - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/how-enterprise-video-systems-use-mpeg-4-svc" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Enterprise video conferencing systems rely on MPEG-4 Scalable Video Coding (SVC) to deliver high-quality video across diverse client devices and fluctuating network connections. By structuring a single video stream into a foundational base layer and mult" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="how-enterprise-video-systems-use-mpeg-4-svc">How Enterprise
+Video Systems Use MPEG-4 SVC</h1>
+<p>Enterprise video conferencing systems rely on MPEG-4 Scalable Video
+Coding (SVC) to deliver high-quality video across diverse client devices
+and fluctuating network connections. By structuring a single video
+stream into a foundational base layer and multiple enhancement layers,
+MPEG-4 SVC allows conferencing servers to tailor video delivery to each
+participant's specific bandwidth capacity without the need for
+resource-heavy server-side transcoding.</p>
+<h3 id="the-mechanics-of-layered-encoding">The Mechanics of Layered
+Encoding</h3>
+<p>MPEG-4 SVC, an extension of the H.264/MPEG-4 AVC standard, breaks
+down a video signal into a hierarchical structure:</p>
+<ul>
+<li><strong>Base Layer:</strong> Contains the essential video data
+representing the lowest acceptable resolution, frame rate, and bitrate.
+Any device receiving at least this layer can decode and display the
+video.</li>
+<li><strong>Enhancement Layers:</strong> Contain supplementary data that
+build directly on top of the base layer to increase resolution (spatial
+scalability), frame rate (temporal scalability), or image fidelity
+(quality/SNR scalability).</li>
+</ul>
+<p>When an enterprise endpoint transmits video, it encodes and uploads
+this single, multi-layered stream to the central conferencing
+infrastructure.</p>
+<h3 id="selective-forwarding-over-transcoding">Selective Forwarding Over
+Transcoding</h3>
+<p>Traditional Multipoint Control Units (MCUs) had to decode, resize,
+re-encode, and transmit distinct video streams for every endpoint with
+different bandwidth constraints—a process that introduces significant
+latency and requires massive processing power.</p>
+<p>MPEG-4 SVC replaces this model by integrating with Selective
+Forwarding Units (SFUs). An SFU does not decode or re-encode video.
+Instead, it inspects the packet headers of the incoming SVC stream and
+selectively forwards only the layers that match each receiving client’s
+available downstream bandwidth and hardware capabilities.</p>
+<ul>
+<li><strong>High-Bandwidth Clients:</strong> A desktop connected to
+high-speed corporate Ethernet receives the base layer and all
+enhancement layers, rendering a full 1080p, 60 fps feed.</li>
+<li><strong>Low-Bandwidth Clients:</strong> A mobile user on an unstable
+cellular connection receives only the base layer and perhaps one
+temporal layer, receiving a smooth 360p or 720p feed without packet loss
+or buffering.</li>
+</ul>
+<h3 id="real-time-bandwidth-adaptation">Real-Time Bandwidth
+Adaptation</h3>
+<p>Enterprise networks experience continuous fluctuations due to
+congestion, packet loss, and jitter. MPEG-4 SVC enables instantaneous
+adaptation to these dynamic conditions:</p>
+<ol type="1">
+<li><strong>Immediate Downscaling:</strong> When a client's available
+bandwidth drops, the SFU immediately ceases forwarding the highest
+enhancement layers. Because the base layer remains uninterrupted, the
+user experiences a slight drop in visual fidelity rather than freezing,
+stuttering, or dropped calls.</li>
+<li><strong>Rapid Recovery:</strong> As network conditions improve, the
+SFU immediately resumes transmitting higher-level enhancement layers.
+This transition happens on the fly without requiring the sender to
+generate a new keyframe (I-frame), preserving network efficiency.</li>
+<li><strong>Resilience to Packet Loss:</strong> If an enhancement layer
+packet is lost in transit, the decoder simply ignores that enhancement
+for the affected frame and displays the base layer, preventing visual
+artifacts and decoding crashes.</li>
+</ol>
+<p>Through layered encoding and intelligent packet routing, MPEG-4 SVC
+enables enterprise video conferencing platforms to support diverse,
+global endpoints efficiently while maintaining optimal quality and
+minimal latency.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

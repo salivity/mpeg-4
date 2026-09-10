@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPEG-4 Metadata and UTF-8 Character Encoding - mpeg-4</title>
+    <meta name="description" content="This article explores how the MPEG-4 (MP4) container format stores and processes international text metadata using UTF-8 descriptors. It covers the underlying ISO Base Media File Format box architecture, the specific atom structures and type indicators t">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/mpeg-4-metadata-and-utf-8-character-encoding">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MPEG-4 Metadata and UTF-8 Character Encoding - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/mpeg-4-metadata-and-utf-8-character-encoding" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explores how the MPEG-4 (MP4) container format stores and processes international text metadata using UTF-8 descriptors. It covers the underlying ISO Base Media File Format box architecture, the specific atom structures and type indicators t" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="mpeg-4-metadata-and-utf-8-character-encoding">MPEG-4 Metadata
+and UTF-8 Character Encoding</h1>
+<p>This article explores how the MPEG-4 (MP4) container format stores
+and processes international text metadata using UTF-8 descriptors. It
+covers the underlying ISO Base Media File Format box architecture, the
+specific atom structures and type indicators that signal UTF-8 content,
+how variable-width character encoding ensures global language
+compatibility, and the parsing mechanisms media engines use to read
+non-Latin scripts reliably.</p>
+<h3 id="the-mpeg-4-box-architecture-for-metadata">The MPEG-4 Box
+Architecture for Metadata</h3>
+<p>MPEG-4 media files (defined by ISO/IEC 14496-14 and based on the ISO
+Base Media File Format, ISO/IEC 14496-12) store all information within
+hierarchical data structures known as "boxes" (traditionally called
+"atoms"). Metadata is typically organized under the <code>moov</code>
+(movie) atom inside specialized metadata containers such as
+<code>udta</code> (user data) or <code>meta</code> (metadata).</p>
+<p>Within modern MP4 implementations—such as the widely adopted
+iTunes-style metadata hierarchy—metadata items reside in an item list
+(<code>ilst</code>) atom. Each individual tag (such as artist, title, or
+album) contains a nested <code>data</code> atom that carries both the
+payload and the flags defining the payload's data type.</p>
+<h3 id="type-indicators-and-utf-8-descriptors">Type Indicators and UTF-8
+Descriptors</h3>
+<p>To handle text across different writing systems without character
+corruption (mojibake), the MPEG-4 specification and standard conventions
+use explicit type descriptors within the <code>data</code> atom header.
+A standard <code>data</code> box contains:</p>
+<ul>
+<li><strong>Size (4 bytes):</strong> The total length of the box.</li>
+<li><strong>Type (4 bytes):</strong> The <code>data</code>
+four-character code (FourCC).</li>
+<li><strong>Version &amp; Flags / Type Indicator (4 bytes):</strong> A
+critical set of flags indicating the data type of the payload.</li>
+</ul>
+<p>When international text is stored, the type indicator is set to
+<code>0x000001</code> (Type 1), explicitly defining the contents as
+UTF-8 formatted text. In ISO-standard metadata schemes, string entries
+are defined either as null-terminated UTF-8 strings
+(<code>UTF8String</code>) or length-prefixed structures. By evaluating
+this type descriptor, demuxers and metadata parsers identify that
+incoming bytes must be decoded as UTF-8 rather than legacy formats such
+as UTF-16, raw ASCII, or fixed local code pages.</p>
+<h3 id="variable-length-byte-processing">Variable-Length Byte
+Processing</h3>
+<p>UTF-8 uses a variable-width encoding format ranging from 1 to 4 bytes
+per character (code point):</p>
+<ul>
+<li><strong>1-byte sequences (0x00–0x7F):</strong> Fully
+backward-compatible with 7-bit ASCII for basic Latin characters.</li>
+<li><strong>2-byte sequences (0xC0–0xDF leading byte):</strong> Covers
+Latin extensions, Cyrillic, Greek, Arabic, Hebrew, and other regional
+scripts.</li>
+<li><strong>3-byte sequences (0xE0–0xEF leading byte):</strong> Covers
+major Asian scripts, including CJK (Chinese, Japanese, and Korean)
+ideographs.</li>
+<li><strong>4-byte sequences (0xF0–0xF7 leading byte):</strong> Covers
+supplementary symbols, historical scripts, and emojis.</li>
+</ul>
+<p>By embedding UTF-8 inside the descriptor payload, the MPEG-4
+container avoids the endianness issues inherent to UTF-16, eliminating
+the requirement for a Byte Order Mark (BOM). Parsers determine the
+character boundaries dynamically by analyzing the leading bits of each
+byte sequence.</p>
+<h3 id="demuxing-and-parsing-considerations">Demuxing and Parsing
+Considerations</h3>
+<p>When reading international character encoding in MPEG-4 containers,
+modern media parsers execute the following steps:</p>
+<ol type="1">
+<li>Traverse the atom tree to locate the target metadata container
+(<code>moov/udta/meta/ilst</code>).</li>
+<li>Inspect the 4-byte type indicator field inside the target
+<code>data</code> atom to verify the UTF-8 flag
+(<code>0x000001</code>).</li>
+<li>Read the raw byte array according to the remaining box length.</li>
+<li>Pass the payload through a strict UTF-8 stream validator to ensure
+that multi-byte sequences do not contain truncated or invalid
+leading/continuation bytes.</li>
+<li>Convert the validated UTF-8 byte stream directly into native
+platform string objects without secondary code page
+transformations.</li>
+</ol>
+<p>This standardized approach ensures consistent display of titles,
+artist credits, chapters, and internationalized copyright information
+across different operating systems, media players, and hardware
+devices.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

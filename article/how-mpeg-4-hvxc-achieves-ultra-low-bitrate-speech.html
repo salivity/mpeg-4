@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How MPEG-4 HVXC Achieves Ultra-Low Bitrate Speech - mpeg-4</title>
+    <meta name="description" content="MPEG-4 Harmonic Vector Excitation Coding (HVXC) achieves ultra-low bitrate speech compression—typically operating between 2.0 and 4.0 kbps—by employing a parametric speech model that separates audio into harmonic and stochastic components. Instead of">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/how-mpeg-4-hvxc-achieves-ultra-low-bitrate-speech">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How MPEG-4 HVXC Achieves Ultra-Low Bitrate Speech - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/how-mpeg-4-hvxc-achieves-ultra-low-bitrate-speech" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="MPEG-4 Harmonic Vector Excitation Coding (HVXC) achieves ultra-low bitrate speech compression—typically operating between 2.0 and 4.0 kbps—by employing a parametric speech model that separates audio into harmonic and stochastic components. Instead of" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="how-mpeg-4-hvxc-achieves-ultra-low-bitrate-speech">How MPEG-4
+HVXC Achieves Ultra-Low Bitrate Speech</h1>
+<p>MPEG-4 Harmonic Vector Excitation Coding (HVXC) achieves ultra-low
+bitrate speech compression—typically operating between 2.0 and 4.0
+kbps—by employing a parametric speech model that separates audio into
+harmonic and stochastic components. Instead of encoding the raw waveform
+sample-by-sample, HVXC analyzes the underlying physical characteristics
+of human speech, encoding only the essential parameters such as pitch,
+spectral envelope, and harmonic magnitudes. This parametric approach
+minimizes data transmission requirements while retaining high
+intelligibility and natural quality.</p>
+<h3 id="parametric-speech-decomposition">Parametric Speech
+Decomposition</h3>
+<p>The core foundation of HVXC is the Harmonic plus Noise Model (HNM).
+Human speech is fundamentally divided into two categories:</p>
+<ul>
+<li><strong>Voiced Speech:</strong> Sounds produced by the vibration of
+vocal cords (such as vowels), which exhibit a distinct periodic and
+harmonic structure.</li>
+<li><strong>Unvoiced Speech:</strong> Noise-like sounds produced by air
+turbulence without vocal cord vibration (such as "s" or "f"
+sounds).</li>
+</ul>
+<p>HVXC continuously classifies incoming speech frames as voiced or
+unvoiced to apply the most data-efficient encoding strategy for each
+frame.</p>
+<h3 id="linear-predictive-coding-lpc-envelope">Linear Predictive Coding
+(LPC) Envelope</h3>
+<p>For every speech frame, HVXC extracts the spectral envelope using
+Linear Predictive Coding (LPC). The spectral envelope models the
+resonance of the vocal tract. To compress this envelope to minimal
+bitrates:</p>
+<ol type="1">
+<li>LPC parameters are converted into Line Spectral Pairs (LSP).</li>
+<li>The LSPs are quantized using Vector Quantization (VQ) schemes
+(specifically split-VQ or multi-stage VQ). This captures the vocal tract
+shape using only a fraction of the available bit budget.</li>
+</ol>
+<h3 id="harmonic-vector-excitation-for-voiced-segments">Harmonic Vector
+Excitation for Voiced Segments</h3>
+<p>When a frame is detected as voiced, HVXC utilizes harmonic
+modeling:</p>
+<ol type="1">
+<li><strong>Pitch Detection:</strong> The fundamental frequency (pitch)
+is accurately estimated and transmitted.</li>
+<li><strong>Harmonic Magnitude Extraction:</strong> The amplitude of
+each harmonic frequency up to a specific limit (typically up to 4 kHz
+for narrow-band speech) is calculated.</li>
+<li><strong>Magnitude Quantization:</strong> Rather than sending each
+harmonic amplitude individually, HVXC uses Vector Quantization (VQ)
+combined with dimension-conversion algorithms to quantize all harmonic
+amplitudes efficiently into compact binary codewords.</li>
+</ol>
+<h3 id="stochastic-coding-for-unvoiced-segments">Stochastic Coding for
+Unvoiced Segments</h3>
+<p>For unvoiced frames where no harmonic structure exists, the harmonic
+coder is disabled. HVXC instead uses a Stochastic Vector Excitation
+approach similar to Code-Excited Linear Prediction (CELP). The
+excitation signal is selected from a pre-defined stochastic codebook to
+represent the noise-like characteristics of the unvoiced sound,
+requiring minimal bits to index.</p>
+<h3 id="operational-bitrates-and-scalability">Operational Bitrates and
+Scalability</h3>
+<p>HVXC supports both fixed and variable bitrate modes:</p>
+<ul>
+<li><strong>2.0 kbps (Base Layer):</strong> Strongly quantizes the
+harmonic parameters and LSPs to fit extremely constrained transmission
+channels.</li>
+<li><strong>4.0 kbps (Enhanced Layer):</strong> Adds a scalable
+enhancement layer that provides finer quantization of harmonic
+magnitudes and residual components for improved audio fidelity.</li>
+<li><strong>Variable Bitrate (VBR):</strong> Dynamically drops the
+bitrate during pauses or silence (using Comfort Noise Generation) to
+achieve average bitrates below 2.0 kbps without quality
+degradation.</li>
+</ul>
+<h3 id="parametric-flexibility">Parametric Flexibility</h3>
+<p>Because speech is fully parameterized into pitch, time scale, and
+spectral envelope data, HVXC allows the receiver to independently modify
+the pitch and playback speed without decoding and re-encoding the audio.
+This parametric representation is what enables HVXC to maintain
+intelligibility at bitrates where conventional waveform-matching codecs
+fail.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

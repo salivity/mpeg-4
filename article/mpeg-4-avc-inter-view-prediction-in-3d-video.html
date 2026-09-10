@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPEG-4 AVC Inter-View Prediction in 3D Video - mpeg-4</title>
+    <meta name="description" content="MPEG-4 Advanced Video Coding (AVC), formally known as ITU-T H.264, processes stereoscopic 3D video using its Multiview Video Coding (MVC) extension (Annex H). This article examines how MPEG-4 AVC utilizes inter-view prediction to eliminate redundancy bet">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/mpeg-4-avc-inter-view-prediction-in-3d-video">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MPEG-4 AVC Inter-View Prediction in 3D Video - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/mpeg-4-avc-inter-view-prediction-in-3d-video" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="MPEG-4 Advanced Video Coding (AVC), formally known as ITU-T H.264, processes stereoscopic 3D video using its Multiview Video Coding (MVC) extension (Annex H). This article examines how MPEG-4 AVC utilizes inter-view prediction to eliminate redundancy bet" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="mpeg-4-avc-inter-view-prediction-in-3d-video">MPEG-4 AVC
+Inter-View Prediction in 3D Video</h1>
+<p>MPEG-4 Advanced Video Coding (AVC), formally known as ITU-T H.264,
+processes stereoscopic 3D video using its Multiview Video Coding (MVC)
+extension (Annex H). This article examines how MPEG-4 AVC utilizes
+inter-view prediction to eliminate redundancy between the left-eye and
+right-eye views, drastically reducing overall bitrates compared to dual
+independent streams while maintaining backward compatibility with legacy
+2D hardware.</p>
+<h3 id="the-base-view-and-dependent-view-structure">The Base View and
+Dependent View Structure</h3>
+<p>In stereoscopic video compression, MPEG-4 AVC designates one video
+channel (typically the left eye) as the <strong>Base View</strong> and
+the secondary channel (the right eye) as the <strong>Dependent
+View</strong>.</p>
+<ul>
+<li><strong>Base View:</strong> Encoded using standard H.264/AVC syntax
+without any inter-view dependencies. Any standard 2D AVC decoder can
+decode and display this stream normally.</li>
+<li><strong>Dependent View:</strong> Encoded using inter-view prediction
+references taken from the decoded base view at the same time instance,
+along with standard temporal references from its own timeline.</li>
+</ul>
+<h3 id="inter-view-prediction-mechanism">Inter-View Prediction
+Mechanism</h3>
+<p>Inter-view prediction leverages the high spatial correlation between
+the two cameras recording the same scene from slightly offset horizontal
+angles. MPEG-4 AVC adapts its existing motion-compensated prediction
+framework to perform <strong>disparity-compensated
+prediction</strong>:</p>
+<ol type="1">
+<li><strong>Reference Picture List Expansion:</strong> In standard AVC,
+reference picture lists (<code>List 0</code> and <code>List 1</code>)
+store temporally neighboring frames (past and future frames in the same
+view). In MVC, the reference picture lists of the dependent view are
+modified to include reconstructed frames from the base view captured at
+the exact same time point.</li>
+<li><strong>Disparity Estimation and Compensation:</strong> Instead of
+calculating motion vectors across time, the encoder calculates
+<strong>disparity vectors</strong> between the views. The disparity
+vector represents the horizontal and vertical shift between
+corresponding objects in the left and right perspectives.</li>
+<li><strong>Macroblock-Level Mode Decision:</strong> For every
+macroblock in the dependent view, the encoder dynamically evaluates
+whether to use:
+<ul>
+<li><strong>Intra-prediction:</strong> Spatial prediction within the
+current frame.</li>
+<li><strong>Temporal inter-prediction:</strong> Motion compensation
+using previous or future frames within the dependent view.</li>
+<li><strong>Inter-view prediction:</strong> Disparity compensation using
+the co-temporal frame from the base view.</li>
+<li><strong>Inter-view B-prediction:</strong> Bi-directional prediction
+combining both a temporal reference and an inter-view reference
+simultaneously.</li>
+</ul></li>
+</ol>
+<h3 id="reference-management-and-synchronization">Reference Management
+and Synchronization</h3>
+<p>To ensure stable decoding without transmission errors cascading
+between views, MPEG-4 AVC imposes strict synchronization rules:</p>
+<ul>
+<li><strong>Anchor Pictures:</strong> Special frames where all views
+only use inter-view prediction (no temporal prediction from previous
+frames). Anchor frames correspond to IDR (Instantaneous Decoder Refresh)
+frames in the base view and allow random access into the 3D stream.</li>
+<li><strong>Non-Anchor Pictures:</strong> Standard frames that can use
+both temporal and inter-view prediction.</li>
+</ul>
+<h3 id="compression-efficiency">Compression Efficiency</h3>
+<p>Because human eyes receive nearly identical scene backgrounds,
+lighting, and textures, inter-view prediction removes immense amounts of
+cross-view data duplication. This allows MPEG-4 AVC to deliver a
+complete stereoscopic 1080p 3D video stream using only roughly 50% more
+data than a single 2D video stream, representing a 20% to 30% bitrate
+saving over transmitting two independent AVC streams.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

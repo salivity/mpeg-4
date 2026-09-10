@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How MPEG-4 Represents 3D Sound Trajectories - mpeg-4</title>
+    <meta name="description" content="This article provides an overview of how the MPEG-4 standard models dynamic 3D sound trajectories within virtual listening environments. By utilizing scene description frameworks, keyframe interpolation nodes, spatial coordinate systems, and perceptual a">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/how-mpeg-4-represents-3d-sound-trajectories">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How MPEG-4 Represents 3D Sound Trajectories - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/how-mpeg-4-represents-3d-sound-trajectories" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article provides an overview of how the MPEG-4 standard models dynamic 3D sound trajectories within virtual listening environments. By utilizing scene description frameworks, keyframe interpolation nodes, spatial coordinate systems, and perceptual a" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="how-mpeg-4-represents-3d-sound-trajectories">How MPEG-4
+Represents 3D Sound Trajectories</h1>
+<p>This article provides an overview of how the MPEG-4 standard models
+dynamic 3D sound trajectories within virtual listening environments. By
+utilizing scene description frameworks, keyframe interpolation nodes,
+spatial coordinate systems, and perceptual acoustic parameters, MPEG-4
+enables the precise rendering and real-time movement of audio sources
+across three-dimensional space for binaural and multichannel playback
+systems.</p>
+<h2 id="the-mpeg-4-scene-architecture-audiobifs">The MPEG-4 Scene
+Architecture (AudioBIFS)</h2>
+<p>MPEG-4 achieves 3D spatial audio representation through AudioBIFS
+(Binary Format for Scenes), an object-based multimedia architecture
+derived from VRML (Virtual Reality Modeling Language). In AudioBIFS,
+audio elements are treated as discrete objects separate from the visual
+scene, yet capable of synchronization with visual geometry.</p>
+<p>The primary structural element is the <strong>Sound node</strong>,
+which places an audio stream within the 3D coordinate space. The Sound
+node references an <strong>AudioSource node</strong> (containing the raw
+or encoded audio data) and assigns it physical properties such as
+position, direction, speed, and spatial extent.</p>
+<h2 id="coordinate-mapping-and-trajectory-paths">Coordinate Mapping and
+Trajectory Paths</h2>
+<p>Spatial trajectory paths in MPEG-4 are mapped within a standard 3D
+Cartesian coordinate system <span class="math inline">\((X, Y,
+Z)\)</span>:</p>
+<ul>
+<li><strong><span class="math inline">\(X\)</span>-axis:</strong>
+Represents lateral movement (left to right).</li>
+<li><strong><span class="math inline">\(Y\)</span>-axis:</strong>
+Represents vertical elevation (up and down).</li>
+<li><strong><span class="math inline">\(Z\)</span>-axis:</strong>
+Represents depth or distance (near and far).</li>
+</ul>
+<p>To animate a sound source along a continuous trajectory, MPEG-4 uses
+<strong>Interpolator nodes</strong>, most notably the
+<code>PositionInterpolator</code> and
+<code>OrientationInterpolator</code>. Instead of streaming
+high-bandwidth continuous coordinate data, MPEG-4 defines discrete
+keyframe coordinates paired with specific timestamps:</p>
+<ol type="1">
+<li><strong>Keyframes (Keys):</strong> Time intervals normalized between
+0.0 and 1.0.</li>
+<li><strong>Key Values (KeyValues):</strong> Spatial vectors
+corresponding to each time key.</li>
+<li><strong>Interpolation Function:</strong> The decoder applies linear
+or spline interpolation between consecutive key values to compute a
+smooth, continuous path across time.</li>
+</ol>
+<h2 id="directionality-and-emission-cones">Directionality and Emission
+Cones</h2>
+<p>Sound sources in MPEG-4 do not only travel as omnidirectional points;
+their spatial trajectory includes orientation. The standard defines
+spatial dispersion using directivity cones characterized by:</p>
+<ul>
+<li><strong>Direction Vector:</strong> Defines where the sound source is
+pointing along its path.</li>
+<li><strong>Inner Cone Angle:</strong> The zone where sound plays at
+full volume without attenuation.</li>
+<li><strong>Outer Cone Angle:</strong> The boundary where sound drops to
+a specified minimum level.</li>
+</ul>
+<p>As the sound moves along its trajectory, changes in its orientation
+alter the spectral balance and intensity perceived by the listener based
+on the angle of arrival.</p>
+<h2 id="dynamic-acoustic-effects-along-trajectories">Dynamic Acoustic
+Effects Along Trajectories</h2>
+<p>To maintain realism as a sound source travels, MPEG-4 applies
+continuous acoustic modifications:</p>
+<ul>
+<li><strong>Doppler Effect:</strong> Frequency shifts are calculated
+dynamically based on the relative velocity vector between the moving
+Sound node and the listener node.</li>
+<li><strong>Distance Attenuation:</strong> Sound pressure levels drop as
+the distance between the source trajectory and the listener increases,
+typically following predefined inverse-square or linear roll-off
+curves.</li>
+<li><strong>Environmental Spatialization:</strong> MPEG-4 Spatial Audio
+incorporates perceptual parameters (such as reverberation time, source
+presence, and room warmth) that adapt as a sound source transitions
+between different acoustic zones.</li>
+</ul>
+<h2 id="client-side-decoding-and-spatial-rendering">Client-Side Decoding
+and Spatial Rendering</h2>
+<p>MPEG-4 transmits spatial trajectories parametrically. The bitstream
+carries the encoded audio alongside low-bitrate trajectory metadata
+(nodes, vectors, and timing). The receiving decoder processes this data
+in real time and renders the 3D trajectory according to the user's
+specific output format, utilizing Head-Related Transfer Functions
+(HRTFs) for headphone binaural listening or channel panning algorithms
+for 5.1, 7.1, or higher-order surround sound systems.</p></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

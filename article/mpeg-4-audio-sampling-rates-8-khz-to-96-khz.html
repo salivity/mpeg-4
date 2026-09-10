@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPEG-4 Audio Sampling Rates: 8 kHz to 96 kHz - mpeg-4</title>
+    <meta name="description" content="The MPEG-4 General Audio (GA) toolset provides a flexible framework designed to handle audio sampling rates ranging from 8 kHz up to 96 kHz. By integrating scalable framing structures, adaptive psychoacoustic modeling, explicit frequency signaling, and m">
+    <link rel="canonical" href="https://salivity.github.io/mpeg-4/article/mpeg-4-audio-sampling-rates-8-khz-to-96-khz">
+    <link rel="search" type="application/opensearchdescription+xml" title="mpeg-4" href="/mpeg-4/opensearch.xml">
+    <link rel="icon" href="/mpeg-4/favicon.ico">
+    <link rel="stylesheet" href="/mpeg-4/css/style.css">
+    <link media="print" rel="stylesheet" href="/mpeg-4/css/print.css">
+    <script src="/mpeg-4/js/fuse.min.js"></script>
+    <script src="/mpeg-4/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="MPEG-4 Audio Sampling Rates: 8 kHz to 96 kHz - mpeg-4" />
+    <meta property="og:url" content="https://salivity.github.io/mpeg-4/article/mpeg-4-audio-sampling-rates-8-khz-to-96-khz" />
+    <meta property="og:image:url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/mpeg-4/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The MPEG-4 General Audio (GA) toolset provides a flexible framework designed to handle audio sampling rates ranging from 8 kHz up to 96 kHz. By integrating scalable framing structures, adaptive psychoacoustic modeling, explicit frequency signaling, and m" />
+    <link rel="manifest" href="/mpeg-4/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/mpeg-4/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>mpeg-4</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/mpeg-4/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="mpeg-4-audio-sampling-rates-8-khz-to-96-khz">MPEG-4 Audio
+Sampling Rates: 8 kHz to 96 kHz</h1>
+<p>The MPEG-4 General Audio (GA) toolset provides a flexible framework
+designed to handle audio sampling rates ranging from 8 kHz up to 96 kHz.
+By integrating scalable framing structures, adaptive psychoacoustic
+modeling, explicit frequency signaling, and modular tools like Spectral
+Band Replication (SBR), the MPEG-4 standard dynamically adapts its
+coding efficiency and frequency resolution to accommodate low-bitrate
+voice, broadcast-quality audio, and ultra-high-definition studio
+streams.</p>
+<h3 id="sampling-frequency-signaling-and-configuration">Sampling
+Frequency Signaling and Configuration</h3>
+<p>The MPEG-4 GA architecture—predominantly centered around Advanced
+Audio Coding (AAC)—communicates the operating sampling frequency within
+its initial configuration header (<code>AudioSpecificConfig</code>). The
+decoder reads a 4-bit <code>samplingFrequencyIndex</code> field
+representing standard predefined sample rates:</p>
+<ul>
+<li><strong>High-Definition Rates (64 kHz, 88.2 kHz, 96 kHz):</strong>
+Used for studio-grade reproduction and preserving ultrasonic
+frequencies.</li>
+<li><strong>Standard Audio Rates (32 kHz, 44.1 kHz, 48 kHz):</strong>
+Standard consumer distribution rates for music and multimedia.</li>
+<li><strong>Low-Bitrate/Speech Rates (8 kHz, 11.025 kHz, 12 kHz, 16 kHz,
+22.05 kHz, 24 kHz):</strong> Optimized for low-bandwidth communication
+and narrow/wideband speech.</li>
+</ul>
+<p>If an arbitrary, non-standard rate is required within the 8–96 kHz
+bounds, an escape value allows the encoder to explicitly transmit a
+24-bit direct sampling frequency value.</p>
+<h3 id="adaptive-time-to-frequency-transform-and-framing">Adaptive
+Time-to-Frequency Transform and Framing</h3>
+<p>MPEG-4 GA uses the Modified Discrete Cosine Transform (MDCT) as its
+primary filter bank. In standard AAC configurations, frame lengths are
+fixed in sample count (typically 1024 or 960 samples for long blocks,
+and 128 or 120 samples for short blocks).</p>
+<p>Because the sample count per frame remains constant:</p>
+<ul>
+<li><strong>At 96 kHz:</strong> A 1024-sample frame represents a brief
+time window (~10.67 ms), delivering high temporal resolution naturally
+suited for transient-heavy, high-definition audio.</li>
+<li><strong>At 8 kHz:</strong> A 1024-sample frame represents a much
+longer duration (~128 ms), maximizing frequency resolution and coding
+efficiency where channel bandwidth is constrained.</li>
+</ul>
+<h3 id="dynamic-scale-factor-band-allocation">Dynamic Scale Factor Band
+Allocation</h3>
+<p>Human auditory perception varies based on the audible bandwidth
+available at a given sampling rate. The MPEG-4 toolset employs
+sample-rate-specific lookup tables to determine the partitioning of MDCT
+spectral lines into Scale Factor Bands (SFBs).</p>
+<p>These tables mimic the human ear’s critical bands (Bark scale):</p>
+<ul>
+<li>At <strong>8 kHz</strong>, the spectrum is divided into fewer,
+narrower SFBs across a 4 kHz Nyquist bandwidth.</li>
+<li>At <strong>96 kHz</strong>, the spectrum is divided into a greater
+number of SFBs spanning up to a 48 kHz Nyquist limit, allowing precise
+quantization noise shaping across both the audible and ultrasonic
+spectra.</li>
+</ul>
+<h3 id="modular-tools-and-hierarchical-bandwidth-management">Modular
+Tools and Hierarchical Bandwidth Management</h3>
+<p>To maintain high perceptual quality across the entire 8 kHz to 96 kHz
+spectrum, MPEG-4 GA incorporates hierarchical and bandwidth-extension
+tools:</p>
+<ul>
+<li><strong>Spectral Band Replication (SBR):</strong> In profiles such
+as HE-AAC, the core coder operates at a lower sampling rate (e.g., 24
+kHz or 48 kHz), while the SBR tool reconstructs the upper spectral
+envelope at the decoder to output 48 kHz or 96 kHz audio, conserving
+bitrate without sacrificing high-frequency reproduction.</li>
+<li><strong>Sampling Rate Switching and Scalability:</strong> MPEG-4
+enables bitstream scalability where a base layer can decode at a lower
+sampling frequency (e.g., 16 kHz for basic intelligibility), while
+enhancement layers add spectral lines to reconstruct higher sample rates
+(e.g., 48 kHz or 96 kHz) on capable decoders.</li>
+</ul></article>
+        <div id="comments-container"></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/mpeg-4'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/mpeg-4/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/mpeg-4/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>
